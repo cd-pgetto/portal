@@ -18,6 +18,27 @@ require "rails_helper"
 RSpec.describe Organization, type: :model do
   subject { build(:organization) }
 
+  describe "associations" do
+    it { is_expected.to have_many(:credentials).dependent(:destroy) }
+    it { is_expected.to have_many(:identity_providers).through(:credentials) }
+    it "is expected to have many shared identity providers through credentials" do
+      subject.save!
+      identity_provider = create(:identity_provider, availability: "shared")
+      subject.identity_providers << identity_provider
+
+      expect(subject.shared_identity_providers.length).to eq(1)
+      expect(subject.shared_identity_providers.first).to eq(identity_provider)
+    end
+    it "is expected to have many dedicated identity providers through credentials" do
+      subject.save!
+      identity_provider = create(:identity_provider, availability: "dedicated")
+      subject.identity_providers << identity_provider
+
+      expect(subject.dedicated_identity_providers.length).to eq(1)
+      expect(subject.dedicated_identity_providers.first).to eq(identity_provider)
+    end
+  end
+
   describe "validations" do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:subdomain) }
@@ -35,5 +56,7 @@ RSpec.describe Organization, type: :model do
         it { is_expected.not_to allow_value(domain_name).for(:subdomain) }
       end
     end
+
+    it { is_expected.to normalize(:subdomain).from(" ExAmPlE ").to("example") }
   end
 end

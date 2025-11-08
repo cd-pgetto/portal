@@ -22,6 +22,11 @@ require "rails_helper"
 RSpec.describe IdentityProvider, type: :model do
   subject { build(:identity_provider) }
 
+  describe "associations" do
+    it { is_expected.to have_many(:credentials).dependent(:destroy) }
+    it { is_expected.to have_many(:organizations).through(:credentials) }
+  end
+
   describe "validations" do
     it { is_expected.to validate_presence_of(:strategy) }
     it { is_expected.to validate_presence_of(:name) }
@@ -30,11 +35,18 @@ RSpec.describe IdentityProvider, type: :model do
     it { is_expected.to validate_presence_of(:client_secret) }
 
     it { is_expected.to validate_uniqueness_of(:client_id).scoped_to(:strategy) }
-    it "should validate uniqueness of strategy for shared availability" do
-      create(:identity_provider, strategy: "shared-strategy", availability: "shared")
-      duplicate = build(:identity_provider, strategy: "shared-strategy", availability: "shared")
-      expect(duplicate).not_to be_valid
-      expect(duplicate.errors[:strategy]).to include("has already been taken")
+    describe "when availability is shared" do
+      subject { build(:identity_provider, availability: "shared") }
+      it { is_expected.to validate_uniqueness_of(:strategy) }
     end
+  end
+
+  describe "enums" do
+    it { is_expected.to respond_to(:availability) }
+    it { is_expected.to respond_to(:shared?) }
+    it { is_expected.to respond_to(:dedicated?) }
+    it { expect(IdentityProvider.availabilities.keys).to contain_exactly("shared", "dedicated") }
+    it { expect(IdentityProvider).to respond_to(:shared) }
+    it { expect(IdentityProvider).to respond_to(:dedicated) }
   end
 end

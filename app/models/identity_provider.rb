@@ -18,10 +18,10 @@
 #  index_identity_providers_on_strategy_and_client_id  (strategy,client_id) UNIQUE
 #
 class IdentityProvider < ApplicationRecord
-  enum :availability, {shared: "shared", dedicated: "dedicated"}
+  has_many :credentials, dependent: :destroy
+  has_many :organizations, through: :credentials
 
-  scope :shared, -> { where(availability: :shared) }
-  scope :dedicated, -> { where(availability: :dedicated) }
+  enum :availability, {shared: "shared", dedicated: "dedicated"}
 
   validates :name, presence: true
   validates :icon_url, presence: true
