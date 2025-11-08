@@ -2,7 +2,7 @@
 #
 # Table name: organizations
 #
-#  id                   :bigint           not null, primary key
+#  id                   :uuid             not null, primary key
 #  allows_password_auth :boolean          default(TRUE), not null
 #  name                 :string           not null
 #  subdomain            :string           not null

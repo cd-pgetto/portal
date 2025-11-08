@@ -2,11 +2,11 @@
 #
 # Table name: credentials
 #
-#  id                   :bigint           not null, primary key
+#  id                   :uuid             not null, primary key
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  identity_provider_id :bigint           not null
-#  organization_id      :bigint           not null
+#  identity_provider_id :uuid             not null
+#  organization_id      :uuid             not null
 #
 # Indexes
 #
@@ -30,6 +30,6 @@ RSpec.describe Credential, type: :model do
   end
 
   describe "validations" do
-    it { is_expected.to validate_uniqueness_of(:organization_id).scoped_to(:identity_provider_id) }
+    it { is_expected.to validate_uniqueness_of(:organization_id).scoped_to(:identity_provider_id).ignoring_case_sensitivity }
   end
 end

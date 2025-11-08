@@ -2,7 +2,7 @@
 #
 # Table name: identity_providers
 #
-#  id            :bigint           not null, primary key
+#  id            :uuid             not null, primary key
 #  availability  :enum             default("shared"), not null
 #  client_secret :string           not null
 #  icon_url      :string           not null

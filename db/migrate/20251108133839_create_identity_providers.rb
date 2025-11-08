@@ -2,7 +2,7 @@ class CreateIdentityProviders < ActiveRecord::Migration[8.1]
   def change
     create_enum :availability, %w[shared dedicated], default: "shared", null: false
 
-    create_table :identity_providers do |t|
+    create_table :identity_providers, id: :uuid do |t|
       t.string :name, null: false
       t.string :icon_url, null: false
       t.string :strategy, null: false

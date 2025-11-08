@@ -18,17 +18,17 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_08_141725) do
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "availability", ["shared", "dedicated"]
 
-  create_table "credentials", force: :cascade do |t|
+  create_table "credentials", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.bigint "identity_provider_id", null: false
-    t.bigint "organization_id", null: false
+    t.uuid "identity_provider_id", null: false
+    t.uuid "organization_id", null: false
     t.datetime "updated_at", null: false
     t.index ["identity_provider_id"], name: "index_credentials_on_identity_provider_id"
     t.index ["organization_id", "identity_provider_id"], name: "index_credentials_on_organization_id_and_identity_provider_id", unique: true
     t.index ["organization_id"], name: "index_credentials_on_organization_id"
   end
 
-  create_table "identity_providers", force: :cascade do |t|
+  create_table "identity_providers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.enum "availability", default: "shared", null: false, enum_type: "availability"
     t.string "client_id", null: false
     t.string "client_secret", null: false
@@ -41,7 +41,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_08_141725) do
     t.index ["strategy"], name: "index_identity_providers_on_strategy", unique: true, where: "(availability = 'shared'::availability)"
   end
 
-  create_table "organizations", force: :cascade do |t|
+  create_table "organizations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.boolean "allows_password_auth", default: true, null: false
     t.datetime "created_at", null: false
     t.string "name", null: false

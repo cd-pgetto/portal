@@ -2,11 +2,11 @@
 #
 # Table name: credentials
 #
-#  id                   :bigint           not null, primary key
+#  id                   :uuid             not null, primary key
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  identity_provider_id :bigint           not null
-#  organization_id      :bigint           not null
+#  identity_provider_id :uuid             not null
+#  organization_id      :uuid             not null
 #
 # Indexes
 #
