@@ -1,1 +1,118 @@
 @import "tailwindcss";
+
+@plugin "daisyui";
+
+@source "./app/components";
+
+@theme {
+  --color-perceptive-purple-1: oklch(0.5921 0.179 293.83);
+  --color-perceptive-purple-2: oklch(0.6652 0.2015 295.82);
+  --color-perceptive-purple-3: oklch(0.7121 0.1237 296.67);
+  --color-perceptive-purple-4: oklch(0.8964 0.0482 295.89);
+
+  --color-perceptive-minty-green: oklch(0.7898 0.0651 195.91);
+  --color-perceptive-tangy-green: oklch(0.9428 0.1375 130.31);
+
+  --color-perceptive-beige: oklch(0.9463 0.007 88.64);
+  --color-perceptive-slate: oklch(0.7385 0.0061 84.57);
+  --color-perceptive-dark: oklch(0.1457 0.0043 285.86);
+
+  --color-cyber-blue-light: #01a9bf;
+  --color-cyber-blue: #019aaf;
+  --color-cyber-blue-dark: #018d9f;
+
+  --color-cyber-gray-light: #606063;
+  --color-cyber-gray: #404042;
+  --color-cyber-gray-dark: #202021;
+
+  --color-primary: var(--color-perceptive-purple-1);
+  --color-secondary: var(--color-perceptive-minty-green);
+  --color-accent: var(--color-perceptive-tangy-green);
+}
+
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  --color-primary: var(--color-perceptive-purple-1);
+  /*--color-secondary: var(--color-perceptive-minty-green);*/
+  --color-accent: var(--color-perceptive-tangy-green);
+}
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  prefersdark: true;
+  --color-primary: var(--color-perceptive-purple-1);
+  /*--color-secondary: var(--color-perceptive-minty-green);*/
+  --color-accent: var(--color-perceptive-tangy-green);
+}
+
+@media (prefers-color-scheme: dark) {
+  img.theme-dark {
+    display: inline;
+  }
+
+  img.theme-light {
+    display: none;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  img.theme-light {
+    display: inline;
+  }
+
+  img.theme-dark {
+    display: none;
+  }
+}
+
+@font-face {
+  font-family: "AcidGrotesk";
+  src:
+    url("FFF-AcidGrotesk-Regular.woff2") format("woff2"),
+    url("FFF-AcidGrotesk-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "AcidGrotesk-Light";
+  src:
+    url("FFF-AcidGrotesk-Light.woff2") format("woff2"),
+    url("FFF-AcidGrotesk-Light.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-base-300, currentcolor);
+  }
+
+  h1 {
+    @apply text-4xl font-bold;
+  }
+
+  h2 {
+    @apply text-2xl;
+  }
+
+  h3 {
+    @apply text-xl;
+  }
+
+  .field-label {
+    @apply block text-sm;
+  }
+
+  body {
+    font-family: "AcidGrotesk", "Inter", Arial, sans-serif;
+  }
+}

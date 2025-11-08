@@ -10,6 +10,9 @@ gem "stimulus-rails"
 gem "tailwindcss-rails"
 gem "jbuilder"
 
+gem "phlex-rails", "~> 2.3"
+gem "phlex-icons"
+
 # gem "bcrypt", "~> 3.1.7"
 
 gem "tzinfo-data", platforms: %i[windows jruby]
