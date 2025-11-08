@@ -12,7 +12,7 @@ require "rails_helper"
 # of tools you can use to make these specs even more expressive, but we're
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
-RSpec.describe "/organizations", type: :request do
+RSpec.describe "/admin/organizations", type: :request do
   # This should return the minimal set of attributes required to create a valid
   # Org. As you add validations to Org, be sure to
   # adjust the attributes here as well.
@@ -27,7 +27,7 @@ RSpec.describe "/organizations", type: :request do
   describe "GET /index" do
     it "renders a successful response" do
       create(:organization)
-      get organizations_url
+      get admin_organizations_url
       expect(response).to be_successful
     end
   end
@@ -35,14 +35,14 @@ RSpec.describe "/organizations", type: :request do
   describe "GET /show" do
     it "renders a successful response" do
       org = create(:organization)
-      get organization_url(org)
+      get admin_organization_url(org)
       expect(response).to be_successful
     end
   end
 
   describe "GET /new" do
     it "renders a successful response" do
-      get new_organization_url
+      get new_admin_organization_url
       expect(response).to be_successful
     end
   end
@@ -50,7 +50,7 @@ RSpec.describe "/organizations", type: :request do
   describe "GET /edit" do
     it "renders a successful response" do
       org = create(:organization)
-      get edit_organization_url(org)
+      get edit_admin_organization_url(org)
       expect(response).to be_successful
     end
   end
@@ -59,25 +59,25 @@ RSpec.describe "/organizations", type: :request do
     context "with valid parameters" do
       it "creates a new Organization" do
         expect {
-          post organizations_url, params: {organization: valid_attributes}
+          post admin_organizations_url, params: {organization: valid_attributes}
         }.to change(Organization, :count).by(1)
       end
 
       it "redirects to the created organization" do
-        post organizations_url, params: {organization: valid_attributes}
-        expect(response).to redirect_to(organization_url(Organization.last))
+        post admin_organizations_url, params: {organization: valid_attributes}
+        expect(response).to redirect_to(admin_organization_url(Organization.last))
       end
     end
 
     context "with invalid parameters" do
       it "does not create a new Organization" do
         expect {
-          post organizations_url, params: {organization: invalid_attributes}
+          post admin_organizations_url, params: {organization: invalid_attributes}
         }.to change(Organization, :count).by(0)
       end
 
       it "renders a response with 422 status (i.e. to display the 'new' template)" do
-        post organizations_url, params: {organization: invalid_attributes}
+        post admin_organizations_url, params: {organization: invalid_attributes}
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
@@ -91,24 +91,18 @@ RSpec.describe "/organizations", type: :request do
 
       it "updates the requested organization" do
         org = create(:organization)
-        patch organization_url(org), params: {organization: new_attributes}
+        patch admin_organization_url(org), params: {organization: new_attributes}
         org.reload
         expect(org.name).to eq("new name")
         expect(org.subdomain).to eq("new-subdomain")
-      end
-
-      it "redirects to the organization" do
-        org = create(:organization)
-        patch organization_url(org), params: {organization: new_attributes}
-        org.reload
-        expect(response).to redirect_to(organization_url(org))
+        expect(response).to redirect_to(admin_organization_url(org))
       end
     end
 
     context "with invalid parameters" do
       it "renders a response with 422 status (i.e. to display the 'edit' template)" do
         org = create(:organization)
-        patch organization_url(org), params: {organization: invalid_attributes}
+        patch admin_organization_url(org), params: {organization: invalid_attributes}
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
@@ -118,14 +112,9 @@ RSpec.describe "/organizations", type: :request do
     it "destroys the requested org" do
       org = create(:organization)
       expect {
-        delete organization_url(org)
+        delete admin_organization_url(org)
       }.to change(Organization, :count).by(-1)
-    end
-
-    it "redirects to the organizations list" do
-      org = create(:organization)
-      delete organization_url(org)
-      expect(response).to redirect_to(organizations_url)
+      expect(response).to redirect_to(admin_organizations_url)
     end
   end
 end

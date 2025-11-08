@@ -7,7 +7,7 @@
 
   <div class="flex justify-between items-center">
     <h1 class="font-bold text-2xl">Organizations</h1>
-    <%= link_to "New Organization", new_organization_path, class: "btn btn-primary" %>
+    <%= link_to "New Organization", new_admin_organization_path, class: "btn btn-primary" %>
   </div>
 
   <div id="organizations" class="min-w-full divide-y divide-gray-200 space-y-5">
@@ -16,9 +16,9 @@
         <div class="flex flex-col sm:flex-row justify-between items-center pb-5 sm:pb-0">
           <%= render org %>
           <div class="w-full sm:w-auto flex flex-col sm:flex-row space-x-2 space-y-2">
-            <%= link_to "Show", org, class: "btn btn-light" %>
-            <%= link_to "Edit", edit_organization_path(org), class: "btn btn-accent" %>
-            <%= button_to "Destroy", org, method: :delete, class: "btn btn-error",
+            <%= link_to "Show", admin_organization_path(org), class: "btn btn-light" %>
+            <%= link_to "Edit", edit_admin_organization_path(org), class: "btn btn-accent" %>
+            <%= button_to "Destroy", admin_organization_path(org), method: :delete, class: "btn btn-error",
               data: { turbo_confirm: "Are you sure?" } %>
           </div>
         </div>

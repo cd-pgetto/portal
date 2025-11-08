@@ -5,6 +5,6 @@
 
   <%= render "form", organization: @organization %>
 
-  <%= link_to "Show this org", @organization, class: "btn btn-accent" %>
-  <%= link_to "Back to orgs", organizations_path, class: "btn btn-light" %>
+  <%= link_to "Show this org", admin_organization_path(@organization), class: "btn btn-accent" %>
+  <%= link_to "Back to orgs", admin_organizations_path, class: "btn btn-light" %>
 </div>
