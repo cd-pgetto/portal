@@ -39,7 +39,6 @@ end
 group :development do
   gem "web-console"
   gem "rails_live_reload"
-  gem "rails-erd", "~> 1.7"
 
   gem "bundler-audit", require: false
   gem "brakeman", require: false
