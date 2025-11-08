@@ -14,6 +14,8 @@
 #  index_organizations_on_subdomain  (subdomain) UNIQUE
 #
 class Organization < ApplicationRecord
+  normalizes :subdomain, with: ->(value) { value.strip.downcase }
+
   validates :name, presence: true
   validates :subdomain, presence: true, uniqueness: {case_sensitive: false},
     length: {minimum: 1, maximum: 63}, format: {with: DomainName::SUBDOMAIN_REGEXP}
