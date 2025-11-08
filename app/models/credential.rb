@@ -23,5 +23,14 @@ class Credential < ApplicationRecord
   belongs_to :organization
   belongs_to :identity_provider
 
+  scope :shared, -> { joins(:identity_provider).merge(IdentityProvider.shared) }
+  scope :dedicated, -> { joins(:identity_provider).merge(IdentityProvider.dedicated) }
+
   validates :organization_id, uniqueness: {scope: :identity_provider_id}
+
+  accepts_nested_attributes_for :identity_provider, allow_destroy: true, reject_if: :all_blank_except_availability
+
+  def all_blank_except_availability(attributes)
+    attributes.except("availability").values.all?(&:blank?)
+  end
 end

@@ -25,4 +25,33 @@ class Organization < ApplicationRecord
   validates :name, presence: true
   validates :subdomain, presence: true, uniqueness: {case_sensitive: false},
     length: {minimum: 1, maximum: 63}, format: {with: DomainName::SUBDOMAIN_REGEXP}
+
+  accepts_nested_attributes_for :credentials, allow_destroy: true, reject_if: :all_blank
+
+  # Custom getter for shared identity provider IDs
+  def shared_identity_provider_ids
+    shared_identity_providers.pluck(:id)
+  end
+
+  # Custom setter for shared identity provider IDs
+  # This manages only shared provider credentials without affecting dedicated ones
+  def shared_identity_provider_ids=(ids)
+    # Filter out blank values
+    ids = ids.compact_blank.map(&:to_i)
+
+    # Get current shared provider IDs
+    current_shared_ids = shared_identity_provider_ids
+
+    # Find which shared credentials to remove
+    to_remove = current_shared_ids - ids
+    credentials.joins(:identity_provider)
+      .where(identity_providers: {id: to_remove, availability: :shared})
+      .destroy_all
+
+    # Find which shared credentials to add
+    to_add = ids - current_shared_ids
+    to_add.each do |provider_id|
+      credentials.find_or_create_by(identity_provider_id: provider_id)
+    end
+  end
 end

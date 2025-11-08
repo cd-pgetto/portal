@@ -1,0 +1,72 @@
+<%= form_with(model: organization, class: "contents") do |form| %>
+  <%= render "shared/error_messages", record: organization %>
+
+  <div class="my-5">
+    <%= form.label :name %>
+    <%= form.text_field :name, class: form_field_classes(organization, :name) %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :subdomain %>
+    <%= form.text_field :subdomain, class: form_field_classes(organization, :subdomain) %>
+  </div>
+
+  <!-- OAuth authentication option - allows_password_auth -->
+  <div data-controller="toggle-checkbox">
+    <%= form.label(:allows_password_auth, class: "label") do %>
+      <%= form.checkbox(:allows_password_auth, class: "checkbox bg-base-100",
+              data: {action: "change->toggle-checkbox#toggle", toggle_checkbox_target: "parentCheckbox"}) %>
+      Allows Password Authentication
+    <% end %>
+  </div>
+
+  <!-- Shared Identity Providers -->
+  <div class="my-5">
+    <div class="mb-2">Shared Identity Providers</div>
+    <%= form.collection_checkboxes :shared_identity_provider_ids, IdentityProvider.shared.all, :id, :name,
+      class: form_field_classes(organization, :shared_identity_provider_ids) do |shared_idp_form| %>
+      <div class="flex">
+        <%= shared_idp_form.check_box(class: "mr-2") %>
+        <%= shared_idp_form.label(class: "flex-1") %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Dedicated Identity Providers -->
+  <div class="my-5">
+    <!-- Nested fields for Dedicated Identity Providers -->
+    <div data-controller="nested-form" data-nested-form-index-value="NEW_RECORD_DEDICATED_CRED">
+
+      <!-- Template for new Dedicated Identity Provider fields -->
+      <template data-nested-form-target="template">
+        <%= form.fields_for :credentials, organization.credentials.build,
+          child_index: "NEW_RECORD_DEDICATED_CRED" do |cred_fields| %>
+
+          <%= cred_fields.fields_for :identity_provider,
+            IdentityProvider.new(availability: :dedicated) do |idp_fields| %>
+            <%= render "identity_provider_fields", form: idp_fields %>
+          <% end %>
+        <% end %>
+      </template>
+
+      <!-- Existing dedicated providers fields -->
+      <div>Dedicated Identity Providers</div>
+      <%# Need to ensure that the identity providers are loaded with the the credentials %>
+      <%= form.fields_for :credentials, organization.credentials.dedicated do |cred_fields| %>
+        <%= cred_fields.hidden_field :id %>
+        <%= cred_fields.fields_for :identity_provider do |idp_fields| %>
+          <%= render "identity_provider_fields", form: idp_fields %>
+        <% end %>
+      <% end %>
+
+      <div class="my-3" data-nested-form-target="container">
+        <%= link_to "Add Provider", "#", class:"btn btn-light",
+          data: { action: "click->nested-form#addNestedForm" } %>
+      </div>
+    </div>
+
+    <div class="inline">
+      <%= form.submit class: "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>

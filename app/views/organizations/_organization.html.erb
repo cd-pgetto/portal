@@ -1,0 +1,23 @@
+<div id="<%= dom_id organization %>" class="w-full sm:w-auto my-5 space-y-5">
+  <div>
+    <strong class="block font-semibold mb-1"><%= organization.name %></strong>
+
+    <div class="text-sm text-gray-600">Shared Identity Providers:</div>
+    <div class="space-y-2">
+      <% organization.shared_identity_providers.each do |shared_provider| %>
+        <ul class="list-disc ml-6" >
+          <li><%= shared_provider.name %></li>
+        </ul>
+      <% end %>
+    </div>
+
+    <div class="text-sm text-gray-600 mt-2">Dedicated Identity Providers:</div>
+    <div class="space-y-2">
+      <% organization.dedicated_identity_providers.each do |dedicated_provider| %>
+        <ul class="list-disc ml-6" >
+          <li><%= dedicated_provider.name %></li>
+        </ul>
+      <% end %>
+    </div>
+  </div>
+</div>
