@@ -1,4 +1,4 @@
-class Components::FlashMessages < Components::Base
+class Views::Shared::FlashMessages < Components::Base
   include Phlex::Rails::Helpers::Flash
 
   MESSAGE_STYLES = {

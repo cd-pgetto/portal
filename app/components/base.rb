@@ -2,6 +2,7 @@
 
 class Components::Base < Phlex::HTML
   # Include any helpers you want to be available across all components
+  include Phlex::Rails::Helpers::AssetPath
   include Phlex::Rails::Helpers::ButtonTo
   include Phlex::Rails::Helpers::ContentFor
   include Phlex::Rails::Helpers::DOMID

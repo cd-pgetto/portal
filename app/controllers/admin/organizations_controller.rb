@@ -13,11 +13,12 @@ class Admin::OrganizationsController < ApplicationController
 
   # GET /admin/organizations/new
   def new
-    @organization = Organization.new
+    render Views::Admin::Organizations::New.new(organization: Organization.new)
   end
 
   # GET /admin/organizations/1/edit
   def edit
+    render Views::Admin::Organizations::Edit.new(organization: @organization)
   end
 
   # POST /admin/organizations or /admin/organizations.json
