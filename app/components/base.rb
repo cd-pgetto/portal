@@ -6,10 +6,11 @@ class Components::Base < Phlex::HTML
   include Phlex::Rails::Helpers::ButtonTo
   include Phlex::Rails::Helpers::ContentFor
   include Phlex::Rails::Helpers::DOMID
+  include Phlex::Rails::Helpers::FormWith
   include Phlex::Rails::Helpers::Routes
   include Phlex::Rails::Helpers::TurboFrameTag
 
-  if Rails.env.development?
+  if Rails.env.development? || Rails.env.test?
     def before_template
       comment { "Before #{self.class.name}" }
       super

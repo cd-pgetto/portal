@@ -1,76 +1,57 @@
-class Views::Admin::Organizations::IdentityProvidersFields < Components::Base
-  def initialize(organization:)
+class Views::Admin::Organizations::IdentityProviderFields < Views::Base
+  def initialize(form:, organization:)
+    @form = form
     @organization = organization
   end
 
-  #   <fieldset class="flex items-center gap-6 mb-6 p-2 border rounded-md" data-nested-form-item=true>
-  #     <%= form.hidden_field :id %>
-  #     <%= form.hidden_field :availability, value: "dedicated" %>
-
-  #     <div>
-  #       <%= form.label :name %>
-  #       <%= form.text_field :name, class: form_field_classes(form.object, :name) %>
-  #     </div>
-
-  #     <div>
-  #       <%= form.label :strategy %>
-  #       <%= form.text_field :strategy, class: form_field_classes(form.object, :strategy) %>
-  #     </div>
-
-  #     <div>
-  #       <%= form.label :icon_url %>
-  #       <%= form.text_field :icon_url, class: form_field_classes(form.object, :icon_url) %>
-  #     </div>
-
-  #     <div>
-  #       <%= form.label "Client ID" %>
-  #       <%= form.text_field :client_id, class: form_field_classes(form.object, :client_id) %>
-  #     </div>
-
-  #     <div>
-  #       <%= form.label "Client Secret" %>
-  #       <%= form.text_field :client_secret, class: form_field_classes(form.object, :client_secret) %>
-  #     </div>
-
-  #     <div>
-  #       <label class="label"></label>
-  #       <%= link_to "X", "#", class: "btn btn-error", data: { action: "click->nested-form#removeNestedForm" } %>
-  #       <%= form.hidden_field :_destroy %>
-  #     </div>
-
-  #   </fieldset>
-
   def view_template
     div(class: "nested-fields", data: {new_record: form.object.new_record? ? "true" : "false"}) do
-      # fieldset(class: "fieldset border-base-300 rounded-box w-md border p-4 mb-4") do
-      fieldset(class: "fieldset bg-base-200 border border-base-300 rounded-box flex items-center gap-6 p-4 mb-4",
+      fieldset(class: "fieldset bg-base-200 border-1 border-neutral rounded-box flex items-center gap-x-6 p-2 mb-2",
         data: {nested_form: {item: true}}) do
         form.hidden_field :id
         form.hidden_field :availability, value: "dedicated"
+        div(class: "flex flex-col w-full gap-y-4 mt-2") do
+          div(class: "flex flex-row justify-between gap-x-4 w-full") do
+            # TODO: CSS to highlight borders of fields with errors, maybe use form_field_classes(form.object, :name)
 
-        if @organization.shared_identity_providers.any?
-          # DaisyUI toggle checkbox
-          label(for: "use_shared_provider", class: "peer label cursor-pointer gap-2") do
-            input(type: "checkbox", id: "use_shared_provider", class: "checkbox bg-base-100 checkbox-bordered mr-2")
-            span(class: "label-text font-medium") { "Use an existing shared provider" }
+            div(class: "w-full") do
+              form.label(:name, class: "label")
+              form.text_field(:name, class: "input w-full", required: true)
+            end
+
+            div(class: "w-full") do
+              form.label(:strategy, class: "label")
+              form.text_field(:strategy, class: "input w-full", required: true)
+            end
+
+            div(class: "w-full") do
+              form.label(:icon_url, class: "label")
+              form.text_field(:icon_url, class: "input w-full")
+            end
           end
 
-          p(class: "text-xs opacity-60 mt-2") { "Check this box to link an existing shared provider, or leave unchecked to create a new organization-specific provider" }
+          div(class: "flex flex-row justify-between gap-x-4 w-full") do
+            div(class: "w-full") do
+              form.label(:client_id, class: "label") { "Client ID" }
+              form.text_field(:client_id, class: "input w-full", required: true)
+            end
 
-          # Shared provider form (visible when checked)
-          div(class: "mt-4 peer-has-checked:block hidden") do
-            render Views::Admin::OrganizationOauthProviders::FormShared.new(form:, organization:, shared_providers:)
+            div(class: "w-full") do
+              form.label(:client_secret, class: "label") { "Client Secret" }
+              form.text_field(:client_secret, class: "input w-full", required: true)
+            end
           end
         end
 
-        div(class: [("mt-4 peer-has-checked:hidden block" if @shared_providers.any?)]) do
-          render Views::Admin::OauthProviders::Form.new(form:, organization:)
-        end
-
-        div(class: "inline text-center mt-2") do
-          form.submit "Add OAuth Provider", class: "btn btn-primary"
+        div do
+          a(href: "#", class: "btn btn-error btn-sm", data: {action: "click->nested-form#removeNestedForm"}) { "X" }
+          form.hidden_field(:_destroy)
         end
       end
     end
   end
+
+  private
+
+  attr_reader :form, :organization
 end

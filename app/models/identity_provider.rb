@@ -28,4 +28,9 @@ class IdentityProvider < ApplicationRecord
   validates :strategy, presence: true, uniqueness: {conditions: -> { shared }}
   validates :client_id, presence: true, uniqueness: {scope: :strategy}
   validates :client_secret, presence: true
+
+  # List of available OAuth strategies
+  def self.available_strategies
+    OmniAuth.strategies.map(&:default_options).map(&:name).compact
+  end
 end

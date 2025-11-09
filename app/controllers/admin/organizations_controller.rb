@@ -30,7 +30,7 @@ class Admin::OrganizationsController < ApplicationController
         format.html { redirect_to admin_organization_path(@organization), notice: "Organization was successfully created." }
         format.json { render :show, status: :created, location: @organization }
       else
-        format.html { render :new, status: :unprocessable_content }
+        format.html { render Views::Admin::Organizations::New.new(organization: @organization), status: :unprocessable_content }
         format.json { render json: @organization.errors, status: :unprocessable_content }
       end
     end
@@ -43,7 +43,7 @@ class Admin::OrganizationsController < ApplicationController
         format.html { redirect_to admin_organization_path(@organization), notice: "Organization was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: @organization }
       else
-        format.html { render :edit, status: :unprocessable_content }
+        format.html { render Views::Admin::Organizations::Edit.new(organization: @organization), status: :unprocessable_content }
         format.json { render json: @organization.errors, status: :unprocessable_content }
       end
     end

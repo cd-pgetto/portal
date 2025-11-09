@@ -4,10 +4,10 @@ class Views::Admin::Organizations::Form < Components::Base
   end
 
   def view_template
-    form_with(model: [:admin, @organization], local: true, class: "contents") do |form|
+    form_with(model: [:admin, @organization], class: "contents") do |form|
       render Views::Shared::ErrorMessages.new(resource: @organization)
 
-      fieldset(class: "fieldset bg-base-200 border-base-300 rounded-box w-md border p-4 mb-4") do
+      fieldset(class: "fieldset bg-base-200 border-base-300 rounded-box w-full border p-4 mb-4") do
         # Org name
         form.label(:name, class: "label tracking-wide ")
         form.text_field(:name, class: "input", required: true)
@@ -19,43 +19,27 @@ class Views::Admin::Organizations::Form < Components::Base
           span(class: "label") { ".perceptiveportal.com" }
         end
 
-        # Email domains
-        div(class: "mt-4", data: {controller: "nested-form"}) do
-          div(class: "flex flex-row justify-between items-center") do
-            form.label(:email_domains, class: "label") { "Email Domains" }
-            button(class: "btn btn-xs btn-outline", data: {action: "click->nested-form#addAssociation"}) {
-              render PhlexIcons::Lucide::Plus.new(class: "size-4")
-            }
-          end
+        # Password authentication option - allows_password_auth
+        span(class: "label mt-4") { "Password Authentication" }
+        form.label(:allows_password_auth, class: "label") do
+          form.checkbox(:allows_password_auth, class: "checkbox bg-base-100", id: "parent_checkbox",
+            data: {controller: "toggle-checkbox", action: "toggle-checkbox#toggle"})
+          plain "Allows Password Authentication"
+        end
 
-          div(data: {nested_form_target: "container"}) do
-            form.fields_for(:email_domains) do |email_domain_form|
-              render_email_domain_fields(email_domain_form)
+        # Shared Identity Providers
+        div(class: "my-5") do
+          div(class: "mb-2") { "Shared Identity Providers" }
+          shared_providers = IdentityProvider.shared.order(:name)
+          form.collection_check_boxes(:shared_identity_provider_ids, shared_providers, :id, :name) do |shared_idp|
+            div(class: "flex items-center gap-2 mb-2") do
+              shared_idp.check_box(class: "checkbox bg-base-100")
+              shared_idp.label(class: "label") { shared_idp.text }
             end
           end
-
-          # Template for new email domains
-          template(data: {nested_form_target: "template"}) do
-            render_email_domain_template(form)
-          end
         end
 
-        # OAuth authentication options - requires oauth
-        span(class: "label mt-4") { "OAuth Options" }
-        form.label(:requires_oauth_authentication, class: "label") do
-          form.checkbox(:requires_oauth_authentication, class: "checkbox bg-base-100", id: "parent_checkbox",
-            data: {controller: "toggle-checkbox", action: "toggle-checkbox#toggle"})
-          plain "Requires OAuth Authentication"
-        end
-
-        # OAuth authentication options - requires specified providers (depends on above)
-        div(class: "ml-6") do
-          form.label(:requires_specified_oauth_providers, class: "label mt-2") do
-            form.checkbox(:requires_specified_oauth_providers, class: "checkbox bg-base-100", data: {toggle_checkbox_target: "dependentCheckbox"},
-              id: "dependent_checkbox", disabled: !@organization.requires_oauth_authentication)
-            plain "Requires Specified OAuth Providers"
-          end
-        end
+        render Views::Admin::Organizations::DedicatedIdentityProvidersSubform.new(form:, organization: @organization)
 
         div(class: "inline text-center mt-2") do
           form.submit class: "btn btn-primary"

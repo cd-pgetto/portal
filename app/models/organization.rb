@@ -37,7 +37,7 @@ class Organization < ApplicationRecord
   # This manages only shared provider credentials without affecting dedicated ones
   def shared_identity_provider_ids=(ids)
     # Filter out blank values
-    ids = ids.compact_blank.map(&:to_i)
+    ids = ids.compact_blank
 
     # Get current shared provider IDs
     current_shared_ids = shared_identity_provider_ids
