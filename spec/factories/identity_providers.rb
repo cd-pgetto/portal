@@ -27,5 +27,14 @@ FactoryBot.define do
     availability { "shared" }
     client_id { "client_id-#{generate(:identity_provider_number)}" }
     client_secret { "SuperSekret" }
+
+    factory :google_identity_provider do
+      name { "Google OAuth" }
+      icon_url { "google-icon.jpg" }
+      strategy { "google_oauth2" }
+      availability { "shared" }
+      client_id { "google-client-id" }
+      client_secret { "GoogleSuperSekret" }
+    end
   end
 end

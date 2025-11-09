@@ -3,11 +3,12 @@ class Admin::OrganizationsController < ApplicationController
 
   # GET /admin/organizations or /admin/organizations.json
   def index
-    @organizations = Organization.all
+    render Views::Admin::Organizations::Index.new(organizations: Organization.all)
   end
 
   # GET /admin/organizations/1 or /admin/organizations/1.json
   def show
+    render Views::Admin::Organizations::Show.new(organization: @organization)
   end
 
   # GET /admin/organizations/new

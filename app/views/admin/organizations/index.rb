@@ -18,8 +18,7 @@ class Views::Admin::Organizations::Index < Views::Base
             tr(class: "text-bold") do
               th { "Name" }
               th { "Subdomain" }
-              th { "Only Oauth" }
-              th(class: "max-w-24 whitespace-normal") { "Only Selected Providers" }
+              th(class: "max-w-24 whitespace-normal") { "Allow Password Auth" }
               th { "Actions" }
             end
           end
@@ -28,8 +27,7 @@ class Views::Admin::Organizations::Index < Views::Base
               tr(class: "hover:bg-base-300") do
                 td { a(href: admin_organization_path(organization), class: "text-primary") { organization.name } }
                 td { organization.subdomain }
-                td { organization.requires_oauth_authentication ? "Yes" : "No" }
-                td { organization.requires_specified_oauth_providers ? "Yes" : "No" }
+                td { organization.allows_password_auth ? "Yes" : "No" }
                 td do
                   button_to(admin_organization_path(organization), method: :delete, class: "btn",
                     data: {turbo_confirm: "Are you sure?"}) {

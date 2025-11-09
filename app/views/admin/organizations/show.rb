@@ -22,10 +22,10 @@ class Views::Admin::Organizations::Show < Views::Base
         end
       end
 
-      # Email domains and Oauth providers lists
+      # Email domains and Identity Providers lists
       div(class: "flex flex-col sm:flex-row gap-4 mt-4") do
-        render Views::Admin::EmailDomains::Index.new(organization: @organization)
-        render Views::Admin::OrganizationOauthProviders::Index.new(organization: @organization)
+        # render Views::Admin::EmailDomains::Index.new(organization: @organization)
+        # render Views::Admin::Organizations::IdentityProvidersFields.new(organization: @organization)
       end
     end
   end

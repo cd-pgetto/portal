@@ -51,6 +51,7 @@ group :development do
   gem "standard-rspec", require: false
   gem "htmlbeautifier", require: false
   gem "annotaterb", require: false
+  gem "ruby-lsp-rspec", "~> 0.1.28", require: false
 end
 
 group :test do
