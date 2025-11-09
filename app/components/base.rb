@@ -6,6 +6,7 @@ class Components::Base < Phlex::HTML
   include Phlex::Rails::Helpers::ContentFor
   include Phlex::Rails::Helpers::DOMID
   include Phlex::Rails::Helpers::Routes
+  include Phlex::Rails::Helpers::TurboFrameTag
 
   if Rails.env.development?
     def before_template
