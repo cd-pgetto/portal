@@ -8,7 +8,7 @@ class Views::Admin::Organizations::Index < Views::Base
 
     div(class: "w-full") do
       div(class: "flex justify-between items-center mb-5") do
-        h1(class: "font-bold text-2xl") { "Organizations" }
+        h1(class: "font-bold text-3xl underline") { "Organizations" }
         a(href: new_admin_organization_path, class: "btn btn-primary") { "New organization" }
       end
 
@@ -25,7 +25,7 @@ class Views::Admin::Organizations::Index < Views::Base
           tbody do
             @organizations&.each do |organization|
               tr(class: "hover:bg-base-300") do
-                td { a(href: admin_organization_path(organization), class: "text-primary") { organization.name } }
+                td { a(href: admin_organization_path(organization), class: "text-primary font-bold text-lg") { organization.name } }
                 td { organization.subdomain }
                 td { organization.allows_password_auth ? "Yes" : "No" }
                 td do
