@@ -28,7 +28,7 @@ class Admin::IdentityProvidersController < ApplicationController
 
     respond_to do |format|
       if @identity_provider.save
-        format.html { redirect_to @identity_provider, notice: "Identity provider was successfully created." }
+        format.html { redirect_to admin_identity_provider_path(@identity_provider), notice: "Identity provider was successfully created." }
         format.json { render :show, status: :created, location: @identity_provider }
       else
         format.html { render Views::Admin::IdentityProviders::New.new(identity_provider: @identity_provider), status: :unprocessable_entity }
@@ -41,7 +41,7 @@ class Admin::IdentityProvidersController < ApplicationController
   def update
     respond_to do |format|
       if @identity_provider.update(identity_provider_params)
-        format.html { redirect_to @identity_provider, notice: "Identity provider was successfully updated.", status: :see_other }
+        format.html { redirect_to admin_identity_provider_path(@identity_provider), notice: "Identity provider was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: @identity_provider }
       else
         format.html { render Views::Admin::IdentityProviders::Edit.new(identity_provider: @identity_provider), status: :unprocessable_entity }
@@ -55,7 +55,7 @@ class Admin::IdentityProvidersController < ApplicationController
     @identity_provider.destroy!
 
     respond_to do |format|
-      format.html { redirect_to identity_providers_path, notice: "Identity provider was successfully destroyed.", status: :see_other }
+      format.html { redirect_to admin_identity_providers_path, notice: "Identity provider was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
     end
   end

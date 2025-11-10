@@ -39,6 +39,12 @@ RSpec.describe IdentityProvider, type: :model do
       subject { build(:identity_provider, availability: "shared") }
       it { is_expected.to validate_uniqueness_of(:strategy) }
     end
+
+    describe "when availability is dedicated" do
+      let!(:other_provider) { create(:identity_provider, strategy: "github", availability: "shared") }
+      subject { build(:identity_provider, strategy: "github", availability: "dedicated") }
+      it { is_expected.to be_valid }
+    end
   end
 
   describe "enums" do

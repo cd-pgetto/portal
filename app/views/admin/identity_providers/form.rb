@@ -20,6 +20,11 @@ class Views::Admin::IdentityProviders::Form < Components::Base
       end
 
       div(class: "my-5") do
+        form.label(:icon_url)
+        form.text_field(:icon_url, class: form_field_classes(@identity_provider, :icon_url))
+      end
+
+      div(class: "my-5") do
         form.label(:availability)
         form.select(:availability,
           IdentityProvider.availabilities.keys.map { |k| [k.titleize, k] },
