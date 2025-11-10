@@ -3,7 +3,7 @@ class Admin::IdentityProvidersController < ApplicationController
 
   # GET /identity_providers or /identity_providers.json
   def index
-    render Views::Admin::IdentityProviders::Index.new(identity_providers: IdentityProvider.all)
+    render Views::Admin::IdentityProviders::Index.new(identity_providers: IdentityProvider.all.order(:name))
   end
 
   # GET /identity_providers/1 or /identity_providers/1.json
