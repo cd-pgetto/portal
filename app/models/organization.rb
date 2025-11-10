@@ -25,6 +25,7 @@ class Organization < ApplicationRecord
   validates :name, presence: true
   validates :subdomain, presence: true, uniqueness: {case_sensitive: false},
     length: {minimum: 1, maximum: 63}, format: {with: DomainName::SUBDOMAIN_REGEXP}
+  validates :identity_providers, presence: {message: "must have at least one identity provider if password authentication is not allowed", unless: :allows_password_auth?}
 
   accepts_nested_attributes_for :credentials, allow_destroy: true, reject_if: :all_blank
 

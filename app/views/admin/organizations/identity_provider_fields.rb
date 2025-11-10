@@ -44,7 +44,9 @@ class Views::Admin::Organizations::IdentityProviderFields < Views::Base
         end
 
         div do
-          a(href: "#", class: "btn btn-error btn-sm", data: {action: "click->nested-form#removeNestedForm"}) { "X" }
+          button(class: ["btn btn-lg", form.object.new_record? ? "btn-warning" : "btn-error"], data: {action: "click->nested-form#removeNestedForm"}) {
+            render PhlexIcons::Lucide::Trash.new(class: ["size-6", form.object.new_record? ? "text-warning-content" : "text-error-content"])
+          }
           form.hidden_field(:_destroy)
         end
       end

@@ -58,5 +58,17 @@ RSpec.describe Organization, type: :model do
     end
 
     it { is_expected.to normalize(:subdomain).from(" ExAmPlE ").to("example") }
+
+    context "when not allowing password auth" do
+      before { subject.allows_password_auth = false }
+      context "without any identity providers" do
+        it { is_expected.not_to be_valid }
+      end
+      context "with at least one identity provider" do
+        before { subject.identity_providers << create(:google_identity_provider) }
+
+        it { is_expected.to be_valid }
+      end
+    end
   end
 end
