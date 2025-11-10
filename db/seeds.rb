@@ -39,3 +39,5 @@ unless IdentityProvider.exists?(strategy: "facebook")
   IdentityProvider.create_with(name: "Facebook", icon_url: "facebook-icon.jpg", availability: "shared",
     client_id: "facebook-client-id", client_secret: "FacebookSuperSekret").find_or_create_by!(strategy: "facebook")
 end
+
+pp "Seeded IdentityProviders: #{IdentityProvider.all.map(&:name).join(", ")}"

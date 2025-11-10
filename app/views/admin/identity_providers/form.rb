@@ -6,7 +6,7 @@ class Views::Admin::IdentityProviders::Form < Components::Base
   end
 
   def view_template
-    form_with(model: @identity_provider, class: "contents") do |form|
+    form_with(model: [:admin, @identity_provider], class: "contents") do |form|
       render Views::Shared::ErrorMessages.new(resource: @identity_provider)
 
       div(class: "my-5") do
