@@ -15,13 +15,13 @@ class Views::Admin::Organizations::IdentityProviderFields < Views::Base
             # TODO: CSS to highlight borders of fields with errors, maybe use form_field_classes(form.object, :name)
 
             div(class: "w-full") do
-              form.label(:name, class: "label")
-              form.text_field(:name, class: "input w-full", required: true)
+              form.label(:strategy, class: "label")
+              form.select(:strategy, IdentityProvider.available_strategies, {}, class: "select w-full", required: true)
             end
 
             div(class: "w-full") do
-              form.label(:strategy, class: "label")
-              form.text_field(:strategy, class: "input w-full", required: true)
+              form.label(:name, class: "label")
+              form.text_field(:name, class: "input w-full", required: true)
             end
 
             div(class: "w-full") do

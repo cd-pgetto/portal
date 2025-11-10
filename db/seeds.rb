@@ -8,16 +8,12 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-# name { "Google OAuth" }
-# icon_url { "google-icon.jpg" }
-# strategy { "google_oauth2" }
-# availability { "shared" }
-# client_id { "google-client-id" }
-# client_secret { "GoogleSuperSekret" }
-
-unless IdentityProvider.exists?(strategy: "google_oauth2")
-  IdentityProvider.create_with(name: "Google OAuth", icon_url: "google-icon.jpg", availability: "shared",
-    client_id: "google-client-id", client_secret: "GoogleSuperSekret").find_or_create_by!(strategy: "google_oauth2")
+IdentityProvider.available_strategies.each do |strategy|
+  unless IdentityProvider.exists?(strategy: strategy)
+    IdentityProvider.create_with(name: strategy.titleize, icon_url: "#{strategy}-icon.jpg", availability: "shared",
+      client_id: Rails.application.credentials.dig(:omniauth, strategy, :client_id),
+      client_secret: Rails.application.credentials.dig(:omniauth, strategy, :client_secret)).find_or_create_by!(strategy: strategy)
+  end
 end
 
 unless IdentityProvider.exists?(strategy: "microsoft")
@@ -40,4 +36,4 @@ unless IdentityProvider.exists?(strategy: "facebook")
     client_id: "facebook-client-id", client_secret: "FacebookSuperSekret").find_or_create_by!(strategy: "facebook")
 end
 
-pp "Seeded IdentityProviders: #{IdentityProvider.all.map(&:name).join(", ")}"
+Rails.logger.info "Seeded IdentityProviders: #{IdentityProvider.all.map(&:name).join(", ")}"
