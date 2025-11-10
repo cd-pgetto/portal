@@ -23,11 +23,13 @@ class IdentityProvider < ApplicationRecord
 
   enum :availability, {shared: "shared", dedicated: "dedicated"}
 
-  validates :name, presence: true
-  validates :icon_url, presence: true
-  validates :strategy, presence: true, uniqueness: {conditions: -> { shared }}
-  validates :client_id, presence: true, uniqueness: {scope: :strategy}
-  validates :client_secret, presence: true
+  validates :name, :icon_url, :strategy, :client_id, :client_secret, presence: true
+
+  # Can only have single shared identity provider per strategy
+  validates :strategy, uniqueness: {conditions: -> { shared }}, if: -> { shared? }
+
+  # Can only have single identity provider per strategy and client_id combination
+  validates :client_id, uniqueness: {scope: :strategy}
 
   # List of available OAuth strategies
   def self.available_strategies
