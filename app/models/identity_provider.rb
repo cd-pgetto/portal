@@ -33,6 +33,6 @@ class IdentityProvider < ApplicationRecord
 
   # List of available OAuth strategies
   def self.available_strategies
-    OmniAuth.strategies.map(&:default_options).map(&:name).compact
+    OmniAuth.strategies.map(&:default_options).map(&:name).compact.map(&:to_s).sort
   end
 end
