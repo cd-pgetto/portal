@@ -68,10 +68,15 @@ class Admin::OrganizationsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def organization_params
-    params.require(:organization).permit(:name, :subdomain,
-      :allows_password_auth, shared_identity_provider_ids: [],
+    params.require(:organization).permit(
+      :name,
+      :subdomain,
+      :allows_password_auth,
+      shared_identity_provider_ids: [],
+      email_domains_attributes: [:id, :domain_name, :_destroy],
       credentials_attributes: [:id, :_destroy, :identity_provider_id,
         identity_provider_attributes: [:id, :_destroy, :name, :strategy, :icon_url,
-          :client_id, :client_secret, :availability]])
+          :client_id, :client_secret, :availability]]
+    )
   end
 end

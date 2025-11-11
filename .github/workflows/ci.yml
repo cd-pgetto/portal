@@ -70,6 +70,9 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Install Node dependencies
+        run: npm install
+
       - name: Run tests
         env:
           RAILS_ENV: test
@@ -99,7 +102,7 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev chromium-browser
 
       - name: Checkout code
         uses: actions/checkout@v5
@@ -108,6 +111,9 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+
+      - name: Install Node dependencies
+        run: npm install
 
       - name: Run System Tests
         env:

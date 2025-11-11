@@ -14,8 +14,12 @@ gem "phlex-rails", "~> 2.3"
 gem "phlex-icons"
 
 # gem "bcrypt", "~> 3.1.7"
-# gem "omniauth-rails_csrf_protection"
-# gem "omniauth-google-oauth2"
+gem "omniauth-rails_csrf_protection"
+gem "omniauth-auth0"
+gem "omniauth-apple"
+gem "omniauth-google-oauth2"
+gem "omniauth-microsoft-office365"
+gem "omniauth-okta"
 
 gem "tzinfo-data", platforms: %i[windows jruby]
 

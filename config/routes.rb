@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   namespace :admin do
     resources :organizations
-    # resources :identity_providers
+    resources :identity_providers
   end
 
   root "admin/organizations#index"

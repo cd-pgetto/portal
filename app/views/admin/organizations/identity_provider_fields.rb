@@ -15,13 +15,13 @@ class Views::Admin::Organizations::IdentityProviderFields < Views::Base
             # TODO: CSS to highlight borders of fields with errors, maybe use form_field_classes(form.object, :name)
 
             div(class: "w-full") do
-              form.label(:name, class: "label")
-              form.text_field(:name, class: "input w-full", required: true)
+              form.label(:strategy, class: "label")
+              form.select(:strategy, IdentityProvider.available_strategies, {}, class: "select w-full")
             end
 
             div(class: "w-full") do
-              form.label(:strategy, class: "label")
-              form.text_field(:strategy, class: "input w-full", required: true)
+              form.label(:name, class: "label")
+              form.text_field(:name, class: "input w-full")
             end
 
             div(class: "w-full") do
@@ -33,19 +33,20 @@ class Views::Admin::Organizations::IdentityProviderFields < Views::Base
           div(class: "flex flex-row justify-between gap-x-4 w-full") do
             div(class: "w-full") do
               form.label(:client_id, class: "label") { "Client ID" }
-              form.text_field(:client_id, class: "input w-full", required: true)
+              form.text_field(:client_id, class: "input w-full")
             end
 
             div(class: "w-full") do
               form.label(:client_secret, class: "label") { "Client Secret" }
-              form.text_field(:client_secret, class: "input w-full", required: true)
+              form.text_field(:client_secret, class: "input w-full")
             end
           end
         end
 
         div do
-          a(href: "#", class: "btn btn-error btn-sm", data: {action: "click->nested-form#removeNestedForm"}) { "X" }
-          form.hidden_field(:_destroy)
+          button(class: ["btn btn-lg", form.object.new_record? ? "btn-warning" : "btn-error"], data: {action: "click->nested-form#removeNestedForm"}) {
+            render PhlexIcons::Lucide::Trash.new(class: ["size-6", form.object.new_record? ? "text-warning-content" : "text-error-content"])
+          }
         end
       end
     end

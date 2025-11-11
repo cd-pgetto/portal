@@ -10,7 +10,7 @@ class Components::Base < Phlex::HTML
   include Phlex::Rails::Helpers::Routes
   include Phlex::Rails::Helpers::TurboFrameTag
 
-  if Rails.env.development? || Rails.env.test?
+  if Rails.env.local?
     def before_template
       comment { "Before #{self.class.name}" }
       super
