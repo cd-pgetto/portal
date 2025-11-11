@@ -22,10 +22,14 @@ RSpec.describe "organizations/show", type: :view do
       # it { expect(rendered).to have_css("form[action='#{admin_organization_email_domain_path(organization, organization.email_domains.first)}'][method='post']") }
       # it { expect(rendered).to have_css("form[action='#{admin_organization_email_domain_path(organization, organization.email_domains.second)}'][method='post']") }
 
-      it { expect(rendered).to have_text("Identity Providers") }
-      skip { expect(rendered).to have_css("a[href='#{new_admin_organization_identity_provider_path(organization)}']") }
-      skip { expect(rendered).to have_text(organization.identity_providers.first.name) }
-      skip { expect(rendered).to have_css("form[action='#{admin_organization_identity_provider_path(organization, organization.identity_providers.first)}'][method='post']") }
+      it { expect(rendered).to have_text("Shared Identity Providers") }
+      it { expect(rendered).to have_text("Dedicated Identity Providers") }
+
+      it {
+        organization.identity_providers.each do |idp|
+          expect(rendered).to have_text(idp.name)
+        end
+      }
     end
   end
 end

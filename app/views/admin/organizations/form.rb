@@ -7,7 +7,7 @@ class Views::Admin::Organizations::Form < Components::Base
     form_with(model: [:admin, @organization], class: "contents") do |form|
       render Views::Shared::ErrorMessages.new(resource: @organization)
 
-      fieldset(class: "fieldset bg-base-200 border-base-300 rounded-box w-full border p-4 mb-4") do
+      fieldset(class: "fieldset bg-base-200 border border-base-content rounded-box w-full p-4 mb-4") do
         # Org name
         form.label(:name, class: "label tracking-wide ")
         form.text_field(:name, class: "input", required: true)

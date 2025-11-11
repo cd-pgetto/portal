@@ -17,7 +17,9 @@ class Views::Admin::Organizations::DedicatedIdentityProvidersSubform < Views::Ba
         end
 
         div(data: {nested_form_target: "container"}) do
-          form.fields_for :credentials, organization.credentials.dedicated do |cred_fields|
+          # Use select list here to pick up in-memory, unsaved data from prior validation errors.
+          dedicated_credentials = organization.credentials.select { |c| c.identity_provider.dedicated? }
+          form.fields_for :credentials, dedicated_credentials do |cred_fields|
             cred_fields.hidden_field :id
             cred_fields.fields_for :identity_provider do |idp_fields|
               render Views::Admin::Organizations::IdentityProviderFields.new(form: idp_fields, organization: organization)

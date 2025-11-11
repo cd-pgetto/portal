@@ -36,7 +36,7 @@ FactoryBot.define do
       name { "Big DSO" }
       subdomain { "big-dso" }
       allows_password_auth { false }
-      identity_providers { [create(:google_identity_provider)] }
+      identity_providers { [create(:google_identity_provider), create(:identity_provider, availability: "dedicated")] }
       # email_domains {
       #   [create(:email_domain, domain_name: "bigdso.com"),
       #     create(:email_domain, domain_name: "big_dso.com")]
