@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_08_141725) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_11_130451) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -26,6 +26,15 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_08_141725) do
     t.index ["identity_provider_id"], name: "index_credentials_on_identity_provider_id"
     t.index ["organization_id", "identity_provider_id"], name: "index_credentials_on_organization_id_and_identity_provider_id", unique: true
     t.index ["organization_id"], name: "index_credentials_on_organization_id"
+  end
+
+  create_table "email_domains", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "domain_name", null: false
+    t.uuid "organization_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["domain_name"], name: "index_email_domains_on_domain_name", unique: true
+    t.index ["organization_id"], name: "index_email_domains_on_organization_id"
   end
 
   create_table "identity_providers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -52,4 +61,5 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_08_141725) do
 
   add_foreign_key "credentials", "identity_providers"
   add_foreign_key "credentials", "organizations"
+  add_foreign_key "email_domains", "organizations"
 end

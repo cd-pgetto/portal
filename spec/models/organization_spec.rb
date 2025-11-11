@@ -19,8 +19,11 @@ RSpec.describe Organization, type: :model do
   subject { build(:organization) }
 
   describe "associations" do
+    it { is_expected.to have_many(:email_domains).dependent(:destroy) }
     it { is_expected.to have_many(:credentials).dependent(:destroy) }
     it { is_expected.to have_many(:identity_providers).through(:credentials) }
+    it { is_expected.to accept_nested_attributes_for(:credentials).allow_destroy(true) }
+    it { is_expected.to accept_nested_attributes_for(:email_domains).allow_destroy(true) }
     it "is expected to have many shared identity providers through credentials" do
       subject.save!
       identity_provider = create(:identity_provider, availability: "shared")
@@ -61,6 +64,7 @@ RSpec.describe Organization, type: :model do
 
     context "when not allowing password auth" do
       before { subject.allows_password_auth = false }
+
       context "without any identity providers" do
         it { is_expected.not_to be_valid }
       end
@@ -68,6 +72,56 @@ RSpec.describe Organization, type: :model do
         before { subject.identity_providers << create(:google_identity_provider) }
 
         it { is_expected.to be_valid }
+      end
+    end
+  end
+
+  describe "methods" do
+    describe "#find_by_email" do
+      let!(:organization) { create(:organization) }
+      let!(:email_domain) { create(:email_domain, organization:) }
+
+      it "returns the organization for a matching email domain" do
+        email = "user@#{email_domain.domain_name}"
+        result = Organization.find_by_email(email)
+        expect(result).to eq(organization)
+      end
+
+      it "is case insensitive for the email domain" do
+        email = "user@#{email_domain.domain_name.upcase}"
+        result = Organization.find_by_email(email)
+        expect(result).to eq(organization)
+      end
+
+      it "returns nil if no matching email domain exists" do
+        email = "user@nonexistentdomain.com"
+        result = Organization.find_by_email(email)
+        expect(result).to be_an_instance_of(Organization::Null)
+      end
+    end
+
+    describe ".shared_identity_provider_ids and .shared_identity_provider_ids=" do
+      let!(:organization) { create(:organization) }
+      let!(:shared_provider1) { create(:identity_provider, availability: "shared") }
+      let!(:shared_provider2) { create(:identity_provider, availability: "shared") }
+      let!(:dedicated_provider) { create(:identity_provider, availability: "dedicated") }
+
+      before do
+        organization.identity_providers << shared_provider1
+        organization.identity_providers << dedicated_provider
+      end
+
+      it "returns the IDs of associated shared identity providers" do
+        expect(organization.shared_identity_provider_ids).to contain_exactly(shared_provider1.id)
+      end
+
+      it "adds and removes shared identity providers correctly" do
+        # Add shared_provider2 and remove shared_provider1
+        organization.shared_identity_provider_ids = [shared_provider2.id]
+        organization.save!
+
+        expect(organization.shared_identity_providers).to contain_exactly(shared_provider2)
+        expect(organization.identity_providers).to include(dedicated_provider)
       end
     end
   end

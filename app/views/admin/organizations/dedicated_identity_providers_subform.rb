@@ -6,7 +6,7 @@ class Views::Admin::Organizations::DedicatedIdentityProvidersSubform < Views::Ba
 
   def view_template
     # Dedicated Identity Providers
-    div(class: "my-2") do
+    div(class: "") do
       #   Nested fields for Dedicated Identity Providers
       div(data: {controller: "nested-form", nested_form_index_value: "NEW_DEDICATED_CRED"}) do
         div(class: "flex flex-row gap-x-4 items-center mb-2") do

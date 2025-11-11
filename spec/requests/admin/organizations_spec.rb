@@ -26,6 +26,9 @@ RSpec.describe "/admin/organizations", type: :request do
         identity_provider_attributes: {
           id: "", availability: "dedicated", strategy: "google_oauth2", name: "invalid-idp-name",
           icon_url: "    ", client_id: "    ", client_secret: ""
+        },
+        email_domains_attributes: {
+          "1762823946995" => {domain_name: "___badbomain.com"}
         }
       }
     }}
@@ -95,7 +98,8 @@ RSpec.describe "/admin/organizations", type: :request do
     context "with valid parameters" do
       let(:new_attributes) {
         {name: "new name", subdomain: "new-subdomain",
-         shared_identity_provider_ids: [create(:google_identity_provider).id]}
+         shared_identity_provider_ids: [create(:google_identity_provider).id],
+         email_domains_attributes: [{domain_name: "example.com"}]}
       }
 
       it "updates the requested organization" do
@@ -106,6 +110,8 @@ RSpec.describe "/admin/organizations", type: :request do
         expect(org.subdomain).to eq("new-subdomain")
         expect(org.identity_providers.count).to eq(1)
         expect(org.identity_providers.first.strategy).to eq("google_oauth2")
+        expect(org.email_domains.count).to eq(1)
+        expect(org.email_domains.first.domain_name).to eq("example.com")
         expect(response).to redirect_to(admin_organization_url(org))
       end
     end
