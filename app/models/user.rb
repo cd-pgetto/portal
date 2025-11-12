@@ -17,6 +17,8 @@
 #  index_users_on_email_address  (email_address) UNIQUE
 #
 class User < ApplicationRecord
+  include Authenticatable
+
   encrypts :first_name, :last_name, deterministic: true, ignore_case: true
   encrypts :email_address, deterministic: true, downcase: true
 
@@ -47,5 +49,10 @@ class User < ApplicationRecord
 
   def full_name
     "#{first_name} #{last_name}"
+  end
+
+  def allows_password_auth?
+    org = Organization.find_by_email(email_address)
+    !org || org.allows_password_auth?
   end
 end

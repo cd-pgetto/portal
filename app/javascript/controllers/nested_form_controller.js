@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = ["container", "template"];
-  static values = { index: {String, default: "NEW_RECORD"} }
+  static values = { index: { String, default: "NEW_RECORD" } }
 
   addNestedForm(event) {
     event.preventDefault();
@@ -27,10 +27,12 @@ export default class extends Controller {
     // If the item is persisted, mark it for deletion
     const destroyInput = item.querySelector("input[name*='_destroy']");
     if (destroyInput) {
+      console.log("Marking item for destruction");
       destroyInput.value = "1";
       item.style.display = "none";
     } else {
       // If it's a new item, just remove it from the DOM
+      console.log("Removing new item from DOM");
       item.remove();
     }
   }
