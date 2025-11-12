@@ -13,9 +13,6 @@ require "rails_helper"
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/admin/identity_providers", type: :request do
-  # This should return the minimal set of attributes required to create a valid
-  # IdentityProvider. As you add validations to IdentityProvider, be sure to
-  # adjust the attributes here as well.
   let(:valid_attributes) {
     {strategy: "google", name: "Google", availability: "shared", icon_url: "google-icon.jpg",
      client_id: "some-client-id", client_secret: "some-client-secret"}

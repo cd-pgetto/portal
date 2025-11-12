@@ -1,6 +1,6 @@
 module Request
   def sign_in_as(user, password)
-    post new_session_path, params: {sign_in_step: 2, email_address: user.email_address, password: password}
+    post session_path, params: {sign_in_step: 2, email_address: user.email_address, password: password}
   end
 
   def sign_in_as_admin(user = FactoryBot.create(:system_admin), provider = :google_oauth2, uid = "123456789")
