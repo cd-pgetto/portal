@@ -82,21 +82,32 @@ RSpec.describe Organization, type: :model do
       let!(:email_domain) { create(:email_domain, organization:) }
 
       it "returns the organization for a matching email domain" do
-        email = "user@#{email_domain.domain_name}"
-        result = Organization.find_by_email(email)
+        result = Organization.find_by_email("user@#{email_domain.domain_name}")
         expect(result).to eq(organization)
       end
 
       it "is case insensitive for the email domain" do
-        email = "user@#{email_domain.domain_name.upcase}"
-        result = Organization.find_by_email(email)
+        result = Organization.find_by_email("user@#{email_domain.domain_name.upcase}")
         expect(result).to eq(organization)
       end
 
       it "returns nil if no matching email domain exists" do
-        email = "user@nonexistentdomain.com"
-        result = Organization.find_by_email(email)
+        result = Organization.find_by_email("user@nonexistentdomain.com")
         expect(result).to be_an_instance_of(Organization::Null)
+      end
+
+      describe "#identity_providers_by_email" do
+        xit "returns the identity providers for organization based on an email address" do
+          provider1 = create(:identity_provider, strategy: "strategy1", client_id: "client_id_1")
+          provider2 = create(:identity_provider, strategy: "strategy2", client_id: "client_id_2")
+          org = create(:organization)
+          org.email_domains.create!(domain_name: "example.com")
+          org.organization_identity_providers.create(identity_provider: provider1)
+          org.organization_identity_providers.create(identity_provider: provider2)
+
+          result = Organization.identity_providers_by_email("user@example.com")
+          expect(result).to match_array([provider1, provider2])
+        end
       end
     end
 

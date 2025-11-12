@@ -32,8 +32,11 @@ class Organization < ApplicationRecord
 
   def self.find_by_email(email)
     return nil unless (domain_name = email_domain(email))
-
     joins(:email_domains).find_by(email_domains: {domain_name: domain_name}) || Organization::Null.new
+  end
+
+  def self.identity_providers_by_email(email)
+    find_by_email(email)&.identity_providers
   end
 
   # Custom getter for shared identity provider IDs

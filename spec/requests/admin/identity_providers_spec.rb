@@ -26,6 +26,9 @@ RSpec.describe "/admin/identity_providers", type: :request do
      client_id: "", client_secret: ""}
   }
 
+  let(:user) { create(:user) }
+  before { sign_in_as(user, attributes_for(:user)[:password]) }
+
   describe "GET /index" do
     it "renders a successful response" do
       get admin_identity_providers_url
