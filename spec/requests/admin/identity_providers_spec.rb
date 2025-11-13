@@ -23,14 +23,15 @@ RSpec.describe "/admin/identity_providers", type: :request do
      client_id: "", client_secret: ""}
   }
 
-  let(:user) { create(:user) }
-  before { sign_in_as(user, attributes_for(:user)[:password]) }
+  # let(:user) { create(:user) }
+  before { sign_in_as_admin }
 
   describe "GET /index" do
     it "renders a successful response" do
       get admin_identity_providers_url
+
       expect(response).to be_successful
-      expect(response.body).to include("No identity providers found.")
+      expect(response.body).to include(IdentityProvider.first.name) # From the admin user.
     end
 
     it "lists all identity providers" do
@@ -75,7 +76,7 @@ RSpec.describe "/admin/identity_providers", type: :request do
 
       it "redirects to the created admin_identity_provider" do
         post admin_identity_providers_url, params: {identity_provider: valid_attributes}
-        expect(response).to redirect_to(admin_identity_provider_url(IdentityProvider.last))
+        expect(response).to redirect_to(admin_identity_provider_url(IdentityProvider.order(:created_at).last))
 
         follow_redirect!
         expect(response.body).to include("Identity provider was successfully created.")

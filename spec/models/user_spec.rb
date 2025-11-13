@@ -23,7 +23,7 @@ RSpec.describe User, type: :model do
 
   describe "associations" do
     it { is_expected.to have_many(:sessions).dependent(:destroy) }
-    xit { is_expected.to have_many(:identities).dependent(:destroy) }
+    it { is_expected.to have_many(:identities).dependent(:destroy) }
   end
 
   describe "validations" do
@@ -54,14 +54,12 @@ RSpec.describe User, type: :model do
       it { is_expected.to have_validation_error_of_kind(:email_address, :taken) }
     end
 
-    # context "internal users" do
-    #   subject { create(:internal_user) }
+    context "internal users" do
+      subject { create_internal_user }
 
-    #   let!(:perceptive_org) { Organization::Perceptive.instance.organization }
-
-    #   it { is_expected.to be_valid }
-    #   it { is_expected.to be_internal }
-    # end
+      it { is_expected.to be_valid }
+      it { is_expected.to be_internal }
+    end
   end
 
   describe "encrypted attributes" do

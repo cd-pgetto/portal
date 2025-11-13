@@ -21,8 +21,8 @@ class Admin::OrganizationsController < ApplicationController
 
   # POST /admin/organizations or /admin/organizations.json
   def create
-    authorize! :create, @organization
     @organization = Organization.new(organization_params)
+    authorize! :create, @organization
 
     respond_to do |format|
       if @organization.save

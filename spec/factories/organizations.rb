@@ -25,7 +25,7 @@ FactoryBot.define do
       name { "Perceptive" }
       subdomain { "perceptive" }
       password_auth_allowed { false }
-      identity_providers { [create(:google_identity_provider)] }
+      identity_providers { [IdentityProvider.find_by(strategy: :google_oauth2) || create(:google_identity_provider)] }
       email_domains {
         [create(:perceptive_io_email_domain), create(:cyberdontics_io_email_domain),
           create(:cyberdontics_co_email_domain)]
@@ -36,7 +36,10 @@ FactoryBot.define do
       name { "Big DSO" }
       subdomain { "big-dso" }
       password_auth_allowed { false }
-      identity_providers { [create(:google_identity_provider), create(:identity_provider, availability: "dedicated")] }
+      identity_providers {
+        [IdentityProvider.find_by(strategy: :google_oauth2) || create(:google_identity_provider),
+          create(:identity_provider, availability: "dedicated")]
+      }
       email_domains {
         [create(:email_domain, domain_name: "bigdso.com"),
           create(:email_domain, domain_name: "big-dso.com")]

@@ -51,6 +51,7 @@ end
 group :development do
   gem "web-console"
   gem "rails_live_reload"
+  gem "rails-erd", "~> 1.7"
 
   gem "bundler-audit", require: false
   gem "brakeman", require: false
@@ -60,7 +61,6 @@ group :development do
   gem "standard-rspec", require: false
   gem "htmlbeautifier", require: false
   gem "annotaterb", require: false
-  gem "rails-erd", "~> 1.7", require: false
   gem "ruby-lsp-rspec", "~> 0.1.28", require: false
 end
 

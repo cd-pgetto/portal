@@ -53,7 +53,7 @@ class Organization < ApplicationRecord
   end
 
   def identity_provider_allowed?(provider)
-    allowed_identity_providers.exists?(name: provider.name)
+    identity_providers.exists?(name: provider.name)
   end
 
   def email_allowed?(email)

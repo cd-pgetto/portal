@@ -20,6 +20,7 @@
 class IdentityProvider < ApplicationRecord
   has_many :credentials, dependent: :destroy
   has_many :organizations, through: :credentials
+  has_many :identities, dependent: :destroy
 
   enum :availability, {shared: "shared", dedicated: "dedicated"}
 

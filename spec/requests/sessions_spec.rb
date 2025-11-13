@@ -54,16 +54,10 @@ RSpec.describe "Sessions", type: :request do
     end
 
     context "as admin user" do
-      let(:admin_user) { create(:system_admin) }
+      let(:admin_user) { create_system_admin }
 
       it "creates a new session and redirects to the admin home page" do
-        user = create(:system_admin)
-        ap user
-        ap user.organization
-        ap user.organization.primary_email_domain
-        provider = :google_oauth2
-        uid = "123456789"
-        sign_in_as_admin(user, provider, uid)
+        sign_in_as_admin
 
         expect(response).to redirect_to(home_path)
         expect(cookies[:session_id]).to be_present

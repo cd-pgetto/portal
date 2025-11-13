@@ -39,8 +39,7 @@ RSpec.describe "/admin/organizations", type: :request do
       create(:organization)
       get admin_organizations_url
 
-      expect(response).to be_redirect
-      expect(response).to redirect_to(root_path)
+      expect(response).to be_successful
     end
   end
 
@@ -77,7 +76,7 @@ RSpec.describe "/admin/organizations", type: :request do
 
       it "redirects to the created organization" do
         post admin_organizations_url, params: {organization: valid_attributes}
-        expect(response).to redirect_to(admin_organization_url(Organization.last))
+        expect(response).to redirect_to(admin_organization_url(Organization.order(:created_at).last))
       end
     end
 
@@ -98,9 +97,12 @@ RSpec.describe "/admin/organizations", type: :request do
 
   describe "PATCH /update" do
     context "with valid parameters" do
+      let(:share_identity_provider) {
+        IdentityProvider.find_by(strategy: "google_oauth2", availability: "shared") || create(:google_identity_provider)
+      }
       let(:new_attributes) {
         {name: "new name", subdomain: "new-subdomain",
-         shared_identity_provider_ids: [create(:google_identity_provider).id],
+         shared_identity_provider_ids: [share_identity_provider.id],
          email_domains_attributes: [{domain_name: "example.com"}]}
       }
 

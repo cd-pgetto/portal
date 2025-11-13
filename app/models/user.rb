@@ -25,6 +25,7 @@ class User < ApplicationRecord
   has_secure_password
 
   has_many :sessions, dependent: :destroy
+  has_many :identities, dependent: :destroy
   has_one :organization_membership, class_name: "OrganizationMember", dependent: :destroy
   has_one :organization, through: :organization_membership
 
@@ -43,6 +44,10 @@ class User < ApplicationRecord
     validates :first_name, presence: true
     validates :last_name, presence: true
     validates_with InternalUserIdentityValidator
+  end
+
+  def self.random_password
+    SecureRandom.base58(16)
   end
 
   NUM_REGISTRATION_STEPS = 2

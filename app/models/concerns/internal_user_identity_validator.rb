@@ -2,8 +2,7 @@
 class InternalUserIdentityValidator < ActiveModel::Validator
   def validate(user)
     return true unless user.internal?
-    # return true unless user.identities.any?
-    # return true unless user.identities.none? { |identity| identity.provider&.strategy == "google_oauth2" }
+    return true if user.identities&.any? { |identity| identity.identity_provider&.strategy == "google_oauth2" }
 
     user.errors.add :identities, "must use Google authentication"
   end

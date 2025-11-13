@@ -3,7 +3,7 @@ module Request
     post session_path, params: {sign_in_step: 2, email_address: user.email_address, password: password}
   end
 
-  def sign_in_as_admin(user = create(:system_admin), provider = :google_oauth2, uid = "123456789")
+  def sign_in_as_admin(user = create_system_admin, provider = :google_oauth2, uid = "123456789")
     OmniAuth.config.test_mode = true
     OmniAuth.config.mock_auth[provider] =
       OmniAuth::AuthHash.new({
@@ -45,12 +45,12 @@ module System
     click_button "Sign In"
   end
 
-  # def login_as_admin(user = User.new(first_name: "Admin", last_name: "Perceptive", email: "admin@#{User::PRIMARY_INTERNAL_DOMAIN}"),
+  # def login_as_admin(user = User.new(first_name: "Admin", last_name: "Perceptive", email_address: "admin@#{User::PRIMARY_INTERNAL_DOMAIN}"),
   #   provider = :google_oauth2, uid = "123456789")
   #   OmniAuth.config.test_mode = true
   #   OmniAuth.config.mock_auth[provider] =
   #     OmniAuth::AuthHash.new({provider: provider, uid: uid, extra: {id_info: {hd: "#{User::PRIMARY_INTERNAL_DOMAIN}"}},
-  #                              info: {first_name: user.first_name, last_name: user.last_name, email: user.email}})
+  #                              info: {first_name: user.first_name, last_name: user.last_name, email_address: user.email_address}})
 
   #   visit login_path
   #   click_button "Sign in with Google"

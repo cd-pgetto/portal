@@ -8,14 +8,14 @@ class IdentitiesController < ApplicationController
     # Check if the provider is supported, reject otherwise
     identity_provider = IdentityProvider.find_by(strategy: params[:provider])
 
-    return redirect_to sign_in_path, alert: "Authentication provider not supported." unless identity_provider
-    return redirect_to sign_in_path, alert: "Authentication provider not allowed." unless organization.identity_provider_allowed?(identity_provider)
-    return redirect_to sign_in_path, alert: "Email not allowed for #{organization.name}." unless organization.email_allowed?(user_email)
+    return redirect_to new_session_path, alert: "Authentication provider not supported." unless identity_provider
+    return redirect_to new_session_path, alert: "Authentication provider not allowed." unless organization.identity_provider_allowed?(identity_provider)
+    return redirect_to new_session_path, alert: "Email not allowed for #{organization.name}." unless organization.email_allowed?(user_email)
 
     provider_user_id = auth_params[:provider_user_id]
-    oauth_identity = identity_provider.identities.find_by(provider_user_id: provider_user_id)
-    if oauth_identity
-      user = oauth_identity.user
+    identity = identity_provider.identities.find_by(provider_user_id: provider_user_id)
+    if identity
+      user = identity.user
 
     else
       # No existing identity, check if user exists by email
@@ -26,9 +26,9 @@ class IdentitiesController < ApplicationController
       #
       ActiveRecord::Base.transaction do
         user = User.create_with(**user_params.merge(password: User.random_password))
-          .find_or_create_by(email: user_email)
-        user.oauth_identities.create_with(provider_user_id: provider_user_id)
-          .find_or_create_by(provider: identity_provider)
+          .find_or_create_by(email_address: user_email)
+        user.identities.create_with(provider_user_id: provider_user_id)
+          .find_or_create_by(identity_provider: identity_provider)
         user.organization = organization if user.organization.nil? && !organization.is_a?(Organization::Null)
       end
     end
@@ -38,7 +38,7 @@ class IdentitiesController < ApplicationController
   end
 
   def failure
-    redirect_to sign_in_path, alert: "Authentication failed."
+    redirect_to new_session_path, alert: "Authentication failed."
   end
 
   private
@@ -52,12 +52,12 @@ class IdentitiesController < ApplicationController
       first_name: auth_info.dig(:info, :first_name),
       last_name: auth_info.dig(:info, :last_name),
       # image_url: auth_info.dig(:info, :image),
-      email: user_email
+      email_address: user_email
     }
   end
 
   def user_email
-    auth_info.dig(:info, :email)
+    auth_info.dig(:info, :email_address)
   end
 
   def auth_info

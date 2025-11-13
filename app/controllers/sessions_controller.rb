@@ -55,7 +55,7 @@ class SessionsController < ApplicationController
   #     format.html { redirect_to new_session_url, alert: alert_message }
   #     format.turbo_stream do
   #       flash.now[:alert] = alert_message
-  #       render turbo_stream: turbo_stream.replace("user_sign_in_form", Views::Sessions::Step2.new(email: params[:email], identity_providers:, password_auth_allowed:))
+  #       render turbo_stream: turbo_stream.replace("user_sign_in_form", Views::Sessions::Step2.new(email_address: params[:email_address], identity_providers:, password_auth_allowed:))
   #     end
   #   end
   # end
