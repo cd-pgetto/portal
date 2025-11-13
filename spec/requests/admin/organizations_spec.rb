@@ -38,8 +38,9 @@ RSpec.describe "/admin/organizations", type: :request do
     it "renders a successful response" do
       create(:organization)
       get admin_organizations_url
-      ap response
-      expect(response).to be_successful
+
+      expect(response).to be_redirect
+      expect(response).to redirect_to(root_path)
     end
   end
 

@@ -41,9 +41,10 @@ FactoryBot.define do
       email_address {
         "#{first_name}.#{last_name}@#{attributes_for(:perceptive_io_email_domain)[:domain_name]}".downcase
       }
+      # organization_membership { create(:organization_member, organization: create(:perceptive), role: :member) }
 
       after(:create) do |user|
-        user.create_organization_membership(organization: Organization.find_by(subdomain: "perceptive"), role: :member)
+        user.create_organization_membership(organization: create(:perceptive), role: :member)
         # user.oauth_identities.create(provider: OauthProvider.find_by(strategy: :google_oauth2), provider_user_id: "12345")
         user.reload
       end

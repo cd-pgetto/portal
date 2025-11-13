@@ -1,4 +1,4 @@
-class Components::NavBar::Notifications < Components::Base
+class Views::Layouts::NavBar::Notifications < Views::Base
   def view_template
     button(class: "btn btn-ghost btn-circle mt-2") do
       div(class: "indicator") do

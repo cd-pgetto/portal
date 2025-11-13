@@ -7,9 +7,7 @@ module Request
     OmniAuth.config.test_mode = true
     OmniAuth.config.mock_auth[provider] =
       OmniAuth::AuthHash.new({
-        provider: provider, uid: uid, extra: {id_info: {
-          hd: Organization.find_by(subdomain: "perceptive").primary_email_domain
-        }},
+        provider: provider, uid: uid, extra: {id_info: {hd: user.organization.primary_email_domain}},
         info: {first_name: user.first_name, last_name: user.last_name, email_address: user.email_address}
       })
 
@@ -39,7 +37,7 @@ end
 
 module System
   def sign_in_as(user, password)
-    visit sign_in_path
+    visit new_session_path
     fill_in "Email address", with: user.email
     click_button "Next"
 

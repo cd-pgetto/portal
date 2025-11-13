@@ -29,4 +29,5 @@ Organization.find_or_create_by!(subdomain: "perceptive") do |org|
     EmailDomain.new(domain_name: "cyberdontics.co")
   ]
 end
-ap "Seeded Organization: Perceptive"
+ap "Seeded Organization: "
+ap Organization.find_by(subdomain: "perceptive")

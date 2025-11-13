@@ -1,4 +1,4 @@
-class Components::NavBar::UserDetailsMenu < Components::Base
+class Views::Layouts::NavBar::UserDetailsMenu < Views::Base
   def initialize(user)
     @user = user
   end
@@ -12,7 +12,7 @@ class Components::NavBar::UserDetailsMenu < Components::Base
       ul(tabindex: "0", class: "menu menu-md dropdown-content bg-base-100 rounded-box z-1 mt-3 w-40 p-2 shadow") do
         li { a(href: user_path(@user), class: "justify-between") { "Profile" } }
         li { a(href: edit_user_path(@user), class: "justify-between") { "Settings" } }
-        li { button_to("Sign Out", sign_out_path, method: :delete, class: "justify-between") }
+        li { button_to("Sign Out", session_path, method: :delete, class: "justify-between") }
       end
     end
   end

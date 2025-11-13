@@ -7,6 +7,7 @@ class Ability
     return unless user
     can [:read, :update], User, id: user.id
 
+    ap "Defining abilities for user: #{user.inspect} with membership: #{user.organization_membership.inspect}"
     return unless user&.organization_membership
 
     can :read, EmailDomain, organization_id: user.organization_membership.organization_id

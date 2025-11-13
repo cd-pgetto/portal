@@ -16,7 +16,7 @@ class Views::Layouts::NavBar::UserMenu < Components::Base
           li { render Views::Layouts::NavBar::UserDetailsMenu.new(@authenticated_user) }
         else
           li(class: "mx-2") { a(href: sign_up_path, data: {turbo_prefetch: "false"}, disabled: on_sign_up, class: "btn btn-accent") { "Sign Up" } }
-          li(class: "mx-2") { a(href: sign_in_path, data: {turbo_prefetch: "false"}, disabled: !on_sign_up, class: "btn btn-accent") { "Sign In" } }
+          li(class: "mx-2") { a(href: new_session_path, data: {turbo_prefetch: "false"}, disabled: !on_sign_up, class: "btn btn-accent") { "Sign In" } }
         end
       end
     end

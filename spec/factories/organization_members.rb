@@ -21,8 +21,8 @@
 #
 FactoryBot.define do
   factory :organization_member do
-    organization
-    user
+    organization { nil }
+    user { nil }
     role { "member" }
   end
 end

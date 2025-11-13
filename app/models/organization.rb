@@ -35,7 +35,8 @@ class Organization < ApplicationRecord
   accepts_nested_attributes_for :email_domains, allow_destroy: true, reject_if: :all_blank
 
   def self.find_by_email(email)
-    return nil unless (domain_name = email_domain(email))
+    domain_name = email_domain(email)
+    return nil if domain_name.nil?
     joins(:email_domains).find_by(email_domains: {domain_name: domain_name}) || Organization::Null.new
   end
 
@@ -49,6 +50,17 @@ class Organization < ApplicationRecord
 
   def primary_email_domain
     email_domains.order(:created_at).first&.domain_name
+  end
+
+  def identity_provider_allowed?(provider)
+    allowed_identity_providers.exists?(name: provider.name)
+  end
+
+  def email_allowed?(email)
+    domain = email_domain(email)
+    return false if domain.nil?
+    return true if email_domains.empty?
+    email_domains.exists?(domain_name: domain)
   end
 
   # Custom getter for shared identity provider IDs
