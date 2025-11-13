@@ -31,13 +31,14 @@ RSpec.describe "/admin/organizations", type: :request do
     }}
   }
 
-  let(:user) { create(:user) }
-  before { sign_in_as(user, attributes_for(:user)[:password]) }
+  # let(:user) { create(:user) }
+  before { sign_in_as_admin }
 
   describe "GET /index" do
     it "renders a successful response" do
       create(:organization)
       get admin_organizations_url
+      ap response
       expect(response).to be_successful
     end
   end

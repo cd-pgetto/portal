@@ -25,6 +25,8 @@ class User < ApplicationRecord
   has_secure_password
 
   has_many :sessions, dependent: :destroy
+  has_one :organization_membership, class_name: "OrganizationMember", dependent: :destroy
+  has_one :organization, through: :organization_membership
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
@@ -40,16 +42,7 @@ class User < ApplicationRecord
   with_options if: -> { required_for_existing_or_step(2) } do
     validates :first_name, presence: true
     validates :last_name, presence: true
-    # validates_with InternalUserOauthValidator
-  end
-
-  def full_name
-    "#{first_name} #{last_name}"
-  end
-
-  def password_auth_allowed?
-    org = Organization.find_by_email(email_address)
-    !org || org.password_auth_allowed?
+    validates_with InternalUserIdentityValidator
   end
 
   NUM_REGISTRATION_STEPS = 2
@@ -65,5 +58,26 @@ class User < ApplicationRecord
 
   def required_for_existing_or_step(step)
     persisted? || registration_step.nil? || registration_step >= step
+  end
+
+  def full_name
+    "#{first_name} #{last_name}"
+  end
+
+  def password_auth_allowed?
+    org = Organization.find_by_email(email_address)
+    !org || org.password_auth_allowed?
+  end
+
+  def system_admin?
+    internal? && organization_membership&.admin?
+  end
+
+  def internal?
+    organization&.subdomain == "perceptive"
+  end
+
+  def organization_admin?
+    organization_membership&.admin?
   end
 end

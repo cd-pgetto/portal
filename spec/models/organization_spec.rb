@@ -98,13 +98,13 @@ RSpec.describe Organization, type: :model do
     end
 
     describe "#identity_providers_by_email" do
-      xit "returns the identity providers for organization based on an email address" do
+      it "returns the identity providers for organization based on an email address" do
         provider1 = create(:identity_provider, strategy: "strategy1", client_id: "client_id_1")
         provider2 = create(:identity_provider, strategy: "strategy2", client_id: "client_id_2")
         org = create(:organization)
         org.email_domains.create!(domain_name: "example.com")
-        org.organization_identity_providers.create(identity_provider: provider1)
-        org.organization_identity_providers.create(identity_provider: provider2)
+        org.credentials.create(identity_provider: provider1)
+        org.credentials.create(identity_provider: provider2)
 
         result = Organization.identity_providers_by_email("user@example.com")
         expect(result).to match_array([provider1, provider2])

@@ -35,26 +35,28 @@ FactoryBot.define do
       original_last_name { "Smith" }
     end
 
-    # factory :internal_user do
-    #   original_first_name { "Super" }
-    #   original_last_name { "User" }
-    #   email { "#{first_name}.#{last_name}@#{attributes_for(:perceptive_io_email_domain)[:domain_name]}".downcase }
+    factory :internal_user do
+      original_first_name { "Super" }
+      original_last_name { "User" }
+      email_address {
+        "#{first_name}.#{last_name}@#{attributes_for(:perceptive_io_email_domain)[:domain_name]}".downcase
+      }
 
-    #   after(:create) do |user|
-    #     user.create_organization_membership(organization: Organization::Perceptive.instance.organization, role: :member)
-    #     user.oauth_identities.create(provider: OauthProvider.find_by(strategy: :google_oauth2), provider_user_id: "12345")
-    #     user.reload
-    #   end
+      after(:create) do |user|
+        user.create_organization_membership(organization: Organization.find_by(subdomain: "perceptive"), role: :member)
+        # user.oauth_identities.create(provider: OauthProvider.find_by(strategy: :google_oauth2), provider_user_id: "12345")
+        user.reload
+      end
 
-    #   factory :system_admin do
-    #     after(:create) do |user|
-    #       user.organization_membership.update(role: :admin)
-    #       user.reload
-    #     end
-    #   end
+      factory :system_admin do
+        after(:create) do |user|
+          user.organization_membership.update(role: :admin)
+          user.reload
+        end
+      end
 
-    #   factory :super_user do
-    #   end
-    # end
+      factory :super_user do
+      end
+    end
   end
 end

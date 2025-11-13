@@ -14,6 +14,7 @@ gem "phlex-rails", "~> 2.3"
 gem "phlex-icons"
 
 gem "bcrypt", "~> 3.1.7"
+gem "cancancan", "~> 3.5"
 gem "omniauth-rails_csrf_protection"
 gem "omniauth-auth0"
 gem "omniauth-apple"

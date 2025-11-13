@@ -18,7 +18,11 @@ class Organization < ApplicationRecord
   has_many :identity_providers, through: :credentials
   has_many :shared_identity_providers, -> { shared }, through: :credentials, source: :identity_provider
   has_many :dedicated_identity_providers, -> { dedicated }, through: :credentials, source: :identity_provider
+
   has_many :email_domains, dependent: :destroy
+
+  has_many :members, class_name: "OrganizationMember", dependent: :destroy
+  has_many :users, through: :members
 
   normalizes :subdomain, with: ->(value) { value.strip.downcase }
 
@@ -41,6 +45,10 @@ class Organization < ApplicationRecord
 
   def self.identity_providers_by_email(email)
     find_by_email(email)&.identity_providers
+  end
+
+  def primary_email_domain
+    email_domains.order(:created_at).first&.domain_name
   end
 
   # Custom getter for shared identity provider IDs

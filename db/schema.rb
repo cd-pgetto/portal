@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_12_231318) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_13_013814) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "availability", ["shared", "dedicated"]
+  create_enum "organization_role", ["owner", "admin", "member", "inactive"]
 
   create_table "credentials", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -48,6 +49,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_231318) do
     t.datetime "updated_at", null: false
     t.index ["strategy", "client_id"], name: "index_identity_providers_on_strategy_and_client_id", unique: true
     t.index ["strategy"], name: "index_identity_providers_on_strategy", unique: true, where: "(availability = 'shared'::availability)"
+  end
+
+  create_table "organization_members", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.uuid "organization_id", null: false
+    t.enum "role", default: "member", null: false, enum_type: "organization_role"
+    t.datetime "updated_at", null: false
+    t.uuid "user_id", null: false
+    t.index ["organization_id"], name: "index_organization_members_on_organization_id"
+    t.index ["user_id"], name: "index_organization_members_on_user_id"
   end
 
   create_table "organizations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -83,5 +94,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_231318) do
   add_foreign_key "credentials", "identity_providers"
   add_foreign_key "credentials", "organizations"
   add_foreign_key "email_domains", "organizations"
+  add_foreign_key "organization_members", "organizations"
+  add_foreign_key "organization_members", "users"
   add_foreign_key "sessions", "users"
 end

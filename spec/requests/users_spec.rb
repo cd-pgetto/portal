@@ -152,7 +152,7 @@ RSpec.describe "Users", type: :request do
     # Need authorization for this
     context "when signed in as another user" do
       let(:another_user) { create(:another_user) }
-      xit "does not update user and shows error" do
+      it "does not update user and shows error" do
         sign_in_as(another_user, attributes_for(:user)[:password])
 
         put user_path(user), params: {user: new_user_data}

@@ -3,11 +3,15 @@ module Request
     post session_path, params: {sign_in_step: 2, email_address: user.email_address, password: password}
   end
 
-  def sign_in_as_admin(user = FactoryBot.create(:system_admin), provider = :google_oauth2, uid = "123456789")
+  def sign_in_as_admin(user = create(:system_admin), provider = :google_oauth2, uid = "123456789")
     OmniAuth.config.test_mode = true
     OmniAuth.config.mock_auth[provider] =
-      OmniAuth::AuthHash.new({provider: provider, uid: uid, extra: {id_info: {hd: Organization::Perceptive.instance.primary_email_domain}},
-                               info: {first_name: user.first_name, last_name: user.last_name, email: user.email}})
+      OmniAuth::AuthHash.new({
+        provider: provider, uid: uid, extra: {id_info: {
+          hd: Organization.find_by(subdomain: "perceptive").primary_email_domain
+        }},
+        info: {first_name: user.first_name, last_name: user.last_name, email_address: user.email_address}
+      })
 
     post "/oauth/#{provider}/callback"
   end

@@ -9,32 +9,24 @@
 #   end
 
 IdentityProvider.available_strategies.each do |strategy|
-  unless IdentityProvider.exists?(strategy: strategy)
-    pp "Seeding IdentityProvider for strategy: #{strategy}"
-    IdentityProvider.create_with(name: strategy.to_s.titleize, icon_url: "#{strategy}-icon.jpg", availability: "shared",
-      client_id: Rails.application.credentials.dig(:omniauth, strategy, :client_id),
-      client_secret: Rails.application.credentials.dig(:omniauth, strategy, :client_secret)).find_or_create_by!(strategy: strategy)
+  IdentityProvider.find_or_create_by!(strategy: strategy) do |idp|
+    idp.name = strategy.to_s.titleize
+    idp.icon_url = "#{strategy}-icon.jpg"
+    idp.availability = "shared"
+    idp.client_id = Rails.application.credentials.dig(:omniauth, strategy, :client_id)
+    idp.client_secret = Rails.application.credentials.dig(:omniauth, strategy, :client_secret)
   end
 end
+ap "Seeded IdentityProviders: #{IdentityProvider.all.map(&:name).join(", ")}"
 
-# unless IdentityProvider.exists?(strategy: "microsoft")
-#   IdentityProvider.create_with(name: "Microsoft", icon_url: "microsoft-icon.jpg", availability: "shared",
-#     client_id: "microsoft-client-id", client_secret: "microsoftSuperSekret").find_or_create_by!(strategy: "microsoft")
-# end
-
-# unless IdentityProvider.exists?(strategy: "github")
-#   IdentityProvider.create_with(name: "GitHub", icon_url: "github-icon.jpg", availability: "shared",
-#     client_id: "github-client-id", client_secret: "githubSuperSekret").find_or_create_by!(strategy: "github")
-# end
-
-# unless IdentityProvider.exists?(strategy: "twitter")
-#   IdentityProvider.create_with(name: "Twitter", icon_url: "twitter-icon.jpg", availability: "shared",
-#     client_id: "twitter-client-id", client_secret: "TwitterSuperSekret").find_or_create_by!(strategy: "twitter")
-# end
-
-# unless IdentityProvider.exists?(strategy: "facebook")
-#   IdentityProvider.create_with(name: "Facebook", icon_url: "facebook-icon.jpg", availability: "shared",
-#     client_id: "facebook-client-id", client_secret: "FacebookSuperSekret").find_or_create_by!(strategy: "facebook")
-# end
-
-Rails.logger.info "Seeded IdentityProviders: #{IdentityProvider.all.map(&:name).join(", ")}"
+Organization.find_or_create_by!(subdomain: "perceptive") do |org|
+  org.name = "Perceptive"
+  org.password_auth_allowed = false
+  org.identity_providers = [IdentityProvider.find_by(strategy: "google_oauth2", availability: "shared")]
+  org.email_domains = [
+    EmailDomain.new(domain_name: "perceptive.io"),
+    EmailDomain.new(domain_name: "cyberdontics.io"),
+    EmailDomain.new(domain_name: "cyberdontics.co")
+  ]
+end
+ap "Seeded Organization: Perceptive"
