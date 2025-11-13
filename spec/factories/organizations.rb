@@ -2,12 +2,12 @@
 #
 # Table name: organizations
 #
-#  id                   :uuid             not null, primary key
-#  allows_password_auth :boolean          default(TRUE), not null
-#  name                 :string           not null
-#  subdomain            :string           not null
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
+#  id                    :uuid             not null, primary key
+#  name                  :string           not null
+#  password_auth_allowed :boolean          default(TRUE), not null
+#  subdomain             :string           not null
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
 #
 # Indexes
 #
@@ -19,12 +19,12 @@ FactoryBot.define do
   factory :organization do
     name { "Organization #{generate(:organization_number)}" }
     subdomain { "org-#{generate(:organization_number)}" }
-    allows_password_auth { true }
+    password_auth_allowed { true }
 
     factory :perceptive do
       name { "Perceptive" }
       subdomain { "perceptive" }
-      allows_password_auth { false }
+      password_auth_allowed { false }
       identity_providers { [create(:google_identity_provider)] }
       email_domains {
         [create(:perceptive_io_email_domain), create(:cyberdontics_io_email_domain),
@@ -35,7 +35,7 @@ FactoryBot.define do
     factory :big_dso do
       name { "Big DSO" }
       subdomain { "big-dso" }
-      allows_password_auth { false }
+      password_auth_allowed { false }
       identity_providers { [create(:google_identity_provider), create(:identity_provider, availability: "dedicated")] }
       email_domains {
         [create(:email_domain, domain_name: "bigdso.com"),

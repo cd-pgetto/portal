@@ -14,8 +14,8 @@ end
 
 RSpec.shared_examples "a user form with an email field" do
   it "has an email field" do
-    expect(rendered).to have_css("label[for='user_email']", text: "Email address")
-    expect(rendered).to have_css("input[type='email'][required]#user_email")
+    expect(rendered).to have_css("label[for='user_email_address']", text: "Email address")
+    expect(rendered).to have_css("input[type='email'][required]#user_email_address")
   end
 end
 

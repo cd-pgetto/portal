@@ -21,7 +21,7 @@ class Views::Admin::Organizations::Organization < Components::Base
 
         p(class: "text-base-content/50") do
           strong { "Allow Password Auth: " }
-          plain @organization.allows_password_auth ? "Yes" : "No"
+          plain @organization.password_auth_allowed? ? "Yes" : "No"
         end
 
         div(class: "text-sm text-gray-600 mt-2") { "Shared Identity Providers:" }

@@ -2,12 +2,12 @@
 #
 # Table name: organizations
 #
-#  id                   :uuid             not null, primary key
-#  allows_password_auth :boolean          default(TRUE), not null
-#  name                 :string           not null
-#  subdomain            :string           not null
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
+#  id                    :uuid             not null, primary key
+#  name                  :string           not null
+#  password_auth_allowed :boolean          default(TRUE), not null
+#  subdomain             :string           not null
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
 #
 # Indexes
 #
@@ -63,7 +63,7 @@ RSpec.describe Organization, type: :model do
     it { is_expected.to normalize(:subdomain).from(" ExAmPlE ").to("example") }
 
     context "when not allowing password auth" do
-      before { subject.allows_password_auth = false }
+      before { subject.password_auth_allowed = false }
 
       context "without any identity providers" do
         it { is_expected.not_to be_valid }
@@ -95,19 +95,19 @@ RSpec.describe Organization, type: :model do
         result = Organization.find_by_email("user@nonexistentdomain.com")
         expect(result).to be_an_instance_of(Organization::Null)
       end
+    end
 
-      describe "#identity_providers_by_email" do
-        xit "returns the identity providers for organization based on an email address" do
-          provider1 = create(:identity_provider, strategy: "strategy1", client_id: "client_id_1")
-          provider2 = create(:identity_provider, strategy: "strategy2", client_id: "client_id_2")
-          org = create(:organization)
-          org.email_domains.create!(domain_name: "example.com")
-          org.organization_identity_providers.create(identity_provider: provider1)
-          org.organization_identity_providers.create(identity_provider: provider2)
+    describe "#identity_providers_by_email" do
+      xit "returns the identity providers for organization based on an email address" do
+        provider1 = create(:identity_provider, strategy: "strategy1", client_id: "client_id_1")
+        provider2 = create(:identity_provider, strategy: "strategy2", client_id: "client_id_2")
+        org = create(:organization)
+        org.email_domains.create!(domain_name: "example.com")
+        org.organization_identity_providers.create(identity_provider: provider1)
+        org.organization_identity_providers.create(identity_provider: provider2)
 
-          result = Organization.identity_providers_by_email("user@example.com")
-          expect(result).to match_array([provider1, provider2])
-        end
+        result = Organization.identity_providers_by_email("user@example.com")
+        expect(result).to match_array([provider1, provider2])
       end
     end
 

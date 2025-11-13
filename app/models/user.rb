@@ -43,16 +43,27 @@ class User < ApplicationRecord
     # validates_with InternalUserOauthValidator
   end
 
-  def required_for_existing_or_step(step)
-    true || persisted? || (defined?(Current) && Current.signup_step && Current.signup_step >= step)
-  end
-
   def full_name
     "#{first_name} #{last_name}"
   end
 
-  def allows_password_auth?
+  def password_auth_allowed?
     org = Organization.find_by_email(email_address)
-    !org || org.allows_password_auth?
+    !org || org.password_auth_allowed?
+  end
+
+  NUM_REGISTRATION_STEPS = 2
+  attr_reader :registration_step
+
+  def registration_step=(step)
+    @registration_step = step.to_i
+  end
+
+  def next_registration_step
+    self.registration_step = (registration_step || 0) + 1
+  end
+
+  def required_for_existing_or_step(step)
+    persisted? || registration_step.nil? || registration_step >= step
   end
 end

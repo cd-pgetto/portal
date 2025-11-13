@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "users/new", type: :view do
   describe "step 1" do
     before {
-      render Views::Users::New.new(user: User.new(registration_step: 1), oauth_providers: [], password_auth_allowed: true)
+      render Views::Users::New.new(user: User.new(registration_step: 1), identity_providers: [], password_auth_allowed: true)
     }
 
     it_behaves_like "a user form with a title"
@@ -14,7 +14,7 @@ RSpec.describe "users/new", type: :view do
 
   describe "step 2" do
     before {
-      render Views::Users::New.new(user: User.new(registration_step: 2), oauth_providers: [], password_auth_allowed: true)
+      render Views::Users::New.new(user: User.new(registration_step: 2), identity_providers: [], password_auth_allowed: true)
     }
 
     it_behaves_like "a user form with a title"

@@ -19,12 +19,12 @@ class Views::Admin::Organizations::Form < Components::Base
           span(class: "label") { ".perceptiveportal.com" }
         end
 
-        # Password authentication option - allows_password_auth
+        # Password authentication option - password_auth_allowed
         span(class: "label mt-4") { "Password Authentication" }
-        form.label(:allows_password_auth, class: "label") do
-          form.checkbox(:allows_password_auth, class: "checkbox bg-base-100", id: "parent_checkbox",
+        form.label(:password_auth_allowed, class: "label") do
+          form.checkbox(:password_auth_allowed, class: "checkbox bg-base-100", id: "parent_checkbox",
             data: {controller: "toggle-checkbox", action: "toggle-checkbox#toggle"})
-          plain "Allows Password Authentication"
+          plain "Password Authentication Allowed"
         end
 
         div(class: "grid grid-cols-2 gap-4 mt-4") do

@@ -28,9 +28,9 @@ class Views::Users::EditForm < Views::Base
 
       # Email address
       div(class: "my-3") do
-        form.label(:email, "Email address", class: "label")
-        form.email_field(:email, autofocus: @user.errors[:email].any?, required: true, autocomplete: "email",
-          value: @user.email, class: "input-neutral block shadow-sm rounded-sm border p-1 mt-2 w-full")
+        form.label(:email_address, "Email address", class: "label")
+        form.email_field(:email_address, autofocus: @user.errors[:email_address].any?, required: true, autocomplete: "email",
+          value: @user.email_address, class: "input-neutral block shadow-sm rounded-sm border p-1 mt-2 w-full")
       end
 
       # Password

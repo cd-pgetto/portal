@@ -2,12 +2,12 @@
 #
 # Table name: organizations
 #
-#  id                   :uuid             not null, primary key
-#  allows_password_auth :boolean          default(TRUE), not null
-#  name                 :string           not null
-#  subdomain            :string           not null
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
+#  id                    :uuid             not null, primary key
+#  name                  :string           not null
+#  password_auth_allowed :boolean          default(TRUE), not null
+#  subdomain             :string           not null
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
 #
 # Indexes
 #
@@ -25,7 +25,7 @@ class Organization < ApplicationRecord
   validates :name, presence: true
   validates :subdomain, presence: true, uniqueness: {case_sensitive: false},
     length: {minimum: 1, maximum: 63}, format: {with: DomainName::SUBDOMAIN_REGEXP}
-  validates :identity_providers, presence: {message: "must have at least one identity provider if password authentication is not allowed", unless: :allows_password_auth?}
+  validates :identity_providers, presence: {message: "must have at least one identity provider if password authentication is not allowed", unless: :password_auth_allowed}
 
   accepts_nested_attributes_for :credentials, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :email_domains, allow_destroy: true, reject_if: :all_blank
@@ -33,6 +33,10 @@ class Organization < ApplicationRecord
   def self.find_by_email(email)
     return nil unless (domain_name = email_domain(email))
     joins(:email_domains).find_by(email_domains: {domain_name: domain_name}) || Organization::Null.new
+  end
+
+  def self.find_by_subdomain_or_email(subdomain, email)
+    find_by(subdomain: subdomain) || find_by_email(email) || Organization::Null.new
   end
 
   def self.identity_providers_by_email(email)
@@ -84,7 +88,7 @@ class Organization < ApplicationRecord
     def set_defaults
       self.name = "Undefined Organization"
       self.subdomain = "undefined-organization"
-      self.allows_password_auth = true
+      self.password_auth_allowed = true
     end
   end
 end

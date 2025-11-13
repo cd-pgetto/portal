@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "home", to: "home#show"
+  resources :users
   resource :session
   resources :passwords, param: :token
   namespace :admin do
@@ -6,7 +8,7 @@ Rails.application.routes.draw do
     resources :identity_providers
   end
 
-  root "admin/organizations#index"
+  root "home#show"
 
   get "up" => "rails/health#show", :as => :rails_health_check
 end

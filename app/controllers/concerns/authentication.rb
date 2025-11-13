@@ -22,6 +22,10 @@ module Authentication
     resume_session || request_authentication
   end
 
+  def redirect_signed_in_user
+    redirect_to home_path, notice: "Please sign out first." if authenticated?
+  end
+
   def resume_session
     Current.session ||= find_session_by_cookie
   end
@@ -32,7 +36,7 @@ module Authentication
 
   def request_authentication
     session[:return_to_after_authenticating] = request.url
-    redirect_to new_session_path
+    redirect_to new_session_path, notice: "Please sign in first."
   end
 
   def after_authentication_url

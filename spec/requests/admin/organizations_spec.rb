@@ -13,7 +13,6 @@ require "rails_helper"
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/admin/organizations", type: :request do
-
   let(:valid_attributes) {
     {name: "Test Org", subdomain: "test-org"}
   }

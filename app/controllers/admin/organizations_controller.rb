@@ -71,7 +71,7 @@ class Admin::OrganizationsController < ApplicationController
     params.require(:organization).permit(
       :name,
       :subdomain,
-      :allows_password_auth,
+      :password_auth_allowed,
       shared_identity_provider_ids: [],
       email_domains_attributes: [:id, :domain_name, :_destroy],
       credentials_attributes: [:id, :_destroy, :identity_provider_id,

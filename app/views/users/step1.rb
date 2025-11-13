@@ -11,8 +11,8 @@ class Views::Users::Step1 < Views::Base
         form.hidden_field :registration_step
 
         div(class: "fieldset px-6 py-2") do
-          form.label(:email, "Email address", class: "fieldset-legend tracking-wide ")
-          form.email_field(:email, class: "input w-full", required: true, autofocus: true)
+          form.label(:email_address, "Email address", class: "fieldset-legend tracking-wide ")
+          form.email_field(:email_address, class: "input w-full", required: true, autofocus: true)
         end
 
         div(class: "mx-auto text-center my-10") do

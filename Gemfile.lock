@@ -82,6 +82,7 @@ GEM
       activerecord (>= 6.0.0)
       activesupport (>= 6.0.0)
     ast (2.4.3)
+    awesome_print (1.9.2)
     base64 (0.3.0)
     bcrypt (3.1.20)
     bcrypt_pbkdf (1.1.1)
@@ -585,6 +586,7 @@ PLATFORMS
 
 DEPENDENCIES
   annotaterb
+  awesome_print
   bcrypt (~> 3.1.7)
   bootsnap
   brakeman

@@ -10,8 +10,8 @@ class Views::Users::Step2PasswordForm < Views::Base
       form.hidden_field :registration_step
 
       div(class: "fieldset px-6 py-2") do
-        form.label(:email, "Email address", class: "fieldset-legend tracking-wide ")
-        form.email_field(:email, class: "input bg-base-200", readonly: true)
+        form.label(:email_address, "Email address", class: "fieldset-legend tracking-wide ")
+        form.email_field(:email_address, class: "input bg-base-200", readonly: true)
       end
 
       div(class: "fieldset px-6 py-2") do

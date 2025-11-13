@@ -9,7 +9,7 @@ RSpec.describe "organizations/show", type: :view do
 
       it { expect(rendered).to have_text("Acme DSO") }
       it { expect(rendered).to have_text("Subdomain: #{organization.subdomain}") }
-      it { expect(rendered).to have_text("Allow Password Auth: #{organization.allows_password_auth ? "Yes" : "No"}") }
+      it { expect(rendered).to have_text("Password Auth: #{organization.password_auth_allowed? ? "Yes" : "No"}") }
 
       it { expect(rendered).to have_css("a[href='#{admin_organizations_path}']") }
       it { expect(rendered).to have_css("a[href='#{edit_admin_organization_path(organization)}']") }
