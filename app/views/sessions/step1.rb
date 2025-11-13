@@ -5,7 +5,7 @@ class Views::Sessions::Step1 < Views::Base
 
   def view_template
     turbo_frame_tag("user_sign_in_form") do
-      form_with url: new_session_path, class: "contents flex-col items-center justify-center" do |form|
+      form_with url: session_path, class: "contents flex-col items-center justify-center" do |form|
         render Views::Shared::ErrorMessages.new(resource: @user)
 
         form.hidden_field :sign_in_step, value: 1

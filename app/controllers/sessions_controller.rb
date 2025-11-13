@@ -46,7 +46,7 @@ class SessionsController < ApplicationController
   end
 
   def organization
-    @organization ||= Organization.find_by_subdomain_or_email(request.subdomain, params[:email])
+    @organization ||= Organization.find_by_subdomain_or_email(request.subdomain, params[:email_address])
   end
 
   # def too_many_failed_attempts
