@@ -48,4 +48,16 @@ RSpec.describe "Identities", type: :request do
       end
     end
   end
+
+  describe "GET /failure" do
+    it "redirects to sign in with alert" do
+      get "/oauth/failure"
+
+      expect(response).to have_http_status(:redirect)
+      expect(response).to redirect_to(new_session_path)
+      follow_redirect!
+
+      expect(response.body).to include("Authentication failed.")
+    end
+  end
 end
