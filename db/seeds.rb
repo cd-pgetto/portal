@@ -8,7 +8,10 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+IdentityProvider.destroy_all
 IdentityProvider.available_strategies.each do |strategy|
+  next unless Rails.application.credentials.dig(:omniauth, strategy.to_sym, :client_id).present?
+
   idp = IdentityProvider.find_or_initialize_by(strategy: strategy)
   idp.update(name: strategy.to_s.titleize.split.first, icon_url: "#{strategy.dasherize}-icon.svg",
     availability: "shared",
