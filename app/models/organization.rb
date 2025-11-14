@@ -103,6 +103,11 @@ class Organization < ApplicationRecord
   class Null < Organization
     after_initialize :set_defaults
 
+    # If no organization is found, all shared identity providers are available
+    def identity_providers
+      IdentityProvider.shared
+    end
+
     private
 
     def set_defaults

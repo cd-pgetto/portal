@@ -33,23 +33,82 @@ RSpec.describe "Sessions", type: :request do
   end
 
   describe "POST /session" do
-    context "with valid credentials" do
-      it "creates a new session and redirects to the user's home page" do
-        post session_path, params: {sign_in_step: 2, email_address: user.email_address, password: attributes_for(:user)[:password]}
+    context "at step 1" do
+      it "renders the password entry form if allowed" do
+        post session_path, params: {sign_in_step: 1, email_address: user.email_address}
 
-        expect(response).to redirect_to(home_path)
-        # Can't check for signed cookies in Rails 7+ with Rack::Test, so we check for presence
-        expect(cookies[:session_id]).to be_present
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include("Password")
+      end
+
+      it "renders a list of shared identity providers for unknown org" do
+        idp = create(:identity_provider)
+
+        post session_path, params: {sign_in_step: 1, email_address: user.email_address}
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include("Password")
+        expect(response.body).to include("Sign In with #{idp.name}")
+      end
+
+      context "for an organization based on the email domain" do
+        let(:idp) { create(:identity_provider, availability: "dedicated", name: "DedicatedIdP") }
+
+        it "renders a list of org identity providers" do
+          create(:organization, password_auth_allowed: true, identity_providers: [idp],
+            email_domains: [create(:email_domain, domain_name: user.email_address.split("@").last)])
+
+          post session_path, params: {sign_in_step: 1, email_address: user.email_address}
+
+          expect(response).to have_http_status(:success)
+          expect(response.body).to include("Password")
+          expect(response.body).to include("Sign In with #{idp.name}")
+        end
+
+        it "does not render password entry if not allowed" do
+          create(:organization, password_auth_allowed: false, identity_providers: [idp],
+            email_domains: [create(:email_domain, domain_name: user.email_address.split("@").last)])
+
+          post session_path, params: {sign_in_step: 1, email_address: user.email_address}
+
+          expect(response).to have_http_status(:success)
+          expect(response.body).not_to include("Password")
+          expect(response.body).to include("Sign In with #{idp.name}")
+        end
+      end
+
+      it "renders a list of org identity providers based on subdomain" do
+        idp = create(:identity_provider, availability: "dedicated", name: "DedicatedIdP")
+        org = create(:organization, identity_providers: [idp])
+        host! "#{org.subdomain}.example.com"
+
+        post session_path, params: {sign_in_step: 1, email_address: user.email_address}
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include("Password")
+        expect(response.body).to include("Sign In with #{idp.name}")
       end
     end
 
-    context "with invalid credentials" do
-      it "does not create a session and re-renders the login form" do
-        post session_path, params: {sign_in_step: 2, email_address: user.email_address, password: "wrongpassword"}
+    context "at step 2" do
+      context "with valid credentials" do
+        it "creates a new session and redirects to the user's home page" do
+          post session_path, params: {sign_in_step: 2, email_address: user.email_address, password: attributes_for(:user)[:password]}
 
-        expect(response).to have_http_status(:unprocessable_content)
-        expect(flash[:alert]).to include("Please try another email address or password")
-        expect(cookies[:session_id]).to be_nil
+          expect(response).to redirect_to(home_path)
+          # Can't check for signed cookies in Rails 7+ with Rack::Test, so we check for presence
+          expect(cookies[:session_id]).to be_present
+        end
+      end
+
+      context "with invalid credentials" do
+        it "does not create a session and re-renders the login form" do
+          post session_path, params: {sign_in_step: 2, email_address: user.email_address, password: "wrongpassword"}
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(flash[:alert]).to include("Please try another email address or password")
+          expect(cookies[:session_id]).to be_nil
+        end
       end
     end
 

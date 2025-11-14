@@ -14,7 +14,7 @@ class Views::Shared::IdentityProviderButtons < Views::Base
         button_to("/oauth/#{provider.strategy}", class: "btn btn-outline btn-medium",
           data: {turbo: false}, local: true) do
           img(src: asset_path(provider.icon_url), class: "h-5 w-5")
-          span { "#{action} with #{provider.name.titleize}" }
+          span { "#{action} with #{provider.name}" }
         end
       end
     end

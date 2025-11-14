@@ -22,7 +22,7 @@ FactoryBot.define do
 
   factory :identity_provider do
     name { "IdP-#{generate(:identity_provider_number)}" }
-    icon_url { "#{name}-icon.jpg" }
+    icon_url { "test-icon.svg" }
     strategy { "strategy-#{generate(:identity_provider_number)}" }
     availability { "shared" }
     client_id { "client_id-#{generate(:identity_provider_number)}" }
