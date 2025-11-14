@@ -35,12 +35,12 @@
       no associated Oauth identities, show password field.
 - [ ] Implement 2FA, add as optional requirement for Org's
 - [ ] Implement Lockout based on too many failed attempts
-- [ ] Add other identity providers - [ ] Apple, [ ] Auth0(?), [X] Google, [ ] Microsoft, [ ] Okta
+- [ ] Add other identity providers - [ ] Apple, [ ] Auth0(?), [X] Google, [ ] Microsoft, [ ] Okta, [ ] OneLogin(?)
 
 ## Admin Pages / Users
 
 - [X] Refactor Perceptive model
-- [ ] Add link for Dashboard to the side nav bar
+- [X] Add link for Dashboard to the side nav bar
 - [ ] Add link for Users to the side nav bar
 - [ ] Add link for Practices to the side nav bar
 - [ ] Add "stat" for Identity Providers
