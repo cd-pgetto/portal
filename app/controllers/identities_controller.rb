@@ -57,7 +57,7 @@ class IdentitiesController < ApplicationController
   end
 
   def user_email
-    auth_info.dig(:info, :email_address)
+    auth_info.dig(:info, :email)
   end
 
   def auth_info

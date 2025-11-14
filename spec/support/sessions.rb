@@ -8,7 +8,7 @@ module Request
     OmniAuth.config.mock_auth[provider] =
       OmniAuth::AuthHash.new({
         provider: provider, uid: uid, extra: {id_info: {hd: user.organization.primary_email_domain}},
-        info: {first_name: user.first_name, last_name: user.last_name, email_address: user.email_address}
+        info: {first_name: user.first_name, last_name: user.last_name, email: user.email_address}
       })
 
     post "/oauth/#{provider}/callback"

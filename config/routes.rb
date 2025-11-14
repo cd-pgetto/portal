@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   resources :passwords, param: :token
 
   namespace :admin do
+    resource :dashboard, only: [:show]
     resources :organizations
     resources :identity_providers
   end
