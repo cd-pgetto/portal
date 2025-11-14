@@ -24,6 +24,9 @@ class User < ApplicationRecord
 
   has_secure_password
 
+  # Generate secure tokens for password reset (expires in 15 minutes)
+  generates_token_for :password_reset, expires_in: 15.minutes
+
   has_many :sessions, dependent: :destroy
   has_many :identities, dependent: :destroy
   has_one :organization_membership, class_name: "OrganizationMember", dependent: :destroy

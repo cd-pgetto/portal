@@ -4,7 +4,7 @@ module Users
       email_address: "super.user@#{attributes_for(:perceptive_io_email_domain)[:domain_name]}")
 
     google_idp = IdentityProvider.find_by(strategy: :google_oauth2) || create(:google_identity_provider)
-    user.identities.build(identity_provider: google_idp, provider_user_id: "12345")
+    user.identities.build(identity_provider: google_idp, provider_user_id: "123456789")
 
     perceptive = Organization.find_by(subdomain: "perceptive") || create(:perceptive)
     user.build_organization_membership(organization: perceptive, role: :member)
