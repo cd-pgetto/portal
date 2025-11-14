@@ -24,7 +24,7 @@
   </head>
 
   <body>
-    <%= render Views::Layouts::NavBar::NavBar.new %>
+    <%= render Views::Layouts::NavBar::NavBar.new(authenticated_user: Current.user) %>
     <div class="drawer lg:drawer-open">
       <%= render Views::Admin::SideNavBar.new %>
 

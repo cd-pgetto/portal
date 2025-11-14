@@ -9,25 +9,20 @@
 #   end
 
 IdentityProvider.available_strategies.each do |strategy|
-  IdentityProvider.find_or_create_by!(strategy: strategy) do |idp|
-    idp.name = strategy.to_s.titleize
-    idp.icon_url = "#{strategy}-icon.jpg"
-    idp.availability = "shared"
-    idp.client_id = Rails.application.credentials.dig(:omniauth, strategy, :client_id)
-    idp.client_secret = Rails.application.credentials.dig(:omniauth, strategy, :client_secret)
-  end
+  idp = IdentityProvider.find_or_initialize_by(strategy: strategy)
+  idp.update(name: strategy.to_s.titleize.split.first, icon_url: "#{strategy.dasherize}-icon.svg",
+    availability: "shared",
+    client_id: Rails.application.credentials.dig(:omniauth, strategy, :client_id),
+    client_secret: Rails.application.credentials.dig(:omniauth, strategy, :client_secret))
+  ap idp
 end
-ap "Seeded IdentityProviders: #{IdentityProvider.all.map(&:name).join(", ")}"
 
-Organization.find_or_create_by!(subdomain: "perceptive") do |org|
-  org.name = "Perceptive"
-  org.password_auth_allowed = false
-  org.identity_providers = [IdentityProvider.find_by(strategy: "google_oauth2", availability: "shared")]
-  org.email_domains = [
+org = Organization.find_or_initialize_by(subdomain: "perceptive")
+org.update(name: "Perceptive", password_auth_allowed: false,
+  identity_providers: [IdentityProvider.find_by(strategy: "google_oauth2", availability: "shared")],
+  email_domains: [
     EmailDomain.new(domain_name: "perceptive.io"),
     EmailDomain.new(domain_name: "cyberdontics.io"),
     EmailDomain.new(domain_name: "cyberdontics.co")
-  ]
-end
-ap "Seeded Organization: "
-ap Organization.find_by(subdomain: "perceptive")
+  ])
+ap org
