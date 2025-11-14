@@ -69,7 +69,16 @@ RSpec.describe "Users", type: :request do
     end
 
     context "when not signed in" do
-      it "creates new user" do
+      it "with valid data at step 1 renders step 2" do
+        post users_path, params: {user: {registration_step: "1", email_address: "new.user@example.com"}}
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("Sign Up")
+        expect(response.body).to include("First name")
+        expect(response.body).to include("Last name")
+        expect(response.body).to include("Password")
+      end
+      it "with valid data at step 2 creates new user" do
         expect do
           post users_path params: {user: new_user_data}
         end.to change(User, :count).by(1)
@@ -77,6 +86,23 @@ RSpec.describe "Users", type: :request do
         # expect(User.last.roles.count).to be >= 1
         expect(response).to have_http_status(:redirect)
         expect(flash[:notice]).to include("Welcome to Perceptive.")
+      end
+    end
+
+    context "with invalid data" do
+      it "at step 1 shows error" do
+        post users_path, params: {user: {registration_step: "1", email_address: "foobar"}}
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(flash[:alert]).to include("Please correct the errors and try again.")
+      end
+      it "at step 2 does not create user and shows error" do
+        expect do
+          post users_path, params: {user: {registration_step: "2", first_name: "", last_name: "", email_address: "invalid_email", password: "short"}}
+        end.to change(User, :count).by(0)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(flash[:alert]).to include("Please correct the errors and try again.")
       end
     end
   end
@@ -132,7 +158,6 @@ RSpec.describe "Users", type: :request do
       end
     end
 
-    # Need authorization for this
     context "when not signed in" do
       it "does not update user and shows error" do
         put user_path(user), params: {user: new_user_data}
@@ -149,7 +174,6 @@ RSpec.describe "Users", type: :request do
       end
     end
 
-    # Need authorization for this
     context "when signed in as another user" do
       let(:another_user) { create(:another_user) }
       it "does not update user and shows error" do

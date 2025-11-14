@@ -69,10 +69,6 @@ class UsersController < ApplicationController
     @password_auth_allowed ||= organization.password_auth_allowed?
   end
 
-  def password_auth_allowed?
-    password_auth_allowed ? true : false
-  end
-
   def organization
     @organization ||= Organization.find_by_subdomain_or_email(request.subdomain, params.dig(:user, :email_address))
   end
