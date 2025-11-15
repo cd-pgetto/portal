@@ -9,7 +9,7 @@
       - [ ] Views
             - [ ] Admin/Identity Provider
             - [ ] Home
-            - [ ] Layouts
+            - [X] Layouts
                   - [X] Navbar
             - [ ] Passwords
             - [ ] Passwords Mailer
@@ -36,7 +36,7 @@
 - [X] Improve test coverage for new sessions to cover all organization rules (pw allowed/denied, IdPs, etc)
 - [ ] Implement 2FA, add as optional requirement for Org's
 - [ ] Implement Lockout based on too many failed attempts
-- [ ] Add other identity providers - [ ] Apple, [ ] Auth0(?), [X] Google, [ ] Microsoft, [ ] Okta, [ ] OneLogin(?)
+- [ ] Add identity providers - [ ] Apple, [ ] Auth0(?), [X] Google, [ ] Microsoft, [ ] Okta, [ ] OneLogin(?)
 
 ## Admin Pages / Users
 
