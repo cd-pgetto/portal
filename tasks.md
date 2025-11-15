@@ -10,11 +10,11 @@
             - [ ] Admin/Identity Provider
             - [ ] Home
             - [ ] Layouts
+                  - [X] Navbar
             - [ ] Passwords
             - [ ] Passwords Mailer
             - [ ] Sessions
             - [ ] Shared
-            - [ ]
       - [ ] Models
             - [ ] Current
             - [ ] Authenticable concern
