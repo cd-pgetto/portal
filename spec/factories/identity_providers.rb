@@ -30,7 +30,7 @@ FactoryBot.define do
 
     factory :google_identity_provider do
       name { "Google OAuth" }
-      icon_url { "google-oauth2-icon.jpg" }
+      icon_url { "google-oauth2-icon.svg" }
       strategy { "google_oauth2" }
       availability { "shared" }
       client_id { "google-client-id" }

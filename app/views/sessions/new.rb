@@ -20,7 +20,7 @@ class Views::Sessions::New < Views::Base
 
         # The logic here comes from the case where the user is signing in
         # via a subdomain. So even if we don't know their email address we
-        # know the organizationa and it's rules. So if passowrd auth is not
+        # know the organization and it's rules. So if password auth is not
         # allowed then we don't need the email address and will redirect to
         # sign in via Oauth in step 2.
         if password_auth_allowed && !email_address.present?

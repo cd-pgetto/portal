@@ -13,8 +13,8 @@
                   - [X] Navbar
             - [ ] Passwords
             - [ ] Passwords Mailer
-            - [ ] Sessions
-            - [ ] Shared
+            - [X] Sessions
+            - [X] Shared
       - [ ] Models
             - [ ] Current
             - [ ] Authenticable concern
