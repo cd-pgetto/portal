@@ -24,7 +24,7 @@
   </head>
 
   <body>
-    <%= render Views::Layouts::NavBar::NavBar.new(authenticated_user: Current.user) %>
+    <%= render Views::Layouts::NavBar::NavBar.new(current_user: Current.user) %>
     <%= render Views::Shared::FlashMessages.new %>
 
     <main class="container max-w-6xl mx-auto p-4">

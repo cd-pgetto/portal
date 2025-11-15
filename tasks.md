@@ -33,6 +33,7 @@
       with an Organization required Oauth, use that. If the user has associated identities show them, possibly with
       the option to use a password if not prohibited by an associated Organization. If no existing user is found, or there
       no associated Oauth identities, show password field.
+- [X] Improve test coverage for new sessions to cover all organization rules (pw allowed/denied, IdPs, etc)
 - [ ] Implement 2FA, add as optional requirement for Org's
 - [ ] Implement Lockout based on too many failed attempts
 - [ ] Add other identity providers - [ ] Apple, [ ] Auth0(?), [X] Google, [ ] Microsoft, [ ] Okta, [ ] OneLogin(?)
