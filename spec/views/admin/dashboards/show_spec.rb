@@ -9,6 +9,8 @@ RSpec.describe "dashboards/show", type: :view do
 
     expect(rendered).to have_text("Organizations#{Organization.count}")
     expect(rendered).to have_css("a[href='#{admin_organizations_path}']")
+    expect(rendered).to have_text("Identity Providers#{IdentityProvider.count}")
     expect(rendered).to have_text("Users#{User.count}")
+    expect(rendered).to have_text("Practices")
   end
 end
