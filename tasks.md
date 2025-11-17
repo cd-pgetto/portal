@@ -46,7 +46,7 @@
 - [ ] Add link for Practices to the side nav bar
 - [X] Add "stat" for Identity Providers
 - [ ] Update IDP index page to table
-- [ ] Update Org show page to list email domains and improve layout (look at IDP index page for layout details?)
+- [X] Update Org show page to list email domains and improve layout (look at IDP index page for layout details?)
 - [ ] Add User index, show, edit, etc pages
 
 

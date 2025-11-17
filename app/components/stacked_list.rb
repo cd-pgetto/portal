@@ -1,4 +1,4 @@
-class Views::Admin::Organizations::StackedList < Components::Base
+class Components::StackedList < Components::Base
   def view_template
     ul(class: "bg-white shadow overflow-hidden sm:rounded-md max-w-sm mx-auto mt-16") do
       # Item 1

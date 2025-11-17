@@ -1,4 +1,4 @@
-class Views::Admin::Organizations::TailwindDescriptionList < Components::Base
+class Components::TailwindDescriptionList < Components::Base
   def view_template
     div do
       div(class: "px-4 sm:px-0") do
