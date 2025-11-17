@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_17_022052) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_17_134521) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -80,6 +80,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_17_022052) do
     t.index ["subdomain"], name: "index_organizations_on_subdomain", unique: true
   end
 
+  create_table "practices", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.uuid "organization_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_practices_on_organization_id"
+  end
+
   create_table "sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -109,5 +117,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_17_022052) do
   add_foreign_key "identities", "users"
   add_foreign_key "organization_members", "organizations"
   add_foreign_key "organization_members", "users"
+  add_foreign_key "practices", "organizations"
   add_foreign_key "sessions", "users"
 end
