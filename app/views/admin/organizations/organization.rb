@@ -6,47 +6,48 @@ class Views::Admin::Organizations::Organization < Components::Base
   end
 
   def view_template
-    # fieldset(class: "fieldset bg-base-200 border border-base-content rounded-box w-full p-4 mb-4") do
     div(id: dom_id(@organization), class: "w-full bg-base-200 border border-base-content rounded-box sm:w-auto mb-4 p-4") do
       div do
-        div(class: "font-semibold text-2xl mb-1") { @organization.name }
+        div(class: "text-xl mb-1") { @organization.name }
 
-        # ul(class: "list rounded-box shadow-md") do
-        table(class: "table") do
-          tr do
-            td { strong { "Subdomain:" } }
-            td { @organization.subdomain }
-          end
+        dl(class: "rounded-box shadow-md divide-y") do
+          #   <li class="list-row">
+          # li(class: "list-row") do
+          dt(class: "opacity-70") { "Subdomain:" }
+          dd { @organization.subdomain }
+          # end
 
-          tr do
-            td { strong { "Allow Password Auth:" } }
-            td { @organization.password_auth_allowed? ? "Yes" : "No" }
-          end
+          # li(class: "list-row") do
+          dt(class: "opacity-70") { "Allow Password Auth:" }
+          dd { @organization.password_auth_allowed? ? "Yes" : "No" }
+          # end
 
-          tr do
-            td { strong { "Email Domains:" } }
-            td { @organization.email_domains.map(&:domain_name).join(", ") }
-          end
-        end
+          # li(class: "list-row") do
+          dt(class: "opacity-70") { "Email Domains:" }
+          dd { @organization.email_domains.map(&:domain_name).join(", ") }
+          # end
 
-        div(class: "text-sm mt-2") { "Shared Identity Providers:" }
-        div(class: "space-y-2") do
-          @organization.shared_identity_providers.each do |provider|
-            ul(class: "list-disc ml-6") do
-              li { provider.name + " (" + provider.strategy + ")" }
-            end
-          end
-        end
+          # li(class: "list-row") do
+          dt(class: "opacity-70") { "Shared Identity Providers:" }
+          dd(class: "") {
+            @organization.shared_identity_providers.map { |idp|
+              idp.name + " (" + idp.strategy + " )"
+            }.join(", ")
+          }
+          # end
 
-        div(class: "text-sm mt-2") { "Dedicated Identity Providers:" }
-        div(class: "space-y-2") do
-          @organization.dedicated_identity_providers.each do |provider|
-            ul(class: "list-disc ml-6") do
-              li { provider.name + " (" + provider.strategy + ")" }
-            end
-          end
+          # li(class: "list-row") do
+          dt(class: "opacity-70") { "Dedicated Identity Providers:" }
+          dd(class: "") {
+            @organization.dedicated_identity_providers.map { |idp|
+              idp.name + " (" + idp.strategy + " )"
+            }.join(", ")
+          }
+          # end
         end
       end
     end
+
+    render Views::Admin::Organizations::StackedList.new
   end
 end
