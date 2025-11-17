@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: identities
+# Database name: primary
 #
 #  id                   :uuid             not null, primary key
 #  created_at           :datetime         not null

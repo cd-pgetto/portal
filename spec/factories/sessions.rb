@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: sessions
+# Database name: primary
 #
 #  id         :uuid             not null, primary key
 #  ip_address :string

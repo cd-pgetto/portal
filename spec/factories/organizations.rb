@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: organizations
+# Database name: primary
 #
 #  id                    :uuid             not null, primary key
 #  name                  :string           not null

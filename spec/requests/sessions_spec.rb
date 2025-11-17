@@ -149,7 +149,7 @@ RSpec.describe "Sessions", type: :request do
     end
   end
 
-  skip "account locking after failed attempts" do
+  describe "account locking after failed attempts" do
     include ActiveSupport::Testing::TimeHelpers
 
     context "when user exceeds maximum failed login attempts" do

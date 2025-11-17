@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: identity_providers
+# Database name: primary
 #
 #  id            :uuid             not null, primary key
 #  availability  :enum             default("shared"), not null

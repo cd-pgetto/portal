@@ -1,9 +1,11 @@
 # == Schema Information
 #
 # Table name: users
+# Database name: primary
 #
 #  id                  :uuid             not null, primary key
 #  email_address       :string           not null
+#  failed_login_count  :integer          default(0), not null
 #  first_name          :string           not null
 #  last_name           :string           not null
 #  original_first_name :string           not null

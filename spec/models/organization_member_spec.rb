@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: organization_members
+# Database name: primary
 #
 #  id              :uuid             not null, primary key
 #  role            :enum             default("member"), not null

@@ -48,6 +48,7 @@ module Authentication
       Current.session = session
       cookies.signed.permanent[:session_id] = {value: session.id, httponly: true, same_site: :lax}
     end
+    user.reset_failed_login_count!
   end
 
   def terminate_session

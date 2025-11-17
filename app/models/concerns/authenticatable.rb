@@ -8,7 +8,7 @@ module Authenticatable
     # has_secure_token :auth_token
 
     def authenticate_password(password)
-      user = super if password_auth_allowed?
+      user = super if password_auth_allowed? && !locked?
       user.tap { |u| increment_failed_login_count! if !u && self.class.include?(Lockable) }
     end
 
