@@ -49,5 +49,8 @@ class Views::Admin::Organizations::Organization < Components::Base
     end
 
     render Views::Admin::Organizations::StackedList.new
+    div(class: "w-full bg-base-200 border border-base-content rounded-box sm:w-auto mb-4 p-4") do
+      render Views::Admin::Organizations::TailwindDescriptionList.new
+    end
   end
 end
