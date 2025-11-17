@@ -9,6 +9,7 @@ class Components::Base < Phlex::HTML
   include Phlex::Rails::Helpers::FormWith
   include Phlex::Rails::Helpers::Routes
   include Phlex::Rails::Helpers::TurboFrameTag
+  include Phlex::Rails::Helpers::TurboStream
 
   if Rails.env.local?
     def before_template

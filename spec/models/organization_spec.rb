@@ -1,13 +1,14 @@
 # == Schema Information
 #
 # Table name: organizations
+# Database name: primary
 #
-#  id                   :uuid             not null, primary key
-#  allows_password_auth :boolean          default(TRUE), not null
-#  name                 :string           not null
-#  subdomain            :string           not null
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
+#  id                    :uuid             not null, primary key
+#  name                  :string           not null
+#  password_auth_allowed :boolean          default(TRUE), not null
+#  subdomain             :string           not null
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
 #
 # Indexes
 #
@@ -63,7 +64,7 @@ RSpec.describe Organization, type: :model do
     it { is_expected.to normalize(:subdomain).from(" ExAmPlE ").to("example") }
 
     context "when not allowing password auth" do
-      before { subject.allows_password_auth = false }
+      before { subject.password_auth_allowed = false }
 
       context "without any identity providers" do
         it { is_expected.not_to be_valid }
@@ -82,21 +83,32 @@ RSpec.describe Organization, type: :model do
       let!(:email_domain) { create(:email_domain, organization:) }
 
       it "returns the organization for a matching email domain" do
-        email = "user@#{email_domain.domain_name}"
-        result = Organization.find_by_email(email)
+        result = Organization.find_by_email("user@#{email_domain.domain_name}")
         expect(result).to eq(organization)
       end
 
       it "is case insensitive for the email domain" do
-        email = "user@#{email_domain.domain_name.upcase}"
-        result = Organization.find_by_email(email)
+        result = Organization.find_by_email("user@#{email_domain.domain_name.upcase}")
         expect(result).to eq(organization)
       end
 
       it "returns nil if no matching email domain exists" do
-        email = "user@nonexistentdomain.com"
-        result = Organization.find_by_email(email)
+        result = Organization.find_by_email("user@nonexistentdomain.com")
         expect(result).to be_an_instance_of(Organization::Null)
+      end
+    end
+
+    describe "#identity_providers_by_email" do
+      it "returns the identity providers for organization based on an email address" do
+        provider1 = create(:identity_provider, strategy: "strategy1", client_id: "client_id_1")
+        provider2 = create(:identity_provider, strategy: "strategy2", client_id: "client_id_2")
+        org = create(:organization)
+        org.email_domains.create!(domain_name: "example.com")
+        org.credentials.create(identity_provider: provider1)
+        org.credentials.create(identity_provider: provider2)
+
+        result = Organization.identity_providers_by_email("user@example.com")
+        expect(result).to match_array([provider1, provider2])
       end
     end
 

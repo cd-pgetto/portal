@@ -13,7 +13,8 @@ gem "jbuilder"
 gem "phlex-rails", "~> 2.3"
 gem "phlex-icons"
 
-# gem "bcrypt", "~> 3.1.7"
+gem "bcrypt", "~> 3.1.7"
+gem "cancancan", "~> 3.5"
 gem "omniauth-rails_csrf_protection"
 gem "omniauth-auth0"
 gem "omniauth-apple"
@@ -40,6 +41,8 @@ gem "thruster", require: false
 
 group :development, :test do
   gem "debug", platforms: %i[mri windows], require: "debug/prelude"
+  gem "awesome_print"
+
   gem "rspec-rails"
   gem "factory_bot_rails"
   gem "faker"
@@ -48,6 +51,7 @@ end
 group :development do
   gem "web-console"
   gem "rails_live_reload"
+  gem "rails-erd", "~> 1.7"
 
   gem "bundler-audit", require: false
   gem "brakeman", require: false

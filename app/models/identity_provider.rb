@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: identity_providers
+# Database name: primary
 #
 #  id            :uuid             not null, primary key
 #  availability  :enum             default("shared"), not null
@@ -20,6 +21,7 @@
 class IdentityProvider < ApplicationRecord
   has_many :credentials, dependent: :destroy
   has_many :organizations, through: :credentials
+  has_many :identities, dependent: :destroy
 
   enum :availability, {shared: "shared", dedicated: "dedicated"}
 

@@ -1,13 +1,14 @@
 # == Schema Information
 #
 # Table name: organizations
+# Database name: primary
 #
-#  id                   :uuid             not null, primary key
-#  allows_password_auth :boolean          default(TRUE), not null
-#  name                 :string           not null
-#  subdomain            :string           not null
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
+#  id                    :uuid             not null, primary key
+#  name                  :string           not null
+#  password_auth_allowed :boolean          default(TRUE), not null
+#  subdomain             :string           not null
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
 #
 # Indexes
 #
@@ -18,22 +19,49 @@ class Organization < ApplicationRecord
   has_many :identity_providers, through: :credentials
   has_many :shared_identity_providers, -> { shared }, through: :credentials, source: :identity_provider
   has_many :dedicated_identity_providers, -> { dedicated }, through: :credentials, source: :identity_provider
+
   has_many :email_domains, dependent: :destroy
+
+  has_many :members, class_name: "OrganizationMember", dependent: :destroy
+  has_many :users, through: :members
 
   normalizes :subdomain, with: ->(value) { value.strip.downcase }
 
   validates :name, presence: true
   validates :subdomain, presence: true, uniqueness: {case_sensitive: false},
     length: {minimum: 1, maximum: 63}, format: {with: DomainName::SUBDOMAIN_REGEXP}
-  validates :identity_providers, presence: {message: "must have at least one identity provider if password authentication is not allowed", unless: :allows_password_auth?}
+  validates :identity_providers, presence: {message: "must have at least one identity provider if password authentication is not allowed", unless: :password_auth_allowed}
 
   accepts_nested_attributes_for :credentials, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :email_domains, allow_destroy: true, reject_if: :all_blank
 
   def self.find_by_email(email)
-    return nil unless (domain_name = email_domain(email))
-
+    domain_name = email_domain(email)
+    return nil if domain_name.nil?
     joins(:email_domains).find_by(email_domains: {domain_name: domain_name}) || Organization::Null.new
+  end
+
+  def self.find_by_subdomain_or_email(subdomain, email)
+    find_by(subdomain: subdomain) || find_by_email(email) || Organization::Null.new
+  end
+
+  def self.identity_providers_by_email(email)
+    find_by_email(email)&.identity_providers
+  end
+
+  def primary_email_domain
+    email_domains.order(:created_at).first&.domain_name
+  end
+
+  def identity_provider_allowed?(provider)
+    identity_providers.exists?(name: provider.name)
+  end
+
+  def email_allowed?(email)
+    domain = email_domain(email)
+    return false if domain.nil?
+    return true if email_domains.empty?
+    email_domains.exists?(domain_name: domain)
   end
 
   # Custom getter for shared identity provider IDs
@@ -76,12 +104,17 @@ class Organization < ApplicationRecord
   class Null < Organization
     after_initialize :set_defaults
 
+    # If no organization is found, all shared identity providers are available
+    def identity_providers
+      IdentityProvider.shared
+    end
+
     private
 
     def set_defaults
       self.name = "Undefined Organization"
       self.subdomain = "undefined-organization"
-      self.allows_password_auth = true
+      self.password_auth_allowed = true
     end
   end
 end

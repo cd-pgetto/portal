@@ -1,29 +1,28 @@
-class Admin::OrganizationsController < ApplicationController
+class Admin::OrganizationsController < Admin::BaseController
   before_action :set_organization, only: %i[show edit update destroy]
 
   # GET /admin/organizations or /admin/organizations.json
   def index
+    authorize! :read, Organization
     render Views::Admin::Organizations::Index.new(organizations: Organization.all)
   end
 
   # GET /admin/organizations/1 or /admin/organizations/1.json
   def show
+    authorize! :read, @organization
     render Views::Admin::Organizations::Show.new(organization: @organization)
   end
 
   # GET /admin/organizations/new
   def new
+    authorize! :create, Organization
     render Views::Admin::Organizations::New.new(organization: Organization.new)
-  end
-
-  # GET /admin/organizations/1/edit
-  def edit
-    render Views::Admin::Organizations::Edit.new(organization: @organization)
   end
 
   # POST /admin/organizations or /admin/organizations.json
   def create
     @organization = Organization.new(organization_params)
+    authorize! :create, @organization
 
     respond_to do |format|
       if @organization.save
@@ -36,8 +35,15 @@ class Admin::OrganizationsController < ApplicationController
     end
   end
 
+  # GET /admin/organizations/1/edit
+  def edit
+    authorize! :update, @organization
+    render Views::Admin::Organizations::Edit.new(organization: @organization)
+  end
+
   # PATCH/PUT /admin/organizations/1 or /admin/organizations/1.json
   def update
+    authorize! :update, @organization
     respond_to do |format|
       if @organization.update(organization_params)
         format.html { redirect_to admin_organization_path(@organization), notice: "Organization was successfully updated.", status: :see_other }
@@ -51,6 +57,7 @@ class Admin::OrganizationsController < ApplicationController
 
   # DELETE /admin/organizations/1 or /admin/organizations/1.json
   def destroy
+    authorize! :destroy, @organization
     @organization.destroy!
 
     respond_to do |format|
@@ -71,7 +78,7 @@ class Admin::OrganizationsController < ApplicationController
     params.require(:organization).permit(
       :name,
       :subdomain,
-      :allows_password_auth,
+      :password_auth_allowed,
       shared_identity_provider_ids: [],
       email_domains_attributes: [:id, :domain_name, :_destroy],
       credentials_attributes: [:id, :_destroy, :identity_provider_id,

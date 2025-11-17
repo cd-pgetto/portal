@@ -70,7 +70,7 @@ end
 #               tr(class: "hover:bg-base-300") do
 #                 td { a(href: admin_organization_path(organization), class: "text-primary font-bold text-lg") { organization.name } }
 #                 td { organization.subdomain }
-#                 td { organization.allows_password_auth ? "Yes" : "No" }
+#                 td { organization.password_auth_allowed? ? "Yes" : "No" }
 #                 td do
 #                   button_to(admin_organization_path(organization), method: :delete, class: "btn",
 #                     data: {turbo_confirm: "Are you sure?"}) {

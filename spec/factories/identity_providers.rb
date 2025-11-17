@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: identity_providers
+# Database name: primary
 #
 #  id            :uuid             not null, primary key
 #  availability  :enum             default("shared"), not null
@@ -22,7 +23,7 @@ FactoryBot.define do
 
   factory :identity_provider do
     name { "IdP-#{generate(:identity_provider_number)}" }
-    icon_url { "#{name}-icon.jpg" }
+    icon_url { "test-icon.svg" }
     strategy { "strategy-#{generate(:identity_provider_number)}" }
     availability { "shared" }
     client_id { "client_id-#{generate(:identity_provider_number)}" }
@@ -30,7 +31,7 @@ FactoryBot.define do
 
     factory :google_identity_provider do
       name { "Google OAuth" }
-      icon_url { "google-icon.jpg" }
+      icon_url { "google-oauth2-icon.svg" }
       strategy { "google_oauth2" }
       availability { "shared" }
       client_id { "google-client-id" }

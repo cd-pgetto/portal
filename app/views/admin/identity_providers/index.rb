@@ -8,7 +8,6 @@ class Views::Admin::IdentityProviders::Index < Views::Base
 
     div(class: "w-full") do
       div(class: "flex justify-between items-center") do
-        h1(class: "font-bold text-3xl underline") { "Identity Providers" }
         a(href: new_admin_identity_provider_path, class: "btn btn-primary") { "New Identity Provider" }
       end
 
@@ -25,8 +24,6 @@ class Views::Admin::IdentityProviders::Index < Views::Base
               end
             end
           end
-        else
-          p(class: "text-center my-10") { "No identity providers found." }
         end
       end
     end

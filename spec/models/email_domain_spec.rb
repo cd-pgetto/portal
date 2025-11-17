@@ -1,6 +1,7 @@
 # == Schema Information
 #
 # Table name: email_domains
+# Database name: primary
 #
 #  id              :uuid             not null, primary key
 #  domain_name     :string           not null

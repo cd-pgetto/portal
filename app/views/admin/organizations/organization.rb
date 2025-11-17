@@ -6,38 +6,50 @@ class Views::Admin::Organizations::Organization < Components::Base
   end
 
   def view_template
-    div(id: dom_id(@organization), class: "w-full sm:w-auto mb-5 space-y-5") do
+    div(id: dom_id(@organization), class: "w-full bg-base-200 border border-base-content rounded-box sm:w-auto mt-4 p-4") do
       div do
-        if action_name == "show"
-          p(class: "font-semibold text-2xl mb-1") { @organization.name }
-        else
-          a(href: admin_organization_path(@organization), class: "font-semibold text-xl") { @organization.name }
+        div(class: "sm:px-0") do
+          p(class: "mt-1 sm:mt-0 text-xl") { @organization.name }
         end
 
-        p(class: "text-base-content/50") do
-          strong { "Subdomain: " }
-          plain @organization.subdomain
-        end
-
-        p(class: "text-base-content/50") do
-          strong { "Allow Password Auth: " }
-          plain @organization.allows_password_auth ? "Yes" : "No"
-        end
-
-        div(class: "text-sm text-gray-600 mt-2") { "Shared Identity Providers:" }
-        div(class: "space-y-2") do
-          @organization.shared_identity_providers.each do |provider|
-            ul(class: "list-disc ml-6") do
-              li { provider.name + " (" + provider.strategy + ")" }
+        div(class: "mt-6 border-t border-gray-100") do
+          dl(class: "divide-y divide-gray-100") do
+            # Subdomain
+            div(class: "py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0") do
+              dt(class: "opacity-70") { "Subdomain:" }
+              dd(class: "mt-1 sm:col-span-2 sm:mt-0") { @organization.subdomain }
             end
-          end
-        end
 
-        div(class: "text-sm text-gray-600 mt-2") { "Dedicated Identity Providers:" }
-        div(class: "space-y-2") do
-          @organization.dedicated_identity_providers.each do |provider|
-            ul(class: "list-disc ml-6") do
-              li { provider.name + " (" + provider.strategy + ")" }
+            # Password Auth Allowed? (Y/N)
+            div(class: "py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0") do
+              dt(class: "opacity-70") { "Allow Password Authentication:" }
+              dd(class: "mt-1 sm:col-span-2 sm:mt-0") { @organization.password_auth_allowed? ? "Yes" : "No" }
+            end
+
+            # Email Domains
+            div(class: "py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0") do
+              dt(class: "opacity-70") { "Email Domains:" }
+              dd(class: "mt-1 sm:col-span-2 sm:mt-0") { @organization.email_domains.map(&:domain_name).join(", ") }
+            end
+
+            # Shared Identity Providers
+            div(class: "py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0") do
+              dt(class: "opacity-70") { "Shared Identity Providers:" }
+              dd(class: "mt-1 sm:col-span-2 sm:mt-0") {
+                @organization.shared_identity_providers.map { |idp|
+                  idp.name + " (" + idp.strategy + " )"
+                }.join(", ")
+              }
+            end
+
+            # Dedicated Identity Providers
+            div(class: "pt-6 pb-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0") do
+              dt(class: "opacity-70") { "Dedicated Identity Providers:" }
+              dd(class: "mt-1 sm:col-span-2 sm:mt-0") {
+                @organization.dedicated_identity_providers.map { |idp|
+                  idp.name + " (" + idp.strategy + " )"
+                }.join(", ")
+              }
             end
           end
         end

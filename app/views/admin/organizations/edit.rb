@@ -7,8 +7,6 @@ class Views::Admin::Organizations::Edit < Views::Base
     content_for :title, "Edit organization"
 
     div(class: "w-full") do
-      h1(class: "font-bold text-2xl mb-2") { "Edit organization" }
-
       render Views::Admin::Organizations::Form.new(organization: @organization)
 
       div(class: "md:w-md flex justify-between") do
