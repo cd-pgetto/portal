@@ -47,14 +47,61 @@ class Views::Layouts::SideNavBarDrawer < Views::Base
     # end
 
     #   <div class="drawer-side is-drawer-close:overflow-visible">
+
+    #     <!-- Sidebar content here -->
+    #       <!-- List item -->
+    #       <li>
+    #         <button class="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Homepage">
+    #           <!-- Home icon -->
+    #           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor" class="my-1.5 inline-block size-4"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+    #           <span class="is-drawer-close:hidden">Homepage</span>
+    #         </button>
+    #       </li>
+
+    #       <!-- List item -->
+    #       <li>
+    #         <button class="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Settings">
+    #           <!-- Settings icon -->
+    #           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor" class="my-1.5 inline-block size-4"><path d="M20 7h-9"></path><path d="M14 17H5"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
+    #           <span class="is-drawer-close:hidden">Settings</span>
+    #         </button>
+    #       </li>
+    #     </ul>
+    #   </div>
+    # </div>
+
+    # Based on DaisyUI responsive collapsible Icon-only drawer sidebar component
+    # <div class="drawer-side is-drawer-close:overflow-visible">
     div(class: "drawer-side is-drawer-close:overflow-visible border-r-2 border-primary") do
-      label(for: "nav-sidebar-drawer-1", aria: {label: "close sidebar"}, class: "drawer-overlay")
-      #     <div class="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
+      #   <label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"></label>
+      label(for: "my-drawer-4", aria: {label: "close sidebar"}, class: "drawer-overlay")
+
+      #   <div class="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
       div(class: "flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64") do
-        ul(class: "menu bg-base-200 w-60 p-4") do
-          li { a(href: admin_dashboard_path) { "Dashboard" } }
-          li { a(href: admin_organizations_path) { "Organizations" } }
-          li { a(href: admin_identity_providers_path) { "Identity Providers" } }
+        #     <ul class="menu w-full grow">
+        ul(class: "menu bg-base-200 w-full grow") do
+          #         <button class="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Homepage">
+          li {
+            a(href: admin_dashboard_path, class: "is-drawer-close:tooltip is-drawer-close:tooltip-right",
+              data_tip: "Dashboard") {
+              render PhlexIcons::Lucide::LayoutDashboard.new(size: 24, class: "my-1.5 inline-block size-5")
+              span(class: "is-drawer-close:hidden") { "Dashboard" }
+            }
+          }
+          li {
+            a(href: admin_organizations_path, class: "is-drawer-close:tooltip is-drawer-close:tooltip-right",
+              data_tip: "Organizations") {
+              render PhlexIcons::Lucide::Building2.new(size: 24, class: "my-1.5 inline-block size-5")
+              span(class: "is-drawer-close:hidden") { "Organizations" }
+            }
+          }
+          li {
+            a(href: admin_identity_providers_path, class: "is-drawer-close:tooltip is-drawer-close:tooltip-right",
+              data_tip: "Identity Providers") {
+              render PhlexIcons::Lucide::UserCheck.new(size: 24, class: "my-1.5 inline-block size-5")
+              span(class: "is-drawer-close:hidden") { "Identity Providers" }
+            }
+          }
         end
       end
     end

@@ -24,22 +24,35 @@
   </head>
 
   <body>
+    <div class="drawer drawer-open">
+      <input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
+
+      <!-- Navbar and content -->
+      <div class="drawer-content">
+        <%= render Views::Layouts::NavBar.new %>
+        <div class="p-4">
+          <%= yield %>
+        </div>
+      </div>
+
+      <%= render Views::Layouts::SideNavBarDrawer.new %>
+    </div>
     <%#= render Views::Layouts::NavBar::NavBar.new(current_user: Current.user) %>
     <%#= render Views::Layouts::SideNavBar.new %>
-    <div class="drawer lg:drawer-open">
+    <!-- <div class="drawer lg:drawer-open">
       <input id="nav-sidebar-drawer-1" type="checkbox" class="drawer-toggle" />
 
       <div class="drawer-content">
-        <%= render Views::Layouts::NavBar.new do %>
+        <%#= render Views::Layouts::NavBar.new do %>
           <main class="container max-w-6xl mx-auto p-4">
-            <%= render Views::Shared::FlashMessages.new %>
-            <%= yield %>
+            <%#= render Views::Shared::FlashMessages.new %>
+            <%#= yield %>
           </main>
-        <% end %>
+        <%# end %>
 
-        <%= render Views::Layouts::SideNavBarDrawer.new %>
+        <%#= render Views::Layouts::SideNavBarDrawer.new %>
       </div>
-    </div>
+    </div> -->
 
     <%#= render Views::Layouts::Footer.new %>
   </body>
