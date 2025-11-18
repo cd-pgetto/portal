@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Views::Layouts::SideNavBar < Views::Base
   def view_template
     # Static sidebar for desktop
