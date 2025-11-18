@@ -1,0 +1,13 @@
+<div class="drawer drawer-open">
+  <input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
+
+  <!-- Navbar and content -->
+  <div class="drawer-content">
+    <%= render Views::Layouts::NavBar.new %>
+    <div class="p-4">
+      <%= yield %>
+    </div>
+  </div>
+
+  <%= render Views::Layouts::SideNavBarDrawer.new %>
+</div>
