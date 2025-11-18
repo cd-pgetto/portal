@@ -1,34 +1,59 @@
-class Views::Layouts::SideNavBarDrawer < Views::Base
+class Views::Layouts::DaisySideDrawerNavBar < Views::Base
   def view_template
     #
     # Based on DaisyUI responsive collapsible Icon-only drawer sidebar component
     #
 
-    div(class: "drawer-side is-drawer-close:overflow-visible border-r-2 border-primary") do
-      label(for: "my-drawer-4", aria: {label: "close sidebar"}, class: "drawer-overlay")
-      div(class: "flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64") do
-        ul(class: "menu bg-base-200 w-full grow") do
-          li {
-            a(href: admin_dashboard_path, class: "is-drawer-close:tooltip is-drawer-close:tooltip-right",
-              data_tip: "Dashboard") {
-              render PhlexIcons::Lucide::LayoutDashboard.new(size: 24, class: "my-1.5 inline-block size-5")
-              span(class: "is-drawer-close:hidden") { "Dashboard" }
+    # <div class="drawer drawer-open">
+    #   <input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
+
+    #   <!-- Navbar and content -->
+    #   <div class="drawer-content">
+    #     <%= render Views::Layouts::DaisyNavBar.new %>
+    #     <div class="p-4">
+    #       <%= yield %>
+    #     </div>
+    #   </div>
+    # </div>
+
+    div(class: "drawer drawer-open") do
+      input(id: "my-drawer-4", type: :checkbox, class: "drawer-toggle")
+
+      # Top Navbar and content
+      div(class: "drawer-content") do
+        render Views::Layouts::DaisyNavBar.new
+        div(class: "p-4") do
+          yield
+        end
+      end
+
+      # Side  Drawer Nav Bar
+      div(class: "drawer-side is-drawer-close:overflow-visible border-r-2 border-primary") do
+        label(for: "my-drawer-4", aria: {label: "close sidebar"}, class: "drawer-overlay")
+        div(class: "flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64") do
+          ul(class: "menu bg-base-200 w-full grow") do
+            li {
+              a(href: admin_dashboard_path, class: "is-drawer-close:tooltip is-drawer-close:tooltip-right",
+                data_tip: "Dashboard") {
+                render PhlexIcons::Lucide::LayoutDashboard.new(size: 24, class: "my-1.5 inline-block size-5")
+                span(class: "is-drawer-close:hidden") { "Dashboard" }
+              }
             }
-          }
-          li {
-            a(href: admin_organizations_path, class: "is-drawer-close:tooltip is-drawer-close:tooltip-right",
-              data_tip: "Organizations") {
-              render PhlexIcons::Lucide::Building2.new(size: 24, class: "my-1.5 inline-block size-5")
-              span(class: "is-drawer-close:hidden") { "Organizations" }
+            li {
+              a(href: admin_organizations_path, class: "is-drawer-close:tooltip is-drawer-close:tooltip-right",
+                data_tip: "Organizations") {
+                render PhlexIcons::Lucide::Building2.new(size: 24, class: "my-1.5 inline-block size-5")
+                span(class: "is-drawer-close:hidden") { "Organizations" }
+              }
             }
-          }
-          li {
-            a(href: admin_identity_providers_path, class: "is-drawer-close:tooltip is-drawer-close:tooltip-right",
-              data_tip: "Identity Providers") {
-              render PhlexIcons::Lucide::UserCheck.new(size: 24, class: "my-1.5 inline-block size-5")
-              span(class: "is-drawer-close:hidden") { "Identity Providers" }
+            li {
+              a(href: admin_identity_providers_path, class: "is-drawer-close:tooltip is-drawer-close:tooltip-right",
+                data_tip: "Identity Providers") {
+                render PhlexIcons::Lucide::UserCheck.new(size: 24, class: "my-1.5 inline-block size-5")
+                span(class: "is-drawer-close:hidden") { "Identity Providers" }
+              }
             }
-          }
+          end
         end
       end
     end

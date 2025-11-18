@@ -1,4 +1,4 @@
-class Views::Layouts::NavBar < Views::Base
+class Views::Layouts::DaisyNavBar < Views::Base
   def view_template
     # <nav class="navbar w-full bg-base-300">
     nav(class: "navbar w-full bg-base-300") do

@@ -1,0 +1,20 @@
+class Views::Layouts::TailwindSidebarNav < Views::Base
+  # <%= render Views::Layouts::SideNavBar.new %>
+  # <div class="drawer lg:drawer-open">
+  #   <input id="nav-sidebar-drawer-1" type="checkbox" class="drawer-toggle" />
+
+  #   <div class="drawer-content">
+  #     <%= render Views::Layouts::NavBar.new do %>
+  #       <main class="container max-w-6xl mx-auto p-4">
+  #         <%= render Views::Shared::FlashMessages.new %>
+  #         <%= yield %>
+  #       </main>
+  #     <% end %>
+
+  #     <%= render Views::Layouts::SideNavBarDrawer.new %>
+  #   </div>
+  # </div>
+
+  def view_template
+  end
+end

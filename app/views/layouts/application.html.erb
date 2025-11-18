@@ -26,8 +26,8 @@
   <body>
     <%#= render Views::Layouts::NavBar::NavBar.new(current_user: Current.user) %>
 
-    <%#= render partial: "layouts/daisy_ui_side_nav_bar_drawer" %>
-    <%= render partial: "layouts/tailwind__side_nav_bar_layout" %>
+    <%= render Views::Layouts::DaisySideDrawerNavBar.new { yield } %>
+    <%#= render partial: "layouts/tailwind_side_nav_bar_layout" %>
 
     <%#= render Views::Layouts::Footer.new %>
   </body>
