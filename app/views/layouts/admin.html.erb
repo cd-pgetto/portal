@@ -21,21 +21,28 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
   </head>
 
   <body>
-    <%= render Views::Layouts::NavBar::NavBar.new(current_user: Current.user) %>
-    <div class="drawer lg:drawer-open">
-      <%= render Views::Admin::SideNavBar.new %>
+    <%# Tailwind Sidebar Layout %>
+    <%#= render partial: "layouts/tailwind_sidebar_layout" %>
+    <%= render Views::Layouts::TailwindSidebarLayout.new { yield }%>
 
-      <div class="drawer-content flex flex-col items-center">
-        <main class="container max-w-6xl mx-auto p-4">
-          <%= render Views::Shared::FlashMessages.new %>
-          <%= yield %>
-        </main>
-      </div>
-    </div>
+    <%#= render Views::Layouts::NavBar::NavBar.new(current_user: Current.user) %>
 
-    <%= render Views::Layouts::Footer.new %>
-  </body>
+    <%# <div class="drawer lg:drawer-open"> %>
+    <%#= render Views::Admin::SideNavBar.new %>
+
+    <%# <div class="drawer-content flex flex-col items-center"> %>
+    <main class="flex container max-w-6xl mx-auto p-4">
+      <%= render Views::Shared::FlashMessages.new %>
+      <%= yield %>
+    </main>
+  </div>
+  <%# </div> %>
+
+  <%= render Views::Layouts::Footer.new %>
+</body>
 </html>

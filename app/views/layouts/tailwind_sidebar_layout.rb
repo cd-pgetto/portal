@@ -1,4 +1,4 @@
-class Views::Layouts::SideNavBar < Views::Base
+class Views::Layouts::TailwindSidebarLayout < Views::Base
   def view_template
     # Static sidebar for desktop
     div(class: "hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col dark:bg-gray-900 transition-all duration-300", data_controller: "sidebar", data_sidebar_target: "container") do
