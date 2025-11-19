@@ -21,14 +21,29 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
   </head>
 
   <body>
-    <%#= render Views::Layouts::NavBar::NavBar.new(current_user: Current.user) %>
-
+    <%# DaisyUI Side Drawer NavBar %>
     <%= render Views::Layouts::DaisySideDrawerNavBar.new { yield } %>
-    <%#= render partial: "layouts/tailwind_side_nav_bar_layout" %>
 
+    <%# Tailwind Sidebar Layout %>
+    <%#= render partial: "layouts/tailwind_sidebar_layout" %>
+
+    <%# Tailwind Sidebar Navigation %>
+    <%#= render partial: "layouts/tailwind_sidebar_nav" %>
+    <main class="container max-w-6xl mx-auto p-4">
+      <%#= yield %>
+    </main>
+
+    <%# Base version %>
+    <%#= render Views::Layouts::NavBar::NavBar.new(current_user: Current.user) %>
+    <%#= render Views::Shared::FlashMessages.new %>
+    <%# <main class="container max-w-6xl mx-auto p-4"> %>
+    <%#= yield %>
+    <%# </main> %>
     <%#= render Views::Layouts::Footer.new %>
   </body>
 </html>

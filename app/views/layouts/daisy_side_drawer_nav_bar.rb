@@ -23,6 +23,7 @@ class Views::Layouts::DaisySideDrawerNavBar < Views::Base
       div(class: "drawer-content") do
         render Views::Layouts::DaisyNavBar.new
         div(class: "p-4") do
+          render Views::Shared::FlashMessages.new
           yield
         end
       end
