@@ -1,28 +1,26 @@
 class Admin::IdentityProvidersController < Admin::BaseController
   before_action :set_identity_provider, only: %i[show edit update destroy]
 
+  authorize_resource
+
   # GET /identity_providers or /identity_providers.json
   def index
-    authorize! :read, IdentityProvider
     render Views::Admin::IdentityProviders::Index.new(identity_providers: IdentityProvider.all.order(:name))
   end
 
   # GET /identity_providers/1 or /identity_providers/1.json
   def show
-    authorize! :read, IdentityProvider
     render Views::Admin::IdentityProviders::Show.new(identity_provider: @identity_provider)
   end
 
   # GET /identity_providers/new
   def new
-    authorize! :create, IdentityProvider
     @identity_provider = IdentityProvider.new
     render Views::Admin::IdentityProviders::New.new(identity_provider: @identity_provider)
   end
 
   # POST /identity_providers or /identity_providers.json
   def create
-    authorize! :create, IdentityProvider
     @identity_provider = IdentityProvider.new(identity_provider_params)
 
     respond_to do |format|
@@ -38,13 +36,11 @@ class Admin::IdentityProvidersController < Admin::BaseController
 
   # GET /identity_providers/1/edit
   def edit
-    authorize! :update, IdentityProvider
     render Views::Admin::IdentityProviders::Edit.new(identity_provider: @identity_provider)
   end
 
   # PATCH/PUT /identity_providers/1 or /identity_providers/1.json
   def update
-    authorize! :update, IdentityProvider
     respond_to do |format|
       if @identity_provider.update(identity_provider_params)
         format.html { redirect_to admin_identity_provider_path(@identity_provider), notice: "Identity provider was successfully updated.", status: :see_other }
@@ -58,7 +54,6 @@ class Admin::IdentityProvidersController < Admin::BaseController
 
   # DELETE /identity_providers/1 or /identity_providers/1.json
   def destroy
-    authorize! :destroy, IdentityProvider
     @identity_provider.destroy!
 
     respond_to do |format|

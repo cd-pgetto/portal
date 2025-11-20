@@ -19,7 +19,7 @@ class Views::Admin::Dashboards::Show < Views::Base
         end
         div(class: "stat") do
           div(class: "stat-title") { "Practices" }
-          # div(class: "stat-value") { Practice.count }
+          div(class: "stat-value") { a(href: practices_path) { Practice.count } }
         end
       end
     end

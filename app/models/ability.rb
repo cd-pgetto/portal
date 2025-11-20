@@ -31,6 +31,7 @@ class Ability
       can :manage, Identity
       can :manage, IdentityProvider
       can :manage, Organization
+      can :manage, Practice
       can :manage, User
     end
   end
