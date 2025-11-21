@@ -21,6 +21,7 @@ class Organization < ApplicationRecord
   has_many :dedicated_identity_providers, -> { dedicated }, through: :credentials, source: :identity_provider
 
   has_many :email_domains, dependent: :destroy
+  has_many :practices, dependent: :destroy
 
   has_many :members, class_name: "OrganizationMember", dependent: :destroy
   has_many :users, through: :members
@@ -34,6 +35,7 @@ class Organization < ApplicationRecord
 
   accepts_nested_attributes_for :credentials, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :email_domains, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :practices, allow_destroy: true, reject_if: :all_blank
 
   def self.find_by_email(email)
     domain_name = email_domain(email)

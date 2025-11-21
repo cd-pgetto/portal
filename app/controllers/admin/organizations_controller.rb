@@ -74,6 +74,7 @@ class Admin::OrganizationsController < Admin::BaseController
       :subdomain,
       :password_auth_allowed,
       shared_identity_provider_ids: [],
+      practices_attributes: [:id, :name, :_destroy],
       email_domains_attributes: [:id, :domain_name, :_destroy],
       credentials_attributes: [:id, :_destroy, :identity_provider_id,
         identity_provider_attributes: [:id, :_destroy, :name, :strategy, :icon_url,

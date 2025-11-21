@@ -51,6 +51,12 @@ class Views::Admin::Organizations::Organization < Components::Base
                 }.join(", ")
               }
             end
+
+            # Practices
+            div(class: "pt-2 pb-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0") do
+              dt(class: "opacity-70") { "Practices:" }
+              dd(class: "mt-1 sm:col-span-2 sm:mt-0") { @organization.practices.map(&:name).join(", ") }
+            end
           end
         end
       end

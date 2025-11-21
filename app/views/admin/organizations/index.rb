@@ -18,6 +18,7 @@ class Views::Admin::Organizations::Index < Views::Base
             tr(class: "font-bold border-b border-base-content") do
               th(class: "text-left") { "Name" }
               th { "Subdomain" }
+              th { "Practices" }
               th(class: "whitespace-normal") { "Passwords?" }
               th(class: "whitespace-normal") { "Email Domains" }
               th(class: "whitespace-normal") { "Shared IdPs" }
@@ -30,6 +31,7 @@ class Views::Admin::Organizations::Index < Views::Base
               tr(class: "hover:bg-base-300") do
                 td(class: "text-left") { a(href: admin_organization_path(organization), class: "link link-primary") { organization.name } }
                 td { organization.subdomain }
+                td { organization.practices.count }
                 td { organization.password_auth_allowed? ? "Yes" : "No" }
                 td { organization.email_domains.count }
                 td { organization.shared_identity_providers.count }
@@ -37,10 +39,10 @@ class Views::Admin::Organizations::Index < Views::Base
                 td(class: "border-l border-base-content") do
                   # flex flex-col sm:flex-row gap-1 w-fit mx-auto
                   div(class: "w-full sm:w-auto flex flex-col sm:flex-row justify-center space-x-4 ") do
-                    a(href: edit_admin_organization_path(organization), class: "btn") { render PhlexIcons::Lucide::Pencil.new }
+                    a(href: edit_admin_organization_path(organization), class: "btn") { render PhlexIcons::Lucide::Pencil.new(class: "size-4") }
                     button_to(admin_organization_path(organization), method: :delete, class: "btn",
                       data: {turbo_confirm: "Are you sure?"}) {
-                        render PhlexIcons::Lucide::Trash.new(class: "size-6 text-error")
+                        render PhlexIcons::Lucide::Trash.new(class: "size-4 text-error")
                       }
                   end
                 end
