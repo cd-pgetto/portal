@@ -10,12 +10,11 @@ Rails.application.routes.draw do
   resources :users, only: [:show, :new, :create, :edit, :update]
   resources :passwords, param: :token
 
-  resources :practices
-
   namespace :admin do
     resource :dashboard, only: [:show]
     resources :organizations
     resources :identity_providers
+    resources :practices
   end
 
   root "home#show"

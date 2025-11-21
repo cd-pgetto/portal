@@ -1,4 +1,4 @@
-class PracticesController < ApplicationController
+class Admin::PracticesController < Admin::BaseController
   before_action :set_practice, only: %i[show edit update destroy]
 
   authorize_resource

@@ -29,13 +29,25 @@
     <%#= render Views::Layouts::NavBar::NavBar.new(current_user: Current.user) %>
 
     <%# DaisyUI Side Drawer NavBar %>
-    <%= render Views::Layouts::DaisySideDrawerNavBar.new { yield } %>
+    <%#= render Views::Layouts::DaisySideDrawerNavBar.new { yield } %>
 
     <%# Tailwind Sidebar Layout %>
     <%#= render "layouts/tailwind_sidebar_layout_with_header" %>
     <%#= render Views::Layouts::TailwindSidebarLayoutWithHeader.new { yield }%>
     <%#= render "layouts/tailwind_sidebar_layout" %>
     <%#= render Views::Layouts::TailwindSidebarLayout.new { yield }%>
+
+    <%= render Views::Layouts::NavBar::NavBar.new(current_user: Current.user) %>
+    <div class="drawer lg:drawer-open">
+      <%= render Views::Admin::SideNavBar.new %>
+
+      <div class="drawer-content flex flex-col items-center">
+        <main class="container max-w-6xl mx-auto p-4">
+          <%= render Views::Shared::FlashMessages.new %>
+          <%= yield %>
+        </main>
+      </div>
+    </div>
 
     <%# Base version %>
     <%# <div class="drawer lg:drawer-open"> %>
