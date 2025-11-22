@@ -32,7 +32,7 @@ RSpec.describe Ability, type: :ability do
     end
 
     context "EmailDomain models" do
-      let(:email_domain) { EmailDomain.new(organization_id: user.organization_membership.organization_id) }
+      let(:email_domain) { EmailDomain.new(organization_id: user.organization_membership.business_unit_id) }
       it { is_expected.to be_able_to(:read, email_domain) }
 
       let(:other_email_domain) { EmailDomain.new(organization_id: create(:organization).id) }
@@ -54,7 +54,7 @@ RSpec.describe Ability, type: :ability do
     let(:user) { create(:user) }
     let(:organization) { create(:organization) }
 
-    before { user.create_organization_membership(organization: organization, role: :admin) }
+    before { user.create_organization_membership(business_unit: organization, role: :admin) }
 
     context "EmailDomain models" do
       [:create, :update].each do |action|

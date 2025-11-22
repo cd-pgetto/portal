@@ -17,8 +17,14 @@
 #
 #  fk_rails_...  (organization_id => organizations.id)
 #
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Practice, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe "associations" do
+    it { is_expected.to belong_to(:organization) }
+  end
+
+  describe "validations" do
+    it { is_expected.to validate_presence_of(:name) }
+  end
 end

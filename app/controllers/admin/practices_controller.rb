@@ -20,10 +20,9 @@ class Admin::PracticesController < Admin::BaseController
   # POST /practices or /practices.json
   def create
     @practice = Practice.new(practice_params)
-
     respond_to do |format|
       if @practice.save
-        format.html { redirect_to @practice, notice: "Practice was successfully created." }
+        format.html { redirect_to [:admin, @practice], notice: "Practice was successfully created." }
         format.json { render :show, status: :created, location: @practice }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -40,7 +39,7 @@ class Admin::PracticesController < Admin::BaseController
   def update
     respond_to do |format|
       if @practice.update(practice_params)
-        format.html { redirect_to @practice, notice: "Practice was successfully updated.", status: :see_other }
+        format.html { redirect_to [:admin, @practice], notice: "Practice was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: @practice }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -54,7 +53,7 @@ class Admin::PracticesController < Admin::BaseController
     @practice.destroy!
 
     respond_to do |format|
-      format.html { redirect_to practices_path, notice: "Practice was successfully destroyed.", status: :see_other }
+      format.html { redirect_to admin_practices_path, notice: "Practice was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
     end
   end
@@ -68,6 +67,6 @@ class Admin::PracticesController < Admin::BaseController
 
   # Only allow a list of trusted parameters through.
   def practice_params
-    params.fetch(:practice, {})
+    params.require(:practice).permit(:name, :organization_id)
   end
 end

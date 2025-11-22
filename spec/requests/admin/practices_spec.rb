@@ -17,12 +17,14 @@ RSpec.describe "/admin/practices", type: :request do
   # Practice. As you add validations to Practice, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    {organization_id: create(:organization).id, name: "My Practice"}
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    {name: nil, organization_id: nil}
   }
+
+  before { sign_in_as_admin }
 
   describe "GET /index" do
     it "renders a successful response" do
@@ -42,8 +44,6 @@ RSpec.describe "/admin/practices", type: :request do
 
   describe "GET /new" do
     it "renders a successful response" do
-      sign_in_as_admin
-
       get new_admin_practice_url
       expect(response).to be_successful
     end
@@ -67,7 +67,8 @@ RSpec.describe "/admin/practices", type: :request do
 
       it "redirects to the created practice" do
         post admin_practices_url, params: {practice: valid_attributes}
-        expect(response).to redirect_to(admin_practice_url(Practice.last))
+        # ap response
+        expect(response).to redirect_to(admin_practice_url(Practice.order(:created_at).last))
       end
     end
 
@@ -88,14 +89,14 @@ RSpec.describe "/admin/practices", type: :request do
   describe "PATCH /update" do
     context "with valid parameters" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        {name: "My Updated Practice"}
       }
 
       it "updates the requested practice" do
         practice = Practice.create! valid_attributes
         patch admin_practice_url(practice), params: {practice: new_attributes}
         practice.reload
-        skip("Add assertions for updated state")
+        expect(practice.name).to eq("My Updated Practice")
       end
 
       it "redirects to the practice" do

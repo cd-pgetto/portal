@@ -19,6 +19,8 @@
 #
 class Practice < ApplicationRecord
   belongs_to :organization
+  has_many :members, as: :business_unit, dependent: :destroy
+  has_many :users, through: :members
 
   validates :name, presence: true
 end

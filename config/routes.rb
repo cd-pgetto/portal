@@ -12,9 +12,11 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resource :dashboard, only: [:show]
-    resources :organizations
-    resources :identity_providers
+    resources :organizations do
+      resources :practices
+    end
     resources :practices
+    resources :identity_providers
   end
 
   root "home#show"

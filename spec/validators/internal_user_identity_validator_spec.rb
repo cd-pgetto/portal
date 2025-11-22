@@ -35,7 +35,7 @@ RSpec.describe InternalUserIdentityValidator, type: :model do
       before do
         # Make the user internal by associating with Perceptive organization
         user.save
-        user.create_organization_membership(organization: perceptive_org, role: :member)
+        user.create_organization_membership(business_unit: perceptive_org, role: :member)
         user.reload
       end
 
@@ -205,7 +205,7 @@ RSpec.describe InternalUserIdentityValidator, type: :model do
 
     it "returns early if user has at least one google_oauth2 identity" do
       user.save
-      user.create_organization_membership(organization: perceptive_org, role: :member)
+      user.create_organization_membership(business_unit: perceptive_org, role: :member)
       user.reload
 
       google_provider = IdentityProvider.find_by(strategy: "google_oauth2") ||

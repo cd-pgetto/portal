@@ -32,8 +32,9 @@ class User < ApplicationRecord
 
   has_many :sessions, dependent: :destroy
   has_many :identities, dependent: :destroy
-  has_one :organization_membership, class_name: "OrganizationMember", dependent: :destroy
-  has_one :organization, through: :organization_membership
+  has_many :members, dependent: :destroy
+  has_one :organization_membership, -> { where(business_unit_type: "Organization") }, class_name: "Member", foreign_key: "user_id", dependent: :destroy
+  has_one :organization, through: :organization_membership, source: :business_unit, source_type: "Organization"
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 

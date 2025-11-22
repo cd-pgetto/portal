@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "practices/index", type: :view do
+RSpec.describe "admin/practices/index", type: :view do
   before(:each) do
     assign(:practices, [
       Practice.create!(organization: create(:organization), name: "My Practice 1"),

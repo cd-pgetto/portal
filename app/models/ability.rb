@@ -9,18 +9,20 @@ class Ability
 
     return unless user&.organization_membership
 
-    can :read, EmailDomain, organization_id: user.organization_membership.organization_id
-    can :read, Organization, id: user.organization_membership.organization_id
+    organization_id = user.organization_membership&.business_unit_id
+
+    can :read, EmailDomain, organization_id: organization_id
+    can :read, Organization, id: organization_id
 
     if user.organization_admin?
-      can [:create, :update], EmailDomain, organization_id: user.organization_membership.organization_id
+      can [:create, :update], EmailDomain, organization_id: organization_id
       can [:create, :update], IdentityProvider do |identity_provider|
         !identity_provider.shared? &&
-          identity_provider.organization_ids.include?(user.organization_membership.organization_id)
+          identity_provider.organization_ids.include?(organization_id)
       end
-      can :update, Organization, id: user.organization_membership.organization_id
+      can :update, Organization, id: organization_id
       can [:create, :update], Credential,
-        organization_id: user.organization_membership.organization_id
+        organization_id: organization_id
     end
 
     if user.system_admin?

@@ -23,7 +23,7 @@ class Organization < ApplicationRecord
   has_many :email_domains, dependent: :destroy
   has_many :practices, dependent: :destroy
 
-  has_many :members, class_name: "OrganizationMember", dependent: :destroy
+  has_many :members, as: :business_unit, dependent: :destroy
   has_many :users, through: :members
 
   normalizes :subdomain, with: ->(value) { value.strip.downcase }
@@ -31,7 +31,7 @@ class Organization < ApplicationRecord
   validates :name, presence: true
   validates :subdomain, presence: true, uniqueness: {case_sensitive: false},
     length: {minimum: 1, maximum: 63}, format: {with: DomainName::SUBDOMAIN_REGEXP}
-  validates :identity_providers, presence: {message: "must have at least one identity provider if password authentication is not allowed", unless: :password_auth_allowed}
+  validates :identity_providers, presence: {message: "must exist if password authentication is not allowed", unless: :password_auth_allowed}
 
   accepts_nested_attributes_for :credentials, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :email_domains, allow_destroy: true, reject_if: :all_blank

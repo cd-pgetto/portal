@@ -7,7 +7,7 @@ module Users
     user.identities.build(identity_provider: google_idp, provider_user_id: "123456789")
 
     perceptive = Organization.find_by(subdomain: "perceptive") || create(:perceptive)
-    user.build_organization_membership(organization: perceptive, role: :member)
+    user.build_organization_membership(business_unit: perceptive, role: :member)
     user.save!
     user.reload
   end
