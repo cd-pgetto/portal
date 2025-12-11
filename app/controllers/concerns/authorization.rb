@@ -15,7 +15,7 @@ module Authorization
     rescue_from CanCan::AccessDenied do |_exception|
       respond_to do |format|
         format.html do
-          redirect_to(Current.user || root_url, alert: "You are not authorized to access that page.")
+          redirect_to(home_path, alert: "You are not authorized to access that page.")
         end
       end
     end

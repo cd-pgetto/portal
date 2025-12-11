@@ -3,16 +3,15 @@
 # Table name: users
 # Database name: primary
 #
-#  id                  :uuid             not null, primary key
-#  email_address       :string           not null
-#  failed_login_count  :integer          default(0), not null
-#  first_name          :string           not null
-#  last_name           :string           not null
-#  original_first_name :string           not null
-#  original_last_name  :string           not null
-#  password_digest     :string           not null
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
+#  id                 :uuid             not null, primary key
+#  email_address      :string           not null
+#  failed_login_count :integer          default(0), not null
+#  first_name         :string           not null
+#  identities_count   :integer          default(0), not null
+#  last_name          :string           not null
+#  password_digest    :string           not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
 #
 # Indexes
 #
@@ -22,9 +21,6 @@ class User < ApplicationRecord
   include Authenticatable
   include Lockable
 
-  encrypts :first_name, :last_name, deterministic: true, ignore_case: true
-  encrypts :email_address, deterministic: true, downcase: true
-
   has_secure_password(validations: false)
 
   # Generate secure tokens for password reset (expires in 15 minutes)
@@ -32,8 +28,13 @@ class User < ApplicationRecord
 
   has_many :sessions, dependent: :destroy
   has_many :identities, dependent: :destroy
-  has_one :organization_membership, class_name: "OrganizationMember", dependent: :destroy
+
+  has_one :organization_membership, dependent: :destroy, class_name: "OrganizationMember"
+  has_one :organization_admin, -> { where(role: "admin") }, class_name: "OrganizationMember"
   has_one :organization, through: :organization_membership
+
+  has_many :practice_memberships, dependent: :destroy, class_name: "PracticeMember"
+  has_many :practices, through: :practice_memberships
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
@@ -81,7 +82,7 @@ class User < ApplicationRecord
   end
 
   def system_admin?
-    internal? && organization_membership&.admin?
+    internal? && organization_admin?
   end
 
   def internal?
@@ -89,6 +90,6 @@ class User < ApplicationRecord
   end
 
   def organization_admin?
-    organization_membership&.admin?
+    organization_admin.present?
   end
 end

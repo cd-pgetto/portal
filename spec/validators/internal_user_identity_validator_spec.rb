@@ -68,7 +68,7 @@ RSpec.describe InternalUserIdentityValidator, type: :model do
         end
 
         it "allows the user to have the correct oauth identity" do
-          expect(user.identities.count).to eq(1)
+          expect(user.identities_count).to eq(1)
           expect(user.identities.first.identity_provider.strategy).to eq("google_oauth2")
         end
       end
@@ -129,7 +129,7 @@ RSpec.describe InternalUserIdentityValidator, type: :model do
 
         it "allows internal users with Google plus other oauth identities" do
           expect(user).to be_valid
-          expect(user.identities.count).to eq(2)
+          expect(user.identities_count).to eq(2)
         end
       end
 

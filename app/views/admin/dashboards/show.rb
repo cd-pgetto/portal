@@ -10,16 +10,16 @@ class Views::Admin::Dashboards::Show < Views::Base
         end
         div(class: "stat") do
           div(class: "stat-title") { "Identity Providers" }
-          div(class: "stat-value") { IdentityProvider.count }
+          div(class: "stat-value") { a(href: admin_identity_providers_path) { IdentityProvider.count } }
           div(class: "stat-desc") { "#{IdentityProvider.shared.count} shared, #{IdentityProvider.dedicated.count} dedicated" }
         end
         div(class: "stat") do
           div(class: "stat-title") { "Users" }
-          div(class: "stat-value") { User.count }
+          div(class: "stat-value") { a(href: admin_users_path) { User.count } }
         end
         div(class: "stat") do
           div(class: "stat-title") { "Practices" }
-          # div(class: "stat-value") { Practice.count }
+          div(class: "stat-value") { a(href: admin_practices_path) { Practice.count } }
         end
       end
     end

@@ -8,28 +8,61 @@ class Views::Admin::Organizations::Form < Components::Base
       render Views::Shared::ErrorMessages.new(resource: @organization)
 
       fieldset(class: "fieldset bg-base-200 border border-base-content rounded-box w-full p-4 mb-4") do
-        # Org name
-        form.label(:name, class: "label tracking-wide ")
-        form.text_field(:name, class: "input", required: true)
+        div(class: "grid grid-cols-2 gap-4 mt-4") do
+          # Shared Identity Providers
+          div do
+            # Org name
+            div do
+              form.label(:name, class: "block label tracking-wide ")
+              form.text_field(:name, class: "input", required: true)
+            end
 
-        # Subdomain
-        form.label(:subdomain, class: "label tracking-wide mt-4")
-        form.label(:subdomain, class: "input") do
-          form.text_field(:subdomain, required: true)
-          span(class: "label") { ".perceptiveportal.com" }
-        end
+            # Subdomain
+            div do
+              form.label(:subdomain, class: "block label tracking-wide mt-4")
+              form.label(:subdomain, class: "input") do
+                form.text_field(:subdomain, required: true)
+                span(class: "label") { ".perceptiveportal.com" }
+              end
+            end
 
-        # Password authentication option - password_auth_allowed
-        span(class: "label mt-4") { "Password Authentication" }
-        form.label(:password_auth_allowed, class: "label") do
-          form.checkbox(:password_auth_allowed, class: "checkbox bg-base-100", id: "parent_checkbox",
-            data: {controller: "toggle-checkbox", action: "toggle-checkbox#toggle"})
-          plain "Password Authentication Allowed"
+            # Password authentication option - password_auth_allowed
+            div(class: "block") do
+              div(class: "block label mt-4") { "Password Authentication" }
+              form.label(:password_auth_allowed, class: "label") do
+                form.checkbox(:password_auth_allowed, class: "checkbox bg-base-100", id: "parent_checkbox",
+                  data: {controller: "toggle-checkbox", action: "toggle-checkbox#toggle"})
+                plain "Password Authentication Allowed"
+              end
+            end
+          end
+
+          # Practices
+          div(data: {controller: "nested-form"}) do
+            div(class: "flex flex-row gap-x-4 items-center mb-2") do
+              div { "Practices" }
+              button(class: "btn btn-xs btn-outline", data: {action: "click->nested-form#addNestedForm"}) {
+                render PhlexIcons::Lucide::Plus.new(class: "size-4")
+              }
+            end
+
+            # Existing practices
+            div(data: {nested_form_target: "container"}) do
+              form.fields_for(:practices) do |practice_form|
+                render_practice_fields(practice_form)
+              end
+            end
+
+            # Template for new practices
+            template(data: {nested_form_target: "template"}) do
+              render_practice_template(form)
+            end
+          end
         end
 
         div(class: "grid grid-cols-2 gap-4 mt-4") do
           # Shared Identity Providers
-          div(class: "") do
+          div do
             div(class: "mb-2") { "Shared Identity Providers" }
             shared_providers = IdentityProvider.shared.order(:name)
             form.collection_check_boxes(:shared_identity_provider_ids, shared_providers, :id, :name) do |shared_idp|
@@ -41,7 +74,7 @@ class Views::Admin::Organizations::Form < Components::Base
           end
 
           # Email Domains
-          div(class: "", data: {controller: "nested-form"}) do
+          div(data: {controller: "nested-form"}) do
             div(class: "flex flex-row gap-x-4 items-center mb-2") do
               div { "Email Domains" }
               button(class: "btn btn-xs btn-outline", data: {action: "click->nested-form#addNestedForm"}) {
@@ -102,6 +135,34 @@ class Views::Admin::Organizations::Form < Components::Base
 
   def render_email_domain_field(form)
     form.text_field(:domain_name, class: "input", placeholder: "example.com")
+  end
+
+  def render_practice_template(form)
+    form.fields_for(:practices, Practice.new, child_index: "NEW_RECORD") do |practice_form|
+      div(class: "flex gap-2 items-center mb-2", data: {nested_form_item: true}) do
+        render_practice_field(practice_form)
+        render_remove_new_record_button(form)
+      end
+    end
+  end
+
+  def render_practice_fields(form)
+    div(class: "flex gap-2 items-center mb-2", data: {nested_form_item: true}) do
+      render_practice_field(form)
+      if form.object&.persisted?
+        form.hidden_field(:_destroy)
+        label(class: "label cursor-pointer gap-2") do
+          form.checkbox(:_destroy, class: "checkbox checkbox-sm bg-base-100")
+          span(class: "text-sm") { "Remove" }
+        end
+      else
+        render_remove_new_record_button(form)
+      end
+    end
+  end
+
+  def render_practice_field(form)
+    form.text_field(:name, class: "input")
   end
 
   def render_remove_new_record_button(form)

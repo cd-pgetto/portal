@@ -23,7 +23,7 @@
 require "rails_helper"
 
 RSpec.describe OrganizationMember, type: :model do
-  subject { build(:organization_member) }
+  subject { build(:organization_member, organization: build(:organization)) }
 
   describe "associations" do
     it { is_expected.to belong_to(:organization) }
@@ -64,14 +64,14 @@ RSpec.describe OrganizationMember, type: :model do
   end
 
   describe "validations" do
-    context "when creating without organization" do
+    context "when creating without an organization" do
       subject { build(:organization_member, organization: nil) }
 
       it { is_expected.to be_invalid }
     end
 
     context "when creating without user" do
-      subject { build(:organization_member, user: nil) }
+      subject { build(:organization_member, user: nil, organization: build(:organization)) }
 
       it { is_expected.to be_invalid }
     end
@@ -79,22 +79,18 @@ RSpec.describe OrganizationMember, type: :model do
 
   describe "database constraints" do
     it "requires organization_id" do
-      member = build(:organization_member, organization: create(:organization), user: create(:user))
-      member.save!
+      organization_member = create(:organization_member, organization: build(:organization), user: build(:user))
 
       expect {
-        member.update_column(:organization_id, nil)
-        member.reload
+        organization_member.update_column(:organization_id, nil)
       }.to raise_error(ActiveRecord::NotNullViolation)
     end
 
     it "requires user_id" do
-      member = build(:organization_member, organization: create(:organization), user: create(:user))
-      member.save!
+      organization_member = create(:organization_member, organization: build(:organization), user: build(:user))
 
       expect {
-        member.update_column(:user_id, nil)
-        member.reload
+        organization_member.update_column(:user_id, nil)
       }.to raise_error(ActiveRecord::NotNullViolation)
     end
   end

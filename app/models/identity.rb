@@ -21,7 +21,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Identity < ApplicationRecord
-  belongs_to :user
+  belongs_to :user, counter_cache: true
   belongs_to :identity_provider
 
   validates :provider_user_id, presence: true

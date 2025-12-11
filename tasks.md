@@ -35,7 +35,7 @@
       no associated Oauth identities, show password field.
 - [X] Improve test coverage for new sessions to cover all organization rules (pw allowed/denied, IdPs, etc)
 - [ ] Implement 2FA, add as optional requirement for Org's
-- [ ] Implement Lockout based on too many failed attempts
+- [X] Implement Lockout based on too many failed attempts
 - [ ] Add identity providers - [ ] Apple, [ ] Auth0(?), [X] Google, [ ] Microsoft, [ ] Okta, [ ] OneLogin(?)
 
 ## Admin Pages / Users
@@ -43,16 +43,16 @@
 - [X] Refactor Perceptive model
 - [X] Add link for Dashboard to the side nav bar
 - [ ] Add link for Users to the side nav bar
-- [ ] Add link for Practices to the side nav bar
+- [X] Add link for Practices to the side nav bar
 - [X] Add "stat" for Identity Providers
-- [ ] Update IDP index page to table
+- [ ] Update IdP index page to table
 - [X] Update Org show page to list email domains and improve layout (look at IDP index page for layout details?)
 - [ ] Add User index, show, edit, etc pages
 
 
 ## Practice and patients
 
-- [ ] Implement practice and role model
+- [X] Implement practice and role model
 - [ ] Practice admin, including invitations, changing roles, etc.
 - [ ] Implement patient and subordinate models (scan, diagnostic model, jaw, tooth, findings, etc)
 - [ ] Implement scan data models

@@ -181,7 +181,7 @@ RSpec.describe "Users", type: :request do
 
         put user_path(user), params: {user: new_user_data}
         expect(response).to have_http_status(:redirect)
-        expect(response).to redirect_to(user_path(another_user))
+        expect(response).to redirect_to(home_path)
         expect(flash[:alert]).to include("You are not authorized to access that page.")
 
         user.reload

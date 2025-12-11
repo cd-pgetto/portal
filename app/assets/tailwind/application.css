@@ -66,7 +66,7 @@
   }
 }
 
-@font-face {
+/*@font-face {
   font-family: "AcidGrotesk";
   src:
     url("FFF-AcidGrotesk-Regular.woff2") format("woff2"),
@@ -84,10 +84,9 @@
   font-weight: normal;
   font-style: normal;
   font-display: swap;
-}
+}*/
 
 @layer base {
-
   *,
   ::after,
   ::before,
@@ -113,7 +112,8 @@
   }
 
   body {
-    font-family: "AcidGrotesk", "Inter", Arial, sans-serif;
+    /*font-family: "AcidGrotesk", "Inter", Arial, sans-serif;*/
+    font-family: "Inter", var(--default-font-family);
   }
 }
 

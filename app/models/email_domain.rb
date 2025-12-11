@@ -19,7 +19,7 @@
 #  fk_rails_...  (organization_id => organizations.id)
 #
 class EmailDomain < ApplicationRecord
-  belongs_to :organization
+  belongs_to :organization, counter_cache: true
 
   validates :domain_name, presence: true, uniqueness: {case_sensitive: false},
     format: {with: DomainName::FULL_DOMAIN_REGEXP}
