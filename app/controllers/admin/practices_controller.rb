@@ -5,7 +5,7 @@ class Admin::PracticesController < Admin::BaseController
 
   # GET /practices or /practices.json
   def index
-    render Views::Admin::Practices::Index.new(practices: Practice.includes([:organization, :users]).order(:name).all)
+    render Views::Admin::Practices::Index.new(practices: Practice.includes([:organization]).order(:name).all)
   end
 
   # GET /practices/1 or /practices/1.json

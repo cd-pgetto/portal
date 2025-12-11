@@ -4,8 +4,8 @@
 # Database name: primary
 #
 #  id         :uuid             not null, primary key
-#  number     :integer          not null # Numbers are 1..8 from central to 3rd molar in each quadrant
-#  side       :enum             not null # Right or left; Upper / lower come from the Jaw
+#  number     :integer          not null
+#  side       :enum             not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  jaw_id     :uuid             not null
