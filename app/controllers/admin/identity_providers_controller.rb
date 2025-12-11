@@ -28,8 +28,8 @@ class Admin::IdentityProvidersController < Admin::BaseController
         format.html { redirect_to admin_identity_provider_path(@identity_provider), notice: "Identity provider was successfully created." }
         format.json { render :show, status: :created, location: @identity_provider }
       else
-        format.html { render Views::Admin::IdentityProviders::New.new(identity_provider: @identity_provider), status: :unprocessable_entity }
-        format.json { render json: @identity_provider.errors, status: :unprocessable_entity }
+        format.html { render Views::Admin::IdentityProviders::New.new(identity_provider: @identity_provider), status: :unprocessable_content }
+        format.json { render json: @identity_provider.errors, status: :unprocessable_content }
       end
     end
   end
@@ -46,8 +46,8 @@ class Admin::IdentityProvidersController < Admin::BaseController
         format.html { redirect_to admin_identity_provider_path(@identity_provider), notice: "Identity provider was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: @identity_provider }
       else
-        format.html { render Views::Admin::IdentityProviders::Edit.new(identity_provider: @identity_provider), status: :unprocessable_entity }
-        format.json { render json: @identity_provider.errors, status: :unprocessable_entity }
+        format.html { render Views::Admin::IdentityProviders::Edit.new(identity_provider: @identity_provider), status: :unprocessable_content }
+        format.json { render json: @identity_provider.errors, status: :unprocessable_content }
       end
     end
   end

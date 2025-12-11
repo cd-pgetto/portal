@@ -18,7 +18,7 @@
 #
 #  fk_rails_...  (jaw_id => jaws.id)
 #
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Tooth, type: :model do
   pending "add some examples to (or delete) #{__FILE__}"

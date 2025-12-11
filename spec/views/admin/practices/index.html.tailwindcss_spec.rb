@@ -10,6 +10,6 @@ RSpec.describe "admin/practices/index", type: :view do
 
   it "renders a list of practices" do
     render
-    cell_selector = "div>p"
+    "div>p"
   end
 end

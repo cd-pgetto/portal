@@ -8,14 +8,14 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-if Rails.env.development? || Rails.env.test?
+if Rails.env.local?
   IdentityProvider.destroy_all
   Organization.destroy_all
   User.where.not(email_address: "phil@perceptive.io").destroy_all
 end
 
 IdentityProvider.available_strategies.each do |strategy|
-  next unless Rails.application.credentials.dig(:omniauth, strategy.to_sym, :client_id).present?
+  next if Rails.application.credentials.dig(:omniauth, strategy.to_sym, :client_id).blank?
 
   idp = IdentityProvider.find_or_initialize_by(strategy: strategy)
   idp.update(name: strategy.to_s.titleize.split.first, icon_url: "#{strategy.dasherize}-icon.svg",
@@ -41,8 +41,10 @@ admin_user.build_organization_membership(organization: org, role: :admin)
 admin_user.identities << Identity.new(identity_provider: google_idp, provider_user_id: "107480982343427960619")
 admin_user.save!
 
+# standard:disable Rails/Output
 ap "Ensured existence of organization #{org.name} with admin user #{admin_user.email_address}."
+# standard:enable Rails/Output
 
 if Rails.env.development?
-  load Rails.root.join("db", "seeds", "development.rb")
+  load Rails.root.join("db/seeds/development.rb")
 end

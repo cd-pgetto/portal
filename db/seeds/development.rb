@@ -1,3 +1,4 @@
+# standard:disable Rails/Output
 %w[apple auth0 facebook github linkedin twitter].each do |strategy|
   IdentityProvider.create!(name: strategy.titleize.split.first, strategy: strategy,
     availability: "shared", icon_url: "test-icon.svg",
@@ -89,3 +90,4 @@ maxilla = dental_model.jaws.create!(jaw_type: :maxilla)
 end
 
 ap "Added teeth for patient #{pt.patient_number} in practice #{pt.practice.name} with owner #{pt.practice.first_owner.email_address}"
+# standard:enable Rails/Output

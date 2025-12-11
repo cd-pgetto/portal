@@ -5,6 +5,6 @@ RSpec.describe "patients/index", type: :view do
 
   it "renders a list of patients" do
     render
-    cell_selector = "div>p"
+    "div>p"
   end
 end
