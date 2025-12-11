@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_08_140222) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_11_210006) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -110,6 +110,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_08_140222) do
     t.index ["dental_model_id"], name: "index_jaws_on_dental_model_id"
   end
 
+  create_table "okta_identity_providers", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.uuid "identity_provider_id", null: false
+    t.string "okta_domain", null: false
+    t.datetime "updated_at", null: false
+    t.index ["identity_provider_id"], name: "index_okta_identity_providers_on_identity_provider_id"
+  end
+
   create_table "organization_members", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.uuid "organization_id", null: false
@@ -200,6 +208,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_08_140222) do
   add_foreign_key "identities", "identity_providers"
   add_foreign_key "identities", "users"
   add_foreign_key "jaws", "dental_models"
+  add_foreign_key "okta_identity_providers", "identity_providers"
   add_foreign_key "organization_members", "organizations"
   add_foreign_key "organization_members", "users"
   add_foreign_key "patients", "practices"
