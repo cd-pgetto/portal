@@ -4,8 +4,10 @@
 # Database name: primary
 #
 #  id                    :uuid             not null, primary key
+#  email_domains_count   :integer          default(0), not null
 #  name                  :string           not null
 #  password_auth_allowed :boolean          default(TRUE), not null
+#  practices_count       :integer          default(0), not null
 #  subdomain             :string           not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
@@ -21,6 +23,7 @@ class Organization < ApplicationRecord
   has_many :dedicated_identity_providers, -> { dedicated }, through: :credentials, source: :identity_provider
 
   has_many :email_domains, dependent: :destroy
+  has_many :practices, dependent: :destroy
 
   has_many :members, class_name: "OrganizationMember", dependent: :destroy
   has_many :users, through: :members
@@ -30,10 +33,11 @@ class Organization < ApplicationRecord
   validates :name, presence: true
   validates :subdomain, presence: true, uniqueness: {case_sensitive: false},
     length: {minimum: 1, maximum: 63}, format: {with: DomainName::SUBDOMAIN_REGEXP}
-  validates :identity_providers, presence: {message: "must have at least one identity provider if password authentication is not allowed", unless: :password_auth_allowed}
+  validates :identity_providers, presence: {message: "must exist if password authentication is not allowed", unless: :password_auth_allowed}
 
   accepts_nested_attributes_for :credentials, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :email_domains, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :practices, allow_destroy: true, reject_if: :all_blank
 
   def self.find_by_email(email)
     domain_name = email_domain(email)
@@ -51,10 +55,6 @@ class Organization < ApplicationRecord
 
   def primary_email_domain
     email_domains.order(:created_at).first&.domain_name
-  end
-
-  def identity_provider_allowed?(provider)
-    identity_providers.exists?(name: provider.name)
   end
 
   def email_allowed?(email)

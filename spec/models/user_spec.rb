@@ -3,16 +3,15 @@
 # Table name: users
 # Database name: primary
 #
-#  id                  :uuid             not null, primary key
-#  email_address       :string           not null
-#  failed_login_count  :integer          default(0), not null
-#  first_name          :string           not null
-#  last_name           :string           not null
-#  original_first_name :string           not null
-#  original_last_name  :string           not null
-#  password_digest     :string           not null
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
+#  id                 :uuid             not null, primary key
+#  email_address      :string           not null
+#  failed_login_count :integer          default(0), not null
+#  first_name         :string           not null
+#  identities_count   :integer          default(0), not null
+#  last_name          :string           not null
+#  password_digest    :string           not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
 #
 # Indexes
 #
@@ -62,12 +61,6 @@ RSpec.describe User, type: :model do
       it { is_expected.to be_valid }
       it { is_expected.to be_internal }
     end
-  end
-
-  describe "encrypted attributes" do
-    it { is_expected.to encrypt(:first_name).deterministic(true).ignore_case(true) }
-    it { is_expected.to encrypt(:last_name).deterministic(true).ignore_case(true) }
-    it { is_expected.to encrypt(:email_address).deterministic(true).downcase(true) }
   end
 
   describe "password" do

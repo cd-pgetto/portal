@@ -1,0 +1,14 @@
+<div id="<%= dom_id practice %>" class="w-full sm:w-auto my-5 space-y-5">
+  <p class="font-medium"><strong>Name:</strong> <%= practice.name %></p>
+
+  <p class="font-medium"><strong>Organization:</strong>
+    <%= link_to(practice.organization.name, admin_organization_path(practice.organization), class: "text-primary hover:underline") %>
+  </p>
+
+  <p><strong>Members:</strong> <%= practice.members.count %></p>
+  <ul>
+    <% practice.members.each do |member| %>
+      <li><%= member.user.full_name %>, <%= member.role %> (<%= member.user.email_address %>)</li>
+    <% end %>
+  </ul>
+</div>

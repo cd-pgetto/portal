@@ -1,29 +1,26 @@
 class Admin::OrganizationsController < Admin::BaseController
   before_action :set_organization, only: %i[show edit update destroy]
 
+  authorize_resource
+
   # GET /admin/organizations or /admin/organizations.json
   def index
-    authorize! :read, Organization
-    render Views::Admin::Organizations::Index.new(organizations: Organization.all)
+    render Views::Admin::Organizations::Index.new(organizations: Organization.order(:name).all)
   end
 
   # GET /admin/organizations/1 or /admin/organizations/1.json
   def show
-    authorize! :read, @organization
     render Views::Admin::Organizations::Show.new(organization: @organization)
   end
 
   # GET /admin/organizations/new
   def new
-    authorize! :create, Organization
     render Views::Admin::Organizations::New.new(organization: Organization.new)
   end
 
   # POST /admin/organizations or /admin/organizations.json
   def create
     @organization = Organization.new(organization_params)
-    authorize! :create, @organization
-
     respond_to do |format|
       if @organization.save
         format.html { redirect_to admin_organization_path(@organization), notice: "Organization was successfully created." }
@@ -37,13 +34,11 @@ class Admin::OrganizationsController < Admin::BaseController
 
   # GET /admin/organizations/1/edit
   def edit
-    authorize! :update, @organization
     render Views::Admin::Organizations::Edit.new(organization: @organization)
   end
 
   # PATCH/PUT /admin/organizations/1 or /admin/organizations/1.json
   def update
-    authorize! :update, @organization
     respond_to do |format|
       if @organization.update(organization_params)
         format.html { redirect_to admin_organization_path(@organization), notice: "Organization was successfully updated.", status: :see_other }
@@ -57,7 +52,6 @@ class Admin::OrganizationsController < Admin::BaseController
 
   # DELETE /admin/organizations/1 or /admin/organizations/1.json
   def destroy
-    authorize! :destroy, @organization
     @organization.destroy!
 
     respond_to do |format|
@@ -70,7 +64,7 @@ class Admin::OrganizationsController < Admin::BaseController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_organization
-    @organization = Organization.includes(credentials: :identity_provider).find(params.expect(:id))
+    @organization = Organization.find(params.expect(:id))
   end
 
   # Only allow a list of trusted parameters through.
@@ -80,6 +74,7 @@ class Admin::OrganizationsController < Admin::BaseController
       :subdomain,
       :password_auth_allowed,
       shared_identity_provider_ids: [],
+      practices_attributes: [:id, :name, :_destroy],
       email_domains_attributes: [:id, :domain_name, :_destroy],
       credentials_attributes: [:id, :_destroy, :identity_provider_id,
         identity_provider_attributes: [:id, :_destroy, :name, :strategy, :icon_url,

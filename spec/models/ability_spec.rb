@@ -1,6 +1,6 @@
 require "rails_helper"
 
-MANAGED_MODELS = [Credential, EmailDomain, IdentityProvider, Organization, User].freeze
+MANAGED_MODELS = [Credential, EmailDomain, IdentityProvider, Organization, User, Practice].freeze
 ACTIONS = [:create, :read, :update, :destroy, :manage].freeze
 
 RSpec.describe Ability, type: :ability do
@@ -43,7 +43,19 @@ RSpec.describe Ability, type: :ability do
       }
     end
 
-    (MANAGED_MODELS - [User, EmailDomain]).each do |model|
+    context "Practice models" do
+      let(:practice) { create(:practice, users: [user], organization_id: user.organization_membership.organization_id) }
+      it { is_expected.to be_able_to(:read, practice) }
+
+      let(:other_practice) { Practice.new(organization_id: create(:organization).id) }
+      it { is_expected.not_to be_able_to(:read, other_practice) }
+
+      [:create, :update, :destroy, :manage].each { |action|
+        it { is_expected.not_to be_able_to(action, practice) }
+      }
+    end
+
+    (MANAGED_MODELS - [User, EmailDomain, Practice]).each do |model|
       ACTIONS.each do |action|
         it { is_expected.not_to be_able_to(action, model.new) }
       end
@@ -71,20 +83,20 @@ RSpec.describe Ability, type: :ability do
       [:create, :update].each do |action|
         it {
           identity_provider = IdentityProvider.new
-          allow(identity_provider).to receive(:shared?).and_return(false)
+          allow(identity_provider).to receive(:dedicated?).and_return(true)
           allow(identity_provider).to receive(:organization_ids).and_return([organization.id])
           is_expected.to be_able_to(action, identity_provider)
         }
 
         it {
           identity_provider = IdentityProvider.new
-          allow(identity_provider).to receive(:shared?).and_return(true)
+          allow(identity_provider).to receive(:dedicated?).and_return(false)
           is_expected.not_to be_able_to(action, identity_provider)
         }
 
         it {
           identity_provider = IdentityProvider.new
-          allow(identity_provider).to receive(:shared?).and_return(false)
+          allow(identity_provider).to receive(:dedicated?).and_return(true)
           allow(identity_provider).to receive(:organization_ids).and_return([create(:organization).id])
           is_expected.not_to be_able_to(action, identity_provider)
         }

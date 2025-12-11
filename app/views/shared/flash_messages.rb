@@ -21,7 +21,7 @@ class Views::Shared::FlashMessages < Components::Base
   def render_message(type)
     return if (message = flash[type]).blank?
 
-    div(class: "#{bg_color_for(type)} px-6 py-4 mt-4 rounded-md flex gap-x-2 items-center mx-auto w-3/4 xl:w-2/4") do
+    div(class: "#{bg_color_for(type)} px-6 py-4 my-4 rounded-md flex gap-x-2 items-center mx-auto w-3/4 xl:w-2/4") do
       render icon_component_class(type).new(class: ["icon-#{type} size-6", text_color_for(type)])
       span(class: text_color_for(type)) { message }
     end

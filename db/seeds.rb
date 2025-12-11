@@ -8,7 +8,12 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-IdentityProvider.destroy_all
+if Rails.env.development? || Rails.env.test?
+  IdentityProvider.destroy_all
+  Organization.destroy_all
+  User.where.not(email_address: "phil@perceptive.io").destroy_all
+end
+
 IdentityProvider.available_strategies.each do |strategy|
   next unless Rails.application.credentials.dig(:omniauth, strategy.to_sym, :client_id).present?
 
@@ -17,15 +22,27 @@ IdentityProvider.available_strategies.each do |strategy|
     availability: "shared",
     client_id: Rails.application.credentials.dig(:omniauth, strategy, :client_id),
     client_secret: Rails.application.credentials.dig(:omniauth, strategy, :client_secret))
-  ap idp
 end
+
+google_idp = IdentityProvider.find_by(strategy: "google_oauth2", availability: "shared")
 
 org = Organization.find_or_initialize_by(subdomain: "perceptive")
 org.update(name: "Perceptive", password_auth_allowed: false,
-  identity_providers: [IdentityProvider.find_by(strategy: "google_oauth2", availability: "shared")],
+  identity_providers: [google_idp],
   email_domains: [
     EmailDomain.new(domain_name: "perceptive.io"),
     EmailDomain.new(domain_name: "cyberdontics.io"),
     EmailDomain.new(domain_name: "cyberdontics.co")
   ])
-ap org
+
+admin_user = User.find_or_initialize_by(email_address: "phil@perceptive.io")
+admin_user.update(first_name: "Phil", last_name: "Getto", password: User.random_password)
+admin_user.build_organization_membership(organization: org, role: :admin)
+admin_user.identities << Identity.new(identity_provider: google_idp, provider_user_id: "107480982343427960619")
+admin_user.save!
+
+ap "Ensured existence of organization #{org.name} with admin user #{admin_user.email_address}."
+
+if Rails.env.development?
+  load Rails.root.join("db", "seeds", "development.rb")
+end

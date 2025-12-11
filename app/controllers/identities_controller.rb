@@ -6,10 +6,9 @@ class IdentitiesController < ApplicationController
   #
   def create
     # Check if the provider is supported, reject otherwise
-    identity_provider = IdentityProvider.find_by(strategy: params[:provider])
+    identity_provider = organization.identity_providers.find_by(strategy: params[:provider])
 
-    return redirect_to new_session_path, alert: "Authentication provider not supported." unless identity_provider
-    return redirect_to new_session_path, alert: "Authentication provider not allowed." unless organization.identity_provider_allowed?(identity_provider)
+    return redirect_to new_session_path, alert: "Authentication provider not allowed." unless identity_provider
     return redirect_to new_session_path, alert: "Email not allowed for #{organization.name}." unless organization.email_allowed?(user_email)
 
     provider_user_id = auth_params[:provider_user_id]

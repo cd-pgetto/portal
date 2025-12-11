@@ -1,14 +1,14 @@
 class UsersController < ApplicationController
+  before_action :set_user, only: %i[show edit update]
+
   allow_unauthenticated_access only: %i[new create]
   skip_authorization_check only: %i[new create]
+  authorize_resource except: %i[new create edit update]
   before_action :redirect_signed_in_user, only: %i[new create]
-
-  before_action :set_user, only: %i[show edit update]
 
   NUMBER_OF_STEPS = 2
 
   def show
-    authorize! :read, @user
     render Views::Users::Show.new(user: @user)
   end
 
