@@ -1,8 +1,6 @@
 class Admin::PracticesController < Admin::BaseController
   before_action :set_practice, only: %i[edit update destroy]
 
-  authorize_resource
-
   # GET /practices or /practices.json
   def index
     render Views::Admin::Practices::Index.new(practices: Practice.includes([:organization]).order(:name).all)

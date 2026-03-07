@@ -1,8 +1,6 @@
 class Admin::IdentityProvidersController < Admin::BaseController
   before_action :set_identity_provider, only: %i[show edit update destroy]
 
-  authorize_resource
-
   # GET /identity_providers or /identity_providers.json
   def index
     render Views::Admin::IdentityProviders::Index.new(identity_providers: IdentityProvider.all.order(:name))

@@ -1,22 +1,26 @@
 class PracticesController < ApplicationController
   before_action :set_practice, only: [:show, :edit, :update, :select]
-  authorize_resource
 
   def index
+    authorize Practice
     @practices = Current.user.practices.distinct.order(:name)
   end
 
   def show
+    authorize @practice
     render Views::Practices::Show.new(practice: @practice)
   end
 
   def edit
+    authorize @practice
   end
 
   def update
+    authorize @practice
   end
 
   def select
+    authorize @practice
     if @practice
       select_current_practice(@practice)
       redirect_to practice_path(@practice)

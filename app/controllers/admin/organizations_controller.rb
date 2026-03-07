@@ -1,8 +1,6 @@
 class Admin::OrganizationsController < Admin::BaseController
   before_action :set_organization, only: %i[show edit update destroy]
 
-  authorize_resource
-
   # GET /admin/organizations or /admin/organizations.json
   def index
     render Views::Admin::Organizations::Index.new(organizations: Organization.order(:name).all)

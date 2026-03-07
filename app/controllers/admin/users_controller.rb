@@ -1,8 +1,6 @@
 class Admin::UsersController < Admin::BaseController
   before_action :set_user, only: %i[show edit update destroy]
 
-  authorize_resource
-
   # GET /admin/users or /admin/users.json
   def index
     render Views::Admin::Users::Index.new(users: User.includes([:organization, :practices]).order(["organization.name", :last_name, :first_name]).all)
