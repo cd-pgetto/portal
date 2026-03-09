@@ -1,17 +1,31 @@
 class EmailDomainPolicy < ApplicationPolicy
-  def show?
-    system_admin? || same_organization?
+  class Scope
+    def initialize(user, scope)
+      @user = user
+      @scope = scope
+    end
+
+    def resolve
+      if user&.system_admin?
+        scope.all
+      elsif user
+        scope.where(organization_id: user.organization_membership&.organization_id)
+      else
+        scope.none
+      end
+    end
+
+    private
+
+    attr_reader :user, :scope
   end
 
-  def index? = system_admin?
+  def show? = system_admin? || same_organization?
 
-  def create?
-    system_admin? || (organization_admin? && same_organization?)
-  end
+  def index? = user.present?
 
-  def update?
-    system_admin? || (organization_admin? && same_organization?)
-  end
+  def create? = system_admin? || (organization_admin? && same_organization?)
+  def update? = create?
 
   def destroy? = system_admin?
 

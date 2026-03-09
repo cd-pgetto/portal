@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe IdentityProviderPolicy, type: :policy do
   subject { described_class }
 
-  permissions :index?, :show? do
+  permissions :index? do
     context "without any user" do
       it { is_expected.not_to permit(nil, IdentityProvider.new) }
     end
@@ -30,7 +30,7 @@ RSpec.describe IdentityProviderPolicy, type: :policy do
     end
   end
 
-  permissions :create?, :update? do
+  permissions :show?, :create?, :update? do
     context "without any user" do
       it { is_expected.not_to permit(nil, IdentityProvider.new) }
     end

@@ -1,19 +1,29 @@
 class PatientPolicy < ApplicationPolicy
-  def index?
-    system_admin? || practice_member?
+  class Scope
+    def initialize(user, scope)
+      @user = user
+      @scope = scope
+    end
+
+    def resolve
+      if user&.system_admin?
+        scope.all
+      elsif user
+        scope.where(practice_id: user.practice_memberships.select(:practice_id))
+      else
+        scope.none
+      end
+    end
+
+    private
+
+    attr_reader :user, :scope
   end
 
-  def show?
-    system_admin? || practice_member?
-  end
-
-  def create?
-    system_admin? || practice_member?
-  end
-
-  def update?
-    system_admin? || practice_member?
-  end
+  def index? = system_admin? || practice_member?
+  def show? = index?
+  def create? = index?
+  def update? = index?
 
   def destroy? = system_admin?
 

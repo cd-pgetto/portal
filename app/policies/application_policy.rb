@@ -16,15 +16,7 @@ class ApplicationPolicy
 
   private
 
-  def system_admin?
-    user&.system_admin?
-  end
-
-  def organization_admin?
-    user&.organization_admin?
-  end
-
-  def user_organization_id
-    user&.organization_membership&.organization_id
-  end
+  def system_admin? = user&.system_admin?
+  def organization_admin? = user&.organization_admin?
+  def user_organization_id = user&.organization_membership&.organization_id
 end

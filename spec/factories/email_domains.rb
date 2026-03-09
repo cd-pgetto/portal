@@ -19,8 +19,10 @@
 #  fk_rails_...  (organization_id => organizations.id)
 #
 FactoryBot.define do
+  sequence(:emaiL_domain_number) { |n| n }
+
   factory :email_domain do
-    domain_name { "example.com" }
+    domain_name { "example-#{generate(:emaiL_domain_number)}.com" }
     organization
 
     factory :perceptive_io_email_domain do

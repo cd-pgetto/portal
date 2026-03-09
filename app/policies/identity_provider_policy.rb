@@ -1,16 +1,11 @@
 class IdentityProviderPolicy < ApplicationPolicy
   def index? = system_admin?
-  def show? = system_admin?
+  def show? = update?
 
-  def create?
-    system_admin? || org_admin_can_manage?
-  end
+  def create? = system_admin? || org_admin_can_manage?
 
   def edit? = update?
-
-  def update?
-    system_admin? || org_admin_can_manage?
-  end
+  def update? = system_admin? || org_admin_can_manage?
 
   def destroy? = system_admin?
 
