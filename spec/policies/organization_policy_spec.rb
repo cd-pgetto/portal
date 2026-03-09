@@ -13,7 +13,7 @@ RSpec.describe OrganizationPolicy, type: :policy do
       let(:user) { create(:user, organization: organization) }
 
       context "own organization" do
-        it { is_expected.to permit(user, Organization.new(id: user.organization_membership.organization_id)) }
+        it { is_expected.to permit(user, organization) }
       end
 
       context "another organization" do
@@ -28,7 +28,11 @@ RSpec.describe OrganizationPolicy, type: :policy do
       before { user.create_organization_membership(organization: organization, role: :admin) }
 
       context "own organization" do
-        it { is_expected.to permit(user, Organization.new(id: organization.id)) }
+        it { is_expected.to permit(user, organization) }
+      end
+
+      context "another organization" do
+        it { is_expected.not_to permit(user, Organization.new(id: create(:organization).id)) }
       end
     end
 
@@ -48,7 +52,7 @@ RSpec.describe OrganizationPolicy, type: :policy do
       let(:organization) { create(:organization) }
       let(:user) { create(:user, organization: organization) }
 
-      it { is_expected.not_to permit(user, Organization.new(id: user.organization_membership.organization_id)) }
+      it { is_expected.not_to permit(user, organization) }
     end
 
     context "as an organization admin" do
@@ -58,7 +62,7 @@ RSpec.describe OrganizationPolicy, type: :policy do
       before { user.create_organization_membership(organization: organization, role: :admin) }
 
       context "own organization" do
-        it { is_expected.to permit(user, Organization.new(id: organization.id)) }
+        it { is_expected.to permit(user, organization) }
       end
 
       context "another organization" do
@@ -91,7 +95,7 @@ RSpec.describe OrganizationPolicy, type: :policy do
 
       before { user.create_organization_membership(organization: organization, role: :admin) }
 
-      it { is_expected.not_to permit(user, Organization.new(id: organization.id)) }
+      it { is_expected.not_to permit(user, organization) }
     end
 
     context "as a system admin" do
