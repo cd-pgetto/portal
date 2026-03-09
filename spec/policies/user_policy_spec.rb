@@ -1,50 +1,113 @@
 require "rails_helper"
 
 RSpec.describe UserPolicy, type: :policy do
-  subject(:policy) { described_class.new(user, record) }
+  subject { described_class }
 
-  let(:record) { User.new }
-  let(:user) { nil }
-
-  describe "without any user" do
-    it { is_expected.to be_create }
-    it { is_expected.not_to be_show }
-    it { is_expected.not_to be_update }
-    it { is_expected.not_to be_edit }
-    it { is_expected.not_to be_destroy }
-    it { is_expected.not_to be_index }
-  end
-
-  context "as a regular user" do
-    let(:user) { create(:user) }
-
-    context "own record" do
-      let(:record) { user }
-
-      it { is_expected.to be_show }
-      it { is_expected.to be_update }
-      it { is_expected.to be_edit }
-      it { is_expected.not_to be_create }
-      it { is_expected.not_to be_destroy }
-      it { is_expected.not_to be_index }
+  permissions :create? do
+    context "without any user" do
+      it { is_expected.to permit(nil, User.new) }
     end
 
-    context "another user's record" do
-      let(:record) { create(:another_user) }
+    context "as a regular user" do
+      let(:user) { create(:user) }
 
-      it { is_expected.not_to be_show }
-      it { is_expected.not_to be_update }
-      it { is_expected.not_to be_destroy }
+      it { is_expected.not_to permit(user, user) }
+    end
+
+    context "as a system admin" do
+      let(:user) { create_system_admin }
+
+      it { is_expected.to permit(user, User.new) }
     end
   end
 
-  context "as a system admin" do
-    let(:user) { create_system_admin }
+  permissions :show? do
+    context "without any user" do
+      it { is_expected.not_to permit(nil, User.new) }
+    end
 
-    it { is_expected.to be_index }
-    it { is_expected.to be_show }
-    it { is_expected.to be_create }
-    it { is_expected.to be_update }
-    it { is_expected.to be_destroy }
+    context "as a regular user" do
+      let(:user) { create(:user) }
+
+      context "own record" do
+        it { is_expected.to permit(user, user) }
+      end
+
+      context "another user's record" do
+        it { is_expected.not_to permit(user, create(:another_user)) }
+      end
+    end
+
+    context "as a system admin" do
+      let(:user) { create_system_admin }
+
+      it { is_expected.to permit(user, User.new) }
+    end
+  end
+
+  permissions :edit?, :update? do
+    context "without any user" do
+      it { is_expected.not_to permit(nil, User.new) }
+    end
+
+    context "as a regular user" do
+      let(:user) { create(:user) }
+
+      context "own record" do
+        it { is_expected.to permit(user, user) }
+      end
+
+      context "another user's record" do
+        it { is_expected.not_to permit(user, create(:another_user)) }
+      end
+    end
+
+    context "as a system admin" do
+      let(:user) { create_system_admin }
+
+      it { is_expected.to permit(user, User.new) }
+    end
+  end
+
+  permissions :destroy? do
+    context "without any user" do
+      it { is_expected.not_to permit(nil, User.new) }
+    end
+
+    context "as a regular user" do
+      let(:user) { create(:user) }
+
+      context "own record" do
+        it { is_expected.not_to permit(user, user) }
+      end
+
+      context "another user's record" do
+        it { is_expected.not_to permit(user, create(:another_user)) }
+      end
+    end
+
+    context "as a system admin" do
+      let(:user) { create_system_admin }
+
+      it { is_expected.to permit(user, User.new) }
+    end
+  end
+
+  permissions :index? do
+    context "without any user" do
+      it { is_expected.not_to permit(nil, User.new) }
+    end
+
+    context "as a regular user" do
+      let(:user) { create(:user) }
+
+      it { is_expected.not_to permit(user, User.new) }
+    end
+
+    context "as a system admin" do
+      let(:user) { create_system_admin }
+
+      it { is_expected.to permit(user, User.new) }
+    end
   end
 end
