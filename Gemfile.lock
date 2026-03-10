@@ -100,7 +100,6 @@ GEM
     bundler-audit (0.9.3)
       bundler (>= 1.2.0)
       thor (~> 1.0)
-    cancancan (3.6.1)
     capybara (3.40.0)
       addressable
       matrix
@@ -347,6 +346,8 @@ GEM
     public_suffix (7.0.5)
     puma (7.2.0)
       nio4r (~> 2.0)
+    pundit (2.5.2)
+      activesupport (>= 3.0.0)
     raabro (1.4.0)
     racc (1.8.1)
     rack (3.2.5)
@@ -602,6 +603,7 @@ PLATFORMS
   arm-linux-gnu
   arm-linux-musl
   arm64-darwin-24
+  arm64-darwin-25
   x86_64-linux
   x86_64-linux-gnu
   x86_64-linux-musl
@@ -614,7 +616,6 @@ DEPENDENCIES
   brakeman
   bullet
   bundler-audit
-  cancancan (~> 3.5)
   capybara
   debug
   factory_bot_rails
@@ -635,6 +636,7 @@ DEPENDENCIES
   phlex-rails (~> 2.3)
   propshaft
   puma (>= 5.0)
+  pundit (~> 2.4)
   rails (~> 8.1.1)
   rails-erd (~> 1.7)
   rails_live_reload

@@ -41,6 +41,13 @@ RSpec.describe "/admin/organizations", type: :request do
 
       expect(response).to be_successful
     end
+
+    it "lists all organizations" do
+      org_a = create(:organization)
+      org_b = create(:organization)
+      get admin_organizations_url
+      expect(response.body).to include(org_a.name, org_b.name)
+    end
   end
 
   describe "GET /show" do
