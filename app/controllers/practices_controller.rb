@@ -3,7 +3,7 @@ class PracticesController < ApplicationController
 
   def index
     authorize Practice
-    @practices = Current.user.practices.distinct.order(:name)
+    @practices = policy_scope(Practice).distinct.order(:name)
   end
 
   def show

@@ -20,7 +20,10 @@
       "Bash(bundle exec rspec spec/ --format progress)",
       "Bash(bundle exec rails routes)",
       "Bash(bundle exec rspec spec/requests/ spec/policies/ --format progress)",
-      "Bash(bundle exec rspec spec/requests/patients_spec.rb:54 spec/requests/practices_spec.rb:25 --format documentation)"
+      "Bash(bundle exec rspec spec/requests/patients_spec.rb:54 spec/requests/practices_spec.rb:25 --format documentation)",
+      "Bash(bundle exec rspec)",
+      "Bash(bundle exec rspec spec/requests/patients_spec.rb:44 --format documentation)",
+      "Bash(bundle exec rspec spec/requests/patients_spec.rb --format documentation)"
     ]
   }
 }

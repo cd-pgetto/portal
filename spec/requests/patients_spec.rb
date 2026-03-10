@@ -40,6 +40,15 @@ RSpec.describe "/patients", type: :request do
         get patients_url
         expect(response).to be_successful
       end
+
+      it "lists only patients from the current practice" do
+        own_patient = create(:patient, practice: practice)
+        other_practice = create(:practice_with_org)
+        other_patient = create(:patient, practice: other_practice)
+        get patients_url
+        expect(response.body).to include(own_patient.patient_number)
+        expect(response.body).not_to include(other_patient.patient_number)
+      end
     end
 
     describe "GET /show" do

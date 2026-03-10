@@ -30,6 +30,10 @@ class PatientPolicy < ApplicationPolicy
   private
 
   def practice_member?
-    user&.practice_memberships&.exists?(practice_id: record.practice_id)
+    if record.is_a?(Class)
+      user&.practice_memberships&.exists?
+    else
+      user&.practice_memberships&.exists?(practice_id: record.practice_id)
+    end
   end
 end

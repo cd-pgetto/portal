@@ -4,7 +4,7 @@ class PatientsController < ApplicationController
   # GET /patients or /patients.json
   def index
     authorize Patient
-    @patients = Current.practice.patients.includes([:dental_models]).all
+    @patients = policy_scope(Patient).where(practice: Current.practice).includes([:dental_models])
   end
 
   # GET /patients/1 or /patients/1.json
