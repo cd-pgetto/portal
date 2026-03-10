@@ -56,7 +56,7 @@ class Admin::IdentityProvidersController < Admin::BaseController
     end
   end
 
-  # DELETE /identity_providers/1 or /identity_providers/1.rb
+  # DELETE /identity_providers/1 or /identity_providers/1.json
   def destroy
     authorize @identity_provider
     @identity_provider.destroy!
