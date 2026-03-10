@@ -4,7 +4,8 @@ module Authorization
   included do
     include Pundit::Authorization
 
-    after_action :verify_authorized
+    # Only check to ensure authorization checks are performed in development and test environments.
+    after_action :verify_authorized unless Rails.env.production?
 
     rescue_from Pundit::NotAuthorizedError do |_exception|
       respond_to do |format|
