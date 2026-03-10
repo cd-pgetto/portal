@@ -33,7 +33,11 @@ class PracticePolicy < ApplicationPolicy
   private
 
   def practice_member?
-    user&.practice_memberships&.exists?(practice_id: record.id)
+    if record.is_a?(Class)
+      user&.practice_memberships&.exists?
+    else
+      user&.practice_memberships&.exists?(practice_id: record.id)
+    end
   end
 
   def admin_or_owner_member?

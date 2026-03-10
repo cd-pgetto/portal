@@ -86,4 +86,29 @@ RSpec.describe UserPolicy, type: :policy do
       it { is_expected.to permit(user, User.new) }
     end
   end
+
+  describe described_class::Scope do
+    subject(:resolved) { described_class.new(user, User.all).resolve }
+
+    let!(:user_a) { create(:user) }
+    let!(:user_b) { create(:another_user) }
+
+    context "without any user" do
+      let(:user) { nil }
+
+      it { is_expected.to be_empty }
+    end
+
+    context "as a regular user" do
+      let(:user) { create(:another_user) }
+
+      it { is_expected.to be_empty }
+    end
+
+    context "as a system admin" do
+      let(:user) { create_system_admin }
+
+      it { is_expected.to include(user_a, user_b) }
+    end
+  end
 end

@@ -3,23 +3,27 @@ class Admin::IdentityProvidersController < Admin::BaseController
 
   # GET /identity_providers or /identity_providers.json
   def index
-    render Views::Admin::IdentityProviders::Index.new(identity_providers: IdentityProvider.all.order(:name))
+    authorize IdentityProvider
+    render Views::Admin::IdentityProviders::Index.new(identity_providers: policy_scope(IdentityProvider).order(:name))
   end
 
   # GET /identity_providers/1 or /identity_providers/1.json
   def show
+    authorize @identity_provider
     render Views::Admin::IdentityProviders::Show.new(identity_provider: @identity_provider)
   end
 
   # GET /identity_providers/new
   def new
     @identity_provider = IdentityProvider.new
+    authorize @identity_provider
     render Views::Admin::IdentityProviders::New.new(identity_provider: @identity_provider)
   end
 
   # POST /identity_providers or /identity_providers.json
   def create
     @identity_provider = IdentityProvider.new(identity_provider_params)
+    authorize @identity_provider
 
     respond_to do |format|
       if @identity_provider.save
@@ -34,11 +38,13 @@ class Admin::IdentityProvidersController < Admin::BaseController
 
   # GET /identity_providers/1/edit
   def edit
+    authorize @identity_provider
     render Views::Admin::IdentityProviders::Edit.new(identity_provider: @identity_provider)
   end
 
   # PATCH/PUT /identity_providers/1 or /identity_providers/1.json
   def update
+    authorize @identity_provider
     respond_to do |format|
       if @identity_provider.update(identity_provider_params)
         format.html { redirect_to admin_identity_provider_path(@identity_provider), notice: "Identity provider was successfully updated.", status: :see_other }
@@ -50,8 +56,9 @@ class Admin::IdentityProvidersController < Admin::BaseController
     end
   end
 
-  # DELETE /identity_providers/1 or /identity_providers/1.json
+  # DELETE /identity_providers/1 or /identity_providers/1.rb
   def destroy
+    authorize @identity_provider
     @identity_provider.destroy!
 
     respond_to do |format|

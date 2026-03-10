@@ -1,5 +1,20 @@
 {
   "permissions": {
-    "allow": ["Bash(bundle exec rspec spec)", "Bash(ruby --version)"]
+    "allow": [
+      "Bash(bundle exec rspec spec)",
+      "Bash(ruby --version)",
+      "Bash(bundle exec rspec spec/requests/admin/ --format documentation)",
+      "Bash(bundle exec rspec spec/requests/admin/users_spec.rb:31 --format documentation)",
+      "Bash(grep -n \"class Scope\" /home/phil/dev/portal/app/policies/*.rb)",
+      "Bash(grep -n \"^FactoryBot.define\\\\|factory :\" /home/phil/dev/portal/spec/factories/*.rb)",
+      "Bash(grep -n \"create_system_admin\\\\|sign_in_as_admin\" /home/phil/dev/portal/spec/support/*.rb)",
+      "Bash(bundle exec rspec spec/requests/admin/ spec/policies/user_policy_spec.rb spec/policies/organization_policy_spec.rb spec/policies/identity_provider_policy_spec.rb spec/policies/practice_policy_spec.rb --format documentation)",
+      "Bash(bundle exec rspec spec/requests/admin/ spec/policies/user_policy_spec.rb spec/policies/organization_policy_spec.rb spec/policies/identity_provider_policy_spec.rb spec/policies/practice_policy_spec.rb)",
+      "Bash(bundle exec rspec spec/policies/practice_policy_spec.rb --format documentation)",
+      "Bash(bundle exec rspec spec/policies/practice_policy_spec.rb)",
+      "Bash(bundle exec rspec spec/policies/)",
+      "Bash(bundle exec rspec spec/requests/practices_spec.rb --format documentation)",
+      "Bash(bundle exec rspec spec/requests/practices_spec.rb spec/policies/practice_policy_spec.rb --format documentation)"
+    ]
   }
 }

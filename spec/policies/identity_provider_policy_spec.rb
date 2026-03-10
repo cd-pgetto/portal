@@ -113,4 +113,38 @@ RSpec.describe IdentityProviderPolicy, type: :policy do
       it { is_expected.to permit(user, IdentityProvider.new) }
     end
   end
+
+  describe described_class::Scope do
+    subject(:resolved) { described_class.new(user, IdentityProvider.all).resolve }
+
+    let!(:provider_a) { create(:identity_provider) }
+    let!(:provider_b) { create(:google_identity_provider) }
+
+    context "without any user" do
+      let(:user) { nil }
+
+      it { is_expected.to be_empty }
+    end
+
+    context "as a regular user" do
+      let(:user) { create(:user, organization: create(:organization)) }
+
+      it { is_expected.to be_empty }
+    end
+
+    context "as an organization admin" do
+      let(:user) { create(:user) }
+      let(:organization) { create(:organization) }
+
+      before { user.create_organization_membership(organization: organization, role: :admin) }
+
+      it { is_expected.to be_empty }
+    end
+
+    context "as a system admin" do
+      let(:user) { create_system_admin }
+
+      it { is_expected.to include(provider_a, provider_b) }
+    end
+  end
 end

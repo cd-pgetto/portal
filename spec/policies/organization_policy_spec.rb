@@ -104,4 +104,37 @@ RSpec.describe OrganizationPolicy, type: :policy do
       it { is_expected.to permit(user, Organization.new) }
     end
   end
+
+  describe described_class::Scope do
+    subject(:resolved) { described_class.new(user, Organization.all).resolve }
+
+    let!(:org_a) { create(:organization) }
+    let!(:org_b) { create(:organization) }
+
+    context "without any user" do
+      let(:user) { nil }
+
+      it { is_expected.to be_empty }
+    end
+
+    context "as a regular user" do
+      let(:user) { create(:user, organization: org_a) }
+
+      it { is_expected.to be_empty }
+    end
+
+    context "as an organization admin" do
+      let(:user) { create(:user) }
+
+      before { user.create_organization_membership(organization: org_a, role: :admin) }
+
+      it { is_expected.to be_empty }
+    end
+
+    context "as a system admin" do
+      let(:user) { create_system_admin }
+
+      it { is_expected.to include(org_a, org_b) }
+    end
+  end
 end
