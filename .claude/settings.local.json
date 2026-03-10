@@ -14,7 +14,13 @@
       "Bash(bundle exec rspec spec/policies/practice_policy_spec.rb)",
       "Bash(bundle exec rspec spec/policies/)",
       "Bash(bundle exec rspec spec/requests/practices_spec.rb --format documentation)",
-      "Bash(bundle exec rspec spec/requests/practices_spec.rb spec/policies/practice_policy_spec.rb --format documentation)"
+      "Bash(bundle exec rspec spec/requests/practices_spec.rb spec/policies/practice_policy_spec.rb --format documentation)",
+      "Bash(bundle exec rspec spec/requests/ --format progress)",
+      "Bash(ls /home/phil/dev/portal/app/controllers/*.rb)",
+      "Bash(bundle exec rspec spec/ --format progress)",
+      "Bash(bundle exec rails routes)",
+      "Bash(bundle exec rspec spec/requests/ spec/policies/ --format progress)",
+      "Bash(bundle exec rspec spec/requests/patients_spec.rb:54 spec/requests/practices_spec.rb:25 --format documentation)"
     ]
   }
 }
