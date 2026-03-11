@@ -28,4 +28,51 @@ RSpec.describe OktaIdentityProvider, type: :model do
 
   it { is_expected.to be_a(IdentityProvider) }
   it { is_expected.to validate_presence_of(:okta_domain) }
+
+  describe ".setup" do
+    let(:okta_idp) { create(:okta_identity_provider) }
+    let(:strategy) { instance_double("OmniAuth::Strategies::Okta", options: {client_options: {}}) }
+    let(:env) { {"omniauth.strategy" => strategy} }
+
+    shared_examples "configures the strategy" do
+      it "sets client_id" do
+        OktaIdentityProvider.setup(env)
+        expect(strategy.options[:client_id]).to eq(okta_idp.client_id)
+      end
+
+      it "sets client_secret" do
+        OktaIdentityProvider.setup(env)
+        expect(strategy.options[:client_secret]).to eq(okta_idp.client_secret)
+      end
+
+      it "sets client_options from okta_domain" do
+        OktaIdentityProvider.setup(env)
+        site = "https://#{okta_idp.okta_domain}.okta.com"
+        expect(strategy.options[:client_options][:site]).to eq(site)
+        expect(strategy.options[:client_options][:authorize_url]).to eq("#{site}/oauth2/default/v1/authorize")
+        expect(strategy.options[:client_options][:token_url]).to eq("#{site}/oauth2/default/v1/token")
+        expect(strategy.options[:client_options][:user_info_url]).to eq("#{site}/oauth2/default/v1/userinfo")
+      end
+    end
+
+    context "when identity_provider_id is present in params" do
+      let(:env) { super().merge("omniauth.params" => {"identity_provider_id" => okta_idp.id}) }
+
+      include_examples "configures the strategy"
+    end
+
+    context "when identity_provider_id is absent and provider is found via request host" do
+      let(:organization) { create(:organization, subdomain: "acme") }
+
+      before do
+        create(:credential, organization: organization, identity_provider: okta_idp)
+        env["rack.input"] = StringIO.new
+        env["HTTP_HOST"] = "acme.example.com"
+        env["REQUEST_METHOD"] = "GET"
+        env["QUERY_STRING"] = ""
+      end
+
+      include_examples "configures the strategy"
+    end
+  end
 end
