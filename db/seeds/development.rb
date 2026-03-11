@@ -1,4 +1,3 @@
-# standard:disable Rails/Output
 %w[apple auth0 facebook github linkedin twitter].each do |strategy|
   IdentityProvider.create!(name: strategy.titleize.split.first, strategy: strategy,
     availability: "shared", icon_url: "test-icon.svg",
@@ -17,7 +16,7 @@ def create_organization
       EmailDomain.new(domain_name: base_email_domain + ".com"),
       EmailDomain.new(domain_name: base_email_domain + ".dental")
     ],
-    identity_providers: IdentityProvider.all.sample(rand(1..IdentityProvider.count)))
+    identity_providers: IdentityProvider.shared.sample(rand(1..IdentityProvider.count)))
 
   if [true, false].sample
     strategy = %w[apple auth0 facebook google_oauth2 github linkedin twitter].sample
@@ -65,8 +64,20 @@ end
       _patient = create_patient(practice)
     end
   end
-  ap "Created organization #{org.name} with #{org.practices_count} practices, #{org.users.count} members and #{org.practices.joins(:patients).count} patients."
+  ap "Created organization #{org.name} using #{org.dedicated_identity_providers.map { |idp| idp.strategy }.join(", ")}, #{org.practices_count} practices, #{org.users.count} members and #{org.practices.joins(:patients).count} patients."
 end
+
+# Org using Okta
+okta_credentials = Rails.application.credentials.dig(:omniauth, :okta).first
+big_dso_okta_idp = OktaIdentityProvider.create!(availability: "dedicated", strategy: "okta",
+  name: "Okta for Big DSO", icon_url: "okta-icon.svg", okta_domain: okta_credentials[:name],
+  client_id: okta_credentials[:client_id], client_secret: okta_credentials[:client_secret])
+_okta_org = Organization.create!(name: "Big DSO", subdomain: "big-dso",
+  identity_providers: [big_dso_okta_idp], password_auth_allowed: false,
+  email_domains: [
+    EmailDomain.new(domain_name: "#{okta_credentials[:name]}.com"),
+    EmailDomain.new(domain_name: "perceptive.io")
+  ])
 
 ap "Total #{Organization.count} organizations with #{Practice.count} practices, #{User.count} members and #{Patient.count} patients."
 
@@ -90,4 +101,3 @@ maxilla = dental_model.jaws.create!(jaw_type: :maxilla)
 end
 
 ap "Added teeth for patient #{pt.patient_number} in practice #{pt.practice.name} with owner #{pt.practice.first_owner.email_address}"
-# standard:enable Rails/Output

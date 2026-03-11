@@ -9,7 +9,7 @@ class DentalModelPolicy < ApplicationPolicy
       if user&.system_admin?
         scope.all
       elsif user
-        scope.joins(:patient).where(patients: { practice_id: user.practice_memberships.select(:practice_id) })
+        scope.joins(:patient).where(patients: {practice_id: user.practice_memberships.select(:practice_id)})
       else
         scope.none
       end
