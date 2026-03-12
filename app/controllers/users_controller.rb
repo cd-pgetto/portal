@@ -2,13 +2,13 @@ class UsersController < ApplicationController
   before_action :set_user, only: %i[show edit update]
 
   allow_unauthenticated_access only: %i[new create]
-  skip_authorization_check only: %i[new create]
-  authorize_resource except: %i[new create edit update]
+  skip_after_action :verify_authorized, only: %i[new create]
   before_action :redirect_signed_in_user, only: %i[new create]
 
   NUMBER_OF_STEPS = 2
 
   def show
+    authorize @user
     render Views::Users::Show.new(user: @user)
   end
 
@@ -35,12 +35,12 @@ class UsersController < ApplicationController
   end
 
   def edit
-    authorize! :edit, @user
+    authorize @user
     render Views::Users::Edit.new(user: @user)
   end
 
   def update
-    authorize! :update, @user
+    authorize @user
     if @user.update(user_params)
       redirect_to @user, notice: "Your account was successfully updated.", status: :see_other
     else

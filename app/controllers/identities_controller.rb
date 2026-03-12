@@ -1,6 +1,6 @@
 class IdentitiesController < ApplicationController
   allow_unauthenticated_access
-  skip_authorization_check
+  skip_after_action :verify_authorized
 
   # TODO: Review and clean up Claude-generated code
   #

@@ -8,7 +8,7 @@ class Views::Admin::IdentityProviders::IdentityProvider < Components::Base
       div do
         strong(class: "block font-bold text-lg mb-1") { @identity_provider.name }
         p(class: "text-base") { "Strategy: #{@identity_provider.strategy}" }
-        p(class: "text-base") { "Availability: #{@identity_provider.availability}" }
+        p(class: "text-base") { "Type: #{@identity_provider.dedicated? ? "Dedicated" : "Shared"}" }
         p(class: "text-base") { "Client ID: #{@identity_provider.client_id}" }
         p(class: "text-base") { "Client Secret: #{@identity_provider.client_secret}" }
       end

@@ -1,0 +1,38 @@
+# == Schema Information
+#
+# Table name: identity_providers
+# Database name: primary
+#
+#  id              :uuid             not null, primary key
+#  client_secret   :text             default("")
+#  icon_url        :string           not null
+#  name            :string           not null
+#  okta_domain     :string
+#  strategy        :string           not null
+#  type            :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  client_id       :text             default("")
+#  organization_id :uuid
+#
+# Indexes
+#
+#  index_identity_providers_on_organization_id  (organization_id) UNIQUE WHERE (organization_id IS NOT NULL)
+#  index_identity_providers_on_strategy         (strategy) UNIQUE WHERE (organization_id IS NULL)
+#  index_identity_providers_on_type             (type)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (organization_id => organizations.id)
+#
+FactoryBot.define do
+  factory :okta_identity_provider, class: "OktaIdentityProvider", parent: :identity_provider do
+    name { "Okta" }
+    icon_url { "okta-icon.svg" }
+    strategy { "okta" }
+    client_id { "okta-client-id-#{generate(:identity_provider_number)}" }
+    client_secret { "OktaSuperSekret" }
+    organization
+    okta_domain { "example" }
+  end
+end
