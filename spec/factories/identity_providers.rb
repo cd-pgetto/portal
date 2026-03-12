@@ -3,20 +3,27 @@
 # Table name: identity_providers
 # Database name: primary
 #
-#  id            :uuid             not null, primary key
-#  availability  :enum             default("shared"), not null
-#  client_secret :string           not null
-#  icon_url      :string           not null
-#  name          :string           not null
-#  strategy      :string           not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  client_id     :string           not null
+#  id              :uuid             not null, primary key
+#  client_secret   :text             default("")
+#  icon_url        :string           not null
+#  name            :string           not null
+#  okta_domain     :string
+#  strategy        :string           not null
+#  type            :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  client_id       :text             default("")
+#  organization_id :uuid
 #
 # Indexes
 #
-#  index_identity_providers_on_strategy                (strategy) UNIQUE WHERE (availability = 'shared'::availability)
-#  index_identity_providers_on_strategy_and_client_id  (strategy,client_id) UNIQUE
+#  index_identity_providers_on_organization_id  (organization_id) UNIQUE WHERE (organization_id IS NOT NULL)
+#  index_identity_providers_on_strategy         (strategy) UNIQUE WHERE (organization_id IS NULL)
+#  index_identity_providers_on_type             (type)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (organization_id => organizations.id)
 #
 FactoryBot.define do
   sequence(:identity_provider_number) { |n| n }
@@ -25,17 +32,11 @@ FactoryBot.define do
     name { "IdP-#{generate(:identity_provider_number)}" }
     icon_url { "test-icon.svg" }
     strategy { "strategy-#{generate(:identity_provider_number)}" }
-    availability { "shared" }
-    client_id { "client_id-#{generate(:identity_provider_number)}" }
-    client_secret { "SuperSekret" }
 
     factory :google_identity_provider do
       name { "Google OAuth" }
       icon_url { "google-oauth2-icon.svg" }
       strategy { "google_oauth2" }
-      availability { "shared" }
-      client_id { "google-client-id" }
-      client_secret { "GoogleSuperSekret" }
     end
   end
 end

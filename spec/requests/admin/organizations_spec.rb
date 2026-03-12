@@ -18,20 +18,13 @@ RSpec.describe "/admin/organizations", type: :request do
   }
 
   let(:invalid_attributes) {
-    {name: "", subdomain: "", credentials_attributes: {
-      "1762823946994" => {
-        identity_provider_attributes: {
-          id: "", availability: "dedicated", strategy: "google_oauth2", name: "invalid-idp-name",
-          icon_url: "    ", client_id: "    ", client_secret: ""
-        },
-        email_domains_attributes: {
-          "1762823946995" => {domain_name: "___badbomain.com"}
-        }
-      }
-    }}
+    {name: "", subdomain: "",
+     dedicated_identity_provider_attributes: {
+       type: "OktaIdentityProvider", strategy: "okta", name: "invalid-idp-name",
+       icon_url: "    ", client_id: "    ", client_secret: "", okta_domain: ""
+     }}
   }
 
-  # let(:user) { create(:user) }
   before { sign_in_as_admin }
 
   describe "GET /index" do
@@ -40,6 +33,13 @@ RSpec.describe "/admin/organizations", type: :request do
       get admin_organizations_url
 
       expect(response).to be_successful
+    end
+
+    it "lists all organizations" do
+      org_a = create(:organization)
+      org_b = create(:organization)
+      get admin_organizations_url
+      expect(response.body).to include(org_a.name, org_b.name)
     end
   end
 
@@ -98,7 +98,7 @@ RSpec.describe "/admin/organizations", type: :request do
   describe "PATCH /update" do
     context "with valid parameters" do
       let(:share_identity_provider) {
-        IdentityProvider.find_by(strategy: "google_oauth2", availability: "shared") || create(:google_identity_provider)
+        IdentityProvider.find_by(strategy: "google_oauth2") || create(:google_identity_provider)
       }
       let(:new_attributes) {
         {name: "new name", subdomain: "new-subdomain",

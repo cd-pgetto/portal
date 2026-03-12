@@ -2,7 +2,7 @@ class SessionsController < ApplicationController
   before_action :redirect_signed_in_user, only: [:new, :create]
 
   allow_unauthenticated_access only: [:new, :create]
-  skip_authorization_check
+  skip_after_action :verify_authorized
 
   def new
     render Views::Sessions::New.new(email_address: nil, identity_providers:, password_auth_allowed:)

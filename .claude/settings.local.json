@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bundle exec rspec spec)",
+      "Bash(ruby --version)",
+      "Bash(bundle exec rspec spec/requests/admin/ --format documentation)",
+      "Bash(bundle exec rspec spec/requests/admin/users_spec.rb:31 --format documentation)",
+      "Bash(grep -n \"class Scope\" app/policies/*.rb)",
+      "Bash(grep -n \"^FactoryBot.define\\\\|factory :\" spec/factories/*.rb)",
+      "Bash(grep -n \"create_system_admin\\\\|sign_in_as_admin\" spec/support/*.rb)",
+      "Bash(bundle exec rspec spec/requests/admin/ spec/policies/user_policy_spec.rb spec/policies/organization_policy_spec.rb spec/policies/identity_provider_policy_spec.rb spec/policies/practice_policy_spec.rb --format documentation)",
+      "Bash(bundle exec rspec spec/requests/admin/ spec/policies/user_policy_spec.rb spec/policies/organization_policy_spec.rb spec/policies/identity_provider_policy_spec.rb spec/policies/practice_policy_spec.rb)",
+      "Bash(bundle exec rspec spec/policies/practice_policy_spec.rb --format documentation)",
+      "Bash(bundle exec rspec spec/policies/practice_policy_spec.rb)",
+      "Bash(bundle exec rspec spec/policies/)",
+      "Bash(bundle exec rspec spec/requests/practices_spec.rb --format documentation)",
+      "Bash(bundle exec rspec spec/requests/practices_spec.rb spec/policies/practice_policy_spec.rb --format documentation)",
+      "Bash(bundle exec rspec spec/requests/ --format progress)",
+      "Bash(ls app/controllers/*.rb)",
+      "Bash(bundle exec rspec spec/ --format progress)",
+      "Bash(bundle exec rails routes)",
+      "Bash(bundle exec rspec spec/requests/ spec/policies/ --format progress)",
+      "Bash(bundle exec rspec spec/requests/patients_spec.rb:54 spec/requests/practices_spec.rb:25 --format documentation)",
+      "Bash(bundle exec rspec)",
+      "Bash(bundle exec rspec spec/requests/patients_spec.rb:44 --format documentation)",
+      "Bash(bundle exec rspec spec/requests/patients_spec.rb --format documentation)",
+      "Bash(bundle exec rspec spec/models/identity_provider_spec.rb spec/models/okta_identity_provider_spec.rb spec/models/organization_spec.rb)"
+    ]
+  }
+}

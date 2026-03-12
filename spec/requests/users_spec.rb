@@ -27,6 +27,19 @@ RSpec.describe "Users", type: :request do
         expect(response.body).to include(user.email_address)
       end
     end
+
+    context "when signed in as another user" do
+      let(:another_user) { create(:another_user) }
+
+      before { sign_in_as(another_user, attributes_for(:user)[:password]) }
+
+      it "is not authorized" do
+        get user_path(user)
+
+        expect(response).to redirect_to(home_path)
+        expect(flash[:alert]).to include("You are not authorized")
+      end
+    end
   end
 
   describe "GET /users/new" do
@@ -122,6 +135,27 @@ RSpec.describe "Users", type: :request do
         expect(response.body).to include("Last name")
         expect(response.body).to include("Email address")
         expect(response.body).to include("Update User")
+      end
+    end
+
+    context "when not signed in" do
+      it "redirects to sign in page" do
+        get edit_user_path(user)
+
+        expect(response).to redirect_to(new_session_path)
+      end
+    end
+
+    context "when signed in as another user" do
+      let(:another_user) { create(:another_user) }
+
+      before { sign_in_as(another_user, attributes_for(:user)[:password]) }
+
+      it "is not authorized" do
+        get edit_user_path(user)
+
+        expect(response).to redirect_to(home_path)
+        expect(flash[:alert]).to include("You are not authorized")
       end
     end
   end

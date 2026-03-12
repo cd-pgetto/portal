@@ -15,25 +15,26 @@ if Rails.env.local?
 end
 
 IdentityProvider.available_strategies.each do |strategy|
+  next if /okta/.match?(strategy)
   next if Rails.application.credentials.dig(:omniauth, strategy.to_sym, :client_id).blank?
 
+  # Credentials are read from the credentials file at startup (omniauth.rb) — not stored in DB
   idp = IdentityProvider.find_or_initialize_by(strategy: strategy)
-  idp.update(name: strategy.to_s.titleize.split.first, icon_url: "#{strategy.dasherize}-icon.svg",
-    availability: "shared",
-    client_id: Rails.application.credentials.dig(:omniauth, strategy, :client_id),
-    client_secret: Rails.application.credentials.dig(:omniauth, strategy, :client_secret))
+  idp.update(name: strategy.to_s.titleize.split.first, icon_url: "#{strategy.dasherize}-icon.svg")
 end
 
-google_idp = IdentityProvider.find_by(strategy: "google_oauth2", availability: "shared")
+google_idp = IdentityProvider.find_by(strategy: "google_oauth2")
 
 org = Organization.find_or_initialize_by(subdomain: "perceptive")
-org.update(name: "Perceptive", password_auth_allowed: false,
-  identity_providers: [google_idp],
+# Save the org first (shared_identity_provider_ids= requires a persisted record)
+org.update!(name: "Perceptive", password_auth_allowed: true,
   email_domains: [
     EmailDomain.new(domain_name: "perceptive.io"),
     EmailDomain.new(domain_name: "cyberdontics.io"),
     EmailDomain.new(domain_name: "cyberdontics.co")
   ])
+org.update!(password_auth_allowed: false,
+  shared_identity_provider_ids: [google_idp&.id].compact)
 
 admin_user = User.find_or_initialize_by(email_address: "phil@perceptive.io")
 admin_user.update(first_name: "Phil", last_name: "Getto", password: User.random_password)
@@ -41,9 +42,7 @@ admin_user.build_organization_membership(organization: org, role: :admin)
 admin_user.identities << Identity.new(identity_provider: google_idp, provider_user_id: "107480982343427960619")
 admin_user.save!
 
-# standard:disable Rails/Output
 ap "Ensured existence of organization #{org.name} with admin user #{admin_user.email_address}."
-# standard:enable Rails/Output
 
 if Rails.env.development?
   load Rails.root.join("db/seeds/development.rb")
