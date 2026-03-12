@@ -1,8 +1,8 @@
 class DentalModelsController < ApplicationController
   before_action :set_dental_model, only: [:show]
-  authorize_resource
 
   def show
+    authorize @dental_model
   end
 
   private

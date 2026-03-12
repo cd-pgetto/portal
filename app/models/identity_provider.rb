@@ -3,35 +3,43 @@
 # Table name: identity_providers
 # Database name: primary
 #
-#  id            :uuid             not null, primary key
-#  availability  :enum             default("shared"), not null
-#  client_secret :string           not null
-#  icon_url      :string           not null
-#  name          :string           not null
-#  strategy      :string           not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  client_id     :string           not null
+#  id              :uuid             not null, primary key
+#  client_secret   :text             default("")
+#  icon_url        :string           not null
+#  name            :string           not null
+#  okta_domain     :string
+#  strategy        :string           not null
+#  type            :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  client_id       :text             default("")
+#  organization_id :uuid
 #
 # Indexes
 #
-#  index_identity_providers_on_strategy                (strategy) UNIQUE WHERE (availability = 'shared'::availability)
-#  index_identity_providers_on_strategy_and_client_id  (strategy,client_id) UNIQUE
+#  index_identity_providers_on_organization_id  (organization_id) UNIQUE WHERE (organization_id IS NOT NULL)
+#  index_identity_providers_on_strategy         (strategy) UNIQUE WHERE (organization_id IS NULL)
+#  index_identity_providers_on_type             (type)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (organization_id => organizations.id)
 #
 class IdentityProvider < ApplicationRecord
-  has_many :credentials, dependent: :destroy
-  has_many :organizations, through: :credentials
+  has_many :organization_shared_identity_providers, dependent: :destroy
+  has_many :organizations, through: :organization_shared_identity_providers
   has_many :identities, dependent: :destroy
 
-  enum :availability, {shared: "shared", dedicated: "dedicated"}
+  validates :name, :icon_url, :strategy, presence: true
 
-  validates :name, :icon_url, :strategy, :client_id, :client_secret, presence: true
+  # Shared providers must have a unique strategy globally
+  validates :strategy, uniqueness: {conditions: -> { where(organization_id: nil) }}, if: -> { !dedicated? }
 
-  # Can only have single shared identity provider per strategy
-  validates :strategy, uniqueness: {conditions: -> { shared }}, if: -> { shared? }
+  scope :shared, -> { where(organization_id: nil) }
+  scope :dedicated, -> { where.not(organization_id: nil) }
 
-  # Can only have single identity provider per strategy and client_id combination
-  validates :client_id, uniqueness: {scope: :strategy}
+  def shared? = !dedicated?
+  def dedicated? = false
 
   # List of available OAuth strategies
   def self.available_strategies
