@@ -1,4 +1,4 @@
-class CredentialPolicy < ApplicationPolicy
+class OrganizationSharedIdentityProviderPolicy < ApplicationPolicy
   def create? = system_admin? || (organization_admin? && same_organization?)
   def update? = create?
 

@@ -10,13 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_10_225400) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_12_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
-  create_enum "availability", ["shared", "dedicated"]
   create_enum "jaw_type", ["maxilla", "mandible"]
   create_enum "organization_role", ["owner", "admin", "member", "inactive"]
   create_enum "practice_role", ["owner", "admin", "member", "dentist", "hygienist", "assistant", "inactive"]
@@ -50,16 +49,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_225400) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "credentials", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.uuid "identity_provider_id", null: false
-    t.uuid "organization_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["identity_provider_id"], name: "index_credentials_on_identity_provider_id"
-    t.index ["organization_id", "identity_provider_id"], name: "index_credentials_on_organization_id_and_identity_provider_id", unique: true
-    t.index ["organization_id"], name: "index_credentials_on_organization_id"
-  end
-
   create_table "dental_models", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "model_type", null: false
@@ -89,18 +78,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_225400) do
   end
 
   create_table "identity_providers", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
-    t.enum "availability", default: "shared", null: false, enum_type: "availability"
-    t.string "client_id", null: false
-    t.string "client_secret", null: false
+    t.text "client_id", default: ""
+    t.text "client_secret", default: ""
     t.datetime "created_at", null: false
     t.string "icon_url", null: false
     t.string "name", null: false
     t.string "okta_domain"
+    t.uuid "organization_id"
     t.string "strategy", null: false
     t.string "type"
     t.datetime "updated_at", null: false
-    t.index ["strategy", "client_id"], name: "index_identity_providers_on_strategy_and_client_id", unique: true
-    t.index ["strategy"], name: "index_identity_providers_on_strategy", unique: true, where: "(availability = 'shared'::availability)"
+    t.index ["organization_id"], name: "index_identity_providers_on_organization_id", unique: true, where: "(organization_id IS NOT NULL)"
+    t.index ["strategy"], name: "index_identity_providers_on_strategy", unique: true, where: "(organization_id IS NULL)"
     t.index ["type"], name: "index_identity_providers_on_type"
   end
 
@@ -121,6 +110,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_225400) do
     t.uuid "user_id", null: false
     t.index ["organization_id"], name: "index_organization_members_on_organization_id"
     t.index ["user_id"], name: "index_organization_members_on_user_id"
+  end
+
+  create_table "organization_shared_identity_providers", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.uuid "identity_provider_id", null: false
+    t.uuid "organization_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["identity_provider_id"], name: "idx_on_identity_provider_id_69c7c4049e"
+    t.index ["organization_id", "identity_provider_id"], name: "idx_on_organization_id_identity_provider_id_0f78e8471f", unique: true
+    t.index ["organization_id"], name: "idx_on_organization_id_5824626843"
   end
 
   create_table "organizations", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -196,15 +195,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_225400) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "credentials", "identity_providers"
-  add_foreign_key "credentials", "organizations"
   add_foreign_key "dental_models", "patients"
   add_foreign_key "email_domains", "organizations"
   add_foreign_key "identities", "identity_providers"
   add_foreign_key "identities", "users"
+  add_foreign_key "identity_providers", "organizations"
   add_foreign_key "jaws", "dental_models"
   add_foreign_key "organization_members", "organizations"
   add_foreign_key "organization_members", "users"
+  add_foreign_key "organization_shared_identity_providers", "identity_providers"
+  add_foreign_key "organization_shared_identity_providers", "organizations"
   add_foreign_key "patients", "practices"
   add_foreign_key "practice_members", "practices"
   add_foreign_key "practice_members", "users"

@@ -1,8 +1,6 @@
 %w[apple auth0 facebook github linkedin twitter].each do |strategy|
   IdentityProvider.create!(name: strategy.titleize.split.first, strategy: strategy,
-    availability: "shared", icon_url: "test-icon.svg",
-    client_id: Faker::Alphanumeric.alphanumeric(number: 10),
-    client_secret: Faker::Alphanumeric.alphanumeric(number: 20))
+    icon_url: "test-icon.svg")
 end
 ap "Created #{IdentityProvider.count} shared identity providers."
 
@@ -10,20 +8,32 @@ def create_organization
   name = Faker::Company.name
   base_email_domain = name.split(/[ -]/).reject { |el| el == "and" }.take(rand(1..2))
     .join("-").downcase.gsub(/[^a-z0-9-]/, "")
-  org = Organization.create!(name: name, subdomain: base_email_domain,
-    password_auth_allowed: [true, false].sample,
-    email_domains: [
-      EmailDomain.new(domain_name: base_email_domain + ".com"),
-      EmailDomain.new(domain_name: base_email_domain + ".dental")
-    ],
-    identity_providers: IdentityProvider.shared.sample(rand(1..IdentityProvider.count)))
+  email_domains = [
+    EmailDomain.new(domain_name: base_email_domain + ".com"),
+    EmailDomain.new(domain_name: base_email_domain + ".dental")
+  ]
 
-  if [true, false].sample
+  use_dedicated = [true, false].sample
+  shared_providers = IdentityProvider.shared.to_a
+
+  if use_dedicated
+    org = Organization.create!(name: name, subdomain: base_email_domain,
+      password_auth_allowed: true,
+      email_domains: email_domains)
     strategy = %w[apple auth0 facebook google_oauth2 github linkedin twitter].sample
-    org.identity_providers << IdentityProvider.create(strategy: strategy, availability: "dedicated",
+    DedicatedIdentityProvider.create!(strategy: strategy, organization: org,
       name: "#{strategy.titleize.split.first} Dedicated", icon_url: "test-icon.svg",
       client_id: Faker::Alphanumeric.alphanumeric(number: 10),
       client_secret: Faker::Alphanumeric.alphanumeric(number: 20))
+    org.update!(password_auth_allowed: false)
+  else
+    org = Organization.create!(name: name, subdomain: base_email_domain,
+      password_auth_allowed: true,
+      email_domains: email_domains)
+    org.update!(
+      password_auth_allowed: [true, false].sample,
+      shared_identity_provider_ids: shared_providers.sample(rand(1..shared_providers.count)).map(&:id)
+    )
   end
   org
 end
@@ -64,20 +74,22 @@ end
       _patient = create_patient(practice)
     end
   end
-  ap "Created organization #{org.name} using #{org.dedicated_identity_providers.map { |idp| idp.strategy }.join(", ")}, #{org.practices_count} practices, #{org.users.count} members and #{org.practices.joins(:patients).count} patients."
+  dedicated_strategy = org.dedicated_identity_provider&.strategy || "none"
+  ap "Created organization #{org.name} using #{dedicated_strategy}, #{org.practices_count} practices, #{org.users.count} members and #{org.practices.joins(:patients).count} patients."
 end
 
 # Org using Okta
 okta_credentials = Rails.application.credentials.dig(:omniauth, :okta).first
-big_dso_okta_idp = OktaIdentityProvider.create!(availability: "dedicated", strategy: "okta",
-  name: "Okta for Big DSO", icon_url: "okta-icon.svg", okta_domain: okta_credentials[:name],
-  client_id: okta_credentials[:client_id], client_secret: okta_credentials[:client_secret])
-_okta_org = Organization.create!(name: "Big DSO", subdomain: "big-dso",
-  identity_providers: [big_dso_okta_idp], password_auth_allowed: false,
+big_dso = Organization.create!(name: "Big DSO", subdomain: "big-dso",
+  password_auth_allowed: true,
   email_domains: [
-    EmailDomain.new(domain_name: "#{okta_credentials[:name]}.com"),
-    EmailDomain.new(domain_name: "perceptive.io")
+    EmailDomain.new(domain_name: "#{okta_credentials[:name]}.com")
   ])
+OktaIdentityProvider.create!(strategy: "okta",
+  name: "Okta for Big DSO", icon_url: "okta-icon.svg", okta_domain: okta_credentials[:name],
+  client_id: okta_credentials[:client_id], client_secret: okta_credentials[:client_secret],
+  organization: big_dso)
+big_dso.update!(password_auth_allowed: false)
 
 ap "Total #{Organization.count} organizations with #{Practice.count} practices, #{User.count} members and #{Patient.count} patients."
 

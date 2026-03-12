@@ -25,18 +25,26 @@
 #
 #  fk_rails_...  (organization_id => organizations.id)
 #
-FactoryBot.define do
-  sequence(:identity_provider_number) { |n| n }
+class DedicatedIdentityProvider < IdentityProvider
+  require_relative "okta_identity_provider"
 
-  factory :identity_provider do
-    name { "IdP-#{generate(:identity_provider_number)}" }
-    icon_url { "test-icon.svg" }
-    strategy { "strategy-#{generate(:identity_provider_number)}" }
+  STRATEGY_CLASS_MAP = {
+    "okta" => "OktaIdentityProvider"
+  }.freeze
 
-    factory :google_identity_provider do
-      name { "Google OAuth" }
-      icon_url { "google-oauth2-icon.svg" }
-      strategy { "google_oauth2" }
-    end
+  encrypts :client_id, :client_secret
+
+  belongs_to :organization
+
+  validates :organization, :client_id, :client_secret, presence: true
+
+  def self.class_for_strategy(strategy)
+    STRATEGY_CLASS_MAP[strategy]
   end
+
+  def self.dedicated_strategies
+    STRATEGY_CLASS_MAP.keys
+  end
+
+  def dedicated? = true
 end
