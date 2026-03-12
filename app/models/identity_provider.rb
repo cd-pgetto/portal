@@ -1,40 +1,21 @@
-# == Schema Information
-#
-# Table name: identity_providers
-# Database name: primary
-#
-#  id            :uuid             not null, primary key
-#  availability  :enum             default("shared"), not null
-#  client_secret :string           not null
-#  icon_url      :string           not null
-#  name          :string           not null
-#  okta_domain   :string
-#  strategy      :string           not null
-#  type          :string
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  client_id     :string           not null
-#
-# Indexes
-#
-#  index_identity_providers_on_strategy                (strategy) UNIQUE WHERE (availability = 'shared'::availability)
-#  index_identity_providers_on_strategy_and_client_id  (strategy,client_id) UNIQUE
-#  index_identity_providers_on_type                    (type)
-#
 class IdentityProvider < ApplicationRecord
-  has_many :credentials, dependent: :destroy
-  has_many :organizations, through: :credentials
+  has_many :organization_shared_identity_providers, dependent: :destroy
+  has_many :organizations, through: :organization_shared_identity_providers
   has_many :identities, dependent: :destroy
-
-  enum :availability, {shared: "shared", dedicated: "dedicated"}
 
   validates :name, :icon_url, :strategy, :client_id, :client_secret, presence: true
 
-  # Can only have single shared identity provider per strategy
-  validates :strategy, uniqueness: {conditions: -> { shared }}, if: -> { shared? }
+  # Shared providers must have a unique strategy globally
+  validates :strategy, uniqueness: {conditions: -> { where(organization_id: nil) }}, if: -> { !dedicated? }
 
-  # Can only have single identity provider per strategy and client_id combination
+  # No two providers with the same strategy and client_id
   validates :client_id, uniqueness: {scope: :strategy}
+
+  scope :shared, -> { where(organization_id: nil) }
+  scope :dedicated, -> { where.not(organization_id: nil) }
+
+  def shared? = !dedicated?
+  def dedicated? = false
 
   # List of available OAuth strategies
   def self.available_strategies

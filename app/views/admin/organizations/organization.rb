@@ -42,13 +42,12 @@ class Views::Admin::Organizations::Organization < Components::Base
               }
             end
 
-            # Dedicated Identity Providers
+            # Dedicated Identity Provider
             div(class: "pt-2 pb-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0") do
               dt(class: "opacity-70") { "Dedicated Identity Providers:" }
               dd(class: "mt-1 sm:col-span-2 sm:mt-0") {
-                @organization.dedicated_identity_providers.map { |idp|
-                  idp.name + " (" + idp.strategy + " )"
-                }.join(", ")
+                idp = @organization.dedicated_identity_provider
+                idp ? "#{idp.name} (#{idp.strategy})" : ""
               }
             end
 

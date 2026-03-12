@@ -63,9 +63,10 @@ RSpec.describe OktaIdentityProvider, type: :model do
 
     context "when identity_provider_id is absent and provider is found via request host" do
       let(:organization) { create(:organization, subdomain: "acme") }
+      let(:okta_idp) { create(:okta_identity_provider, organization: organization) }
 
       before do
-        create(:credential, organization: organization, identity_provider: okta_idp)
+        okta_idp # ensure created
         env["rack.input"] = StringIO.new
         env["HTTP_HOST"] = "acme.example.com"
         env["REQUEST_METHOD"] = "GET"

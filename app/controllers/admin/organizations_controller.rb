@@ -4,7 +4,7 @@ class Admin::OrganizationsController < Admin::BaseController
   # GET /admin/organizations or /admin/organizations.json
   def index
     authorize Organization
-    render Views::Admin::Organizations::Index.new(organizations: policy_scope(Organization).order(:name))
+    render Views::Admin::Organizations::Index.new(organizations: policy_scope(Organization).includes(:dedicated_identity_provider).order(:name))
   end
 
   # GET /admin/organizations/1 or /admin/organizations/1.json
@@ -75,16 +75,27 @@ class Admin::OrganizationsController < Admin::BaseController
 
   # Only allow a list of trusted parameters through.
   def organization_params
-    params.require(:organization).permit(
+    permitted = params.require(:organization).permit(
       :name,
       :subdomain,
       :password_auth_allowed,
       shared_identity_provider_ids: [],
       practices_attributes: [:id, :name, :_destroy],
       email_domains_attributes: [:id, :domain_name, :_destroy],
-      credentials_attributes: [:id, :_destroy, :identity_provider_id,
-        identity_provider_attributes: [:id, :_destroy, :name, :strategy, :icon_url,
-          :client_id, :client_secret, :availability]]
+      dedicated_identity_provider_attributes: [:id, :_destroy, :type, :name, :strategy,
+        :icon_url, :client_id, :client_secret, :okta_domain]
     )
+    idp_attrs = permitted[:dedicated_identity_provider_attributes]
+    if idp_attrs.present?
+      if idp_attrs.fetch(:id, nil).present?
+        # Prevent changing the STI type of an existing dedicated identity provider
+        idp_attrs.delete(:type)
+      else
+        # Whitelist the type for new dedicated identity providers
+        allowed_types = DedicatedIdentityProvider.descendants.map(&:name)
+        idp_attrs[:type] = OktaIdentityProvider.name unless allowed_types.include?(idp_attrs[:type])
+      end
+    end
+    permitted
   end
 end

@@ -20,16 +20,15 @@ IdentityProvider.available_strategies.each do |strategy|
 
   idp = IdentityProvider.find_or_initialize_by(strategy: strategy)
   idp.update(name: strategy.to_s.titleize.split.first, icon_url: "#{strategy.dasherize}-icon.svg",
-    availability: "shared",
     client_id: Rails.application.credentials.dig(:omniauth, strategy, :client_id),
     client_secret: Rails.application.credentials.dig(:omniauth, strategy, :client_secret))
 end
 
-google_idp = IdentityProvider.find_by(strategy: "google_oauth2", availability: "shared")
+google_idp = IdentityProvider.find_by(strategy: "google_oauth2")
 
 org = Organization.find_or_initialize_by(subdomain: "perceptive")
 org.update(name: "Perceptive", password_auth_allowed: false,
-  identity_providers: [google_idp],
+  shared_identity_provider_ids: [google_idp&.id].compact,
   email_domains: [
     EmailDomain.new(domain_name: "perceptive.io"),
     EmailDomain.new(domain_name: "cyberdontics.io"),

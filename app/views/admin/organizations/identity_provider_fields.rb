@@ -9,7 +9,7 @@ class Views::Admin::Organizations::IdentityProviderFields < Views::Base
       fieldset(class: "fieldset bg-base-200 border-1 border-neutral rounded-box flex items-center gap-x-6 p-2 mb-2",
         data: {nested_form: {item: true}}) do
         form.hidden_field :id
-        form.hidden_field :availability, value: "dedicated"
+        form.hidden_field :type, value: form.object.class.name.presence || "OktaIdentityProvider"
         div(class: "flex flex-col w-full gap-y-4 mt-2") do
           div(class: "flex flex-row justify-between gap-x-4 w-full") do
             # TODO: CSS to highlight borders of fields with errors, maybe use form_field_classes(form.object, :name)
