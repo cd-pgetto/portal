@@ -73,6 +73,8 @@ class Admin::OrganizationsController < Admin::BaseController
     @organization = Organization.find(params.expect(:id))
   end
 
+  DEDICATED_IDP_TYPES = [OktaIdentityProvider.name].freeze
+
   # Only allow a list of trusted parameters through.
   def organization_params
     permitted = params.require(:organization).permit(
@@ -92,8 +94,7 @@ class Admin::OrganizationsController < Admin::BaseController
         idp_attrs.delete(:type)
       else
         # Whitelist the type for new dedicated identity providers
-        allowed_types = DedicatedIdentityProvider.descendants.map(&:name)
-        idp_attrs[:type] = OktaIdentityProvider.name unless allowed_types.include?(idp_attrs[:type])
+        idp_attrs[:type] = OktaIdentityProvider.name unless DEDICATED_IDP_TYPES.include?(idp_attrs[:type])
       end
     end
     permitted

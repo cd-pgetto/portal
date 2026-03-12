@@ -24,10 +24,11 @@ class Organization < ApplicationRecord
 
   # Returns all identity providers for this organization — shared (via join table)
   # and dedicated (via direct organization_id FK). Mutually exclusive in practice.
+  # Use shared_identity_providers.ids to handle the case of a new, unsaved organization which
+  # can have in-memory shared identity providers.
   def identity_providers
-    IdentityProvider
-      .where(id: shared_identity_providers)
-      .or(IdentityProvider.where(organization_id: id))
+    IdentityProvider.where(id: shared_identity_providers.ids)
+      .or(IdentityProvider.where(organization_id: id).where.not(type: "IdentityProvider"))
   end
 
   def self.find_by_email(email)
@@ -87,14 +88,14 @@ class Organization < ApplicationRecord
 
   def has_identity_provider_if_password_auth_not_allowed
     return if password_auth_allowed?
-    unless identity_providers.exists? || dedicated_identity_provider.present?
+    unless shared_identity_providers.any? || dedicated_identity_provider.present?
       errors.add(:base, "must have at least one identity provider if password authentication is not allowed")
     end
   end
 
   def authentication_mode_is_exclusive
     return unless dedicated_identity_provider.present?
-    if shared_identity_providers.exists?
+    if shared_identity_providers.any?
       errors.add(:base, "cannot have both a dedicated identity provider and shared identity providers")
     end
     if password_auth_allowed?
