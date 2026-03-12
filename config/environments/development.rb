@@ -81,4 +81,7 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
+
+  # Allow subdomains to be used as the top-level domain.
+  config.action_dispatch.tld_length = 0
 end

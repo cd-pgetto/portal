@@ -25,14 +25,6 @@ class Views::Admin::IdentityProviders::Form < Components::Base
       end
 
       div(class: "my-5") do
-        form.label(:availability)
-        form.select(:availability,
-          IdentityProvider.availabilities.keys.map { |k| [k.titleize, k] },
-          {include_blank: true},
-          class: form_field_classes(@identity_provider, :availability))
-      end
-
-      div(class: "my-5") do
         form.label(:client_id, "Client ID")
         form.text_field(:client_id, class: form_field_classes(@identity_provider, :client_id))
       end

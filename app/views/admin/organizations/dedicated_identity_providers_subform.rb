@@ -5,37 +5,15 @@ class Views::Admin::Organizations::DedicatedIdentityProvidersSubform < Views::Ba
   end
 
   def view_template
-    # Dedicated Identity Providers
-    div(class: "") do
-      #   Nested fields for Dedicated Identity Providers
-      div(data: {controller: "nested-form", nested_form_index_value: "NEW_DEDICATED_CRED"}) do
-        div(class: "flex flex-row gap-x-4 items-center mb-2") do
-          div { "Dedicated Identity Providers" }
-          button(class: "btn btn-xs btn-outline", data: {action: "click->nested-form#addNestedForm"}) do
-            render PhlexIcons::Lucide::Plus.new(class: "size-4")
-          end
-        end
+    div do
+      div(class: "mb-2") { "Dedicated Identity Provider" }
 
-        div(data: {nested_form_target: "container"}) do
-          # Use select list here to pick up in-memory, unsaved data from prior validation errors.
-          dedicated_credentials = organization.credentials.select { |c| c.identity_provider.dedicated? }
-          form.fields_for :credentials, dedicated_credentials do |cred_fields|
-            cred_fields.hidden_field :id
-            cred_fields.fields_for :identity_provider do |idp_fields|
-              render Views::Admin::Organizations::IdentityProviderFields.new(form: idp_fields, organization: organization)
-            end
-          end
-        end
+      # Use the existing dedicated IdP or build a new one for the form
+      dedicated_idp = organization.dedicated_identity_provider ||
+        organization.build_dedicated_identity_provider
 
-        # Template for new Dedicated Identity Provider fields
-        template(data: {nested_form_target: "template"}) do
-          new_credential = organization.credentials.build
-          form.fields_for :credentials, new_credential, child_index: "NEW_DEDICATED_CRED" do |cred_fields|
-            cred_fields.fields_for :identity_provider, IdentityProvider.new(availability: :dedicated) do |idp_fields|
-              render Views::Admin::Organizations::IdentityProviderFields.new(form: idp_fields, organization: organization)
-            end
-          end
-        end
+      form.fields_for :dedicated_identity_provider, dedicated_idp do |idp_fields|
+        render Views::Admin::Organizations::DedicatedIdentityProviderFields.new(form: idp_fields, organization: organization)
       end
     end
   end

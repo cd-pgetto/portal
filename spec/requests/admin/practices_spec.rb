@@ -32,6 +32,14 @@ RSpec.describe "/admin/practices", type: :request do
       get admin_practices_url
       expect(response).to be_successful
     end
+
+    it "lists all practices" do
+      org = create(:organization)
+      practice_a = Practice.create! valid_attributes
+      practice_b = Practice.create! name: "Another Practice", organization_id: org.id
+      get admin_practices_url
+      expect(response.body).to include(practice_a.name, practice_b.name)
+    end
   end
 
   describe "GET /show" do
