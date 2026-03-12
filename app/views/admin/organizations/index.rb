@@ -23,7 +23,7 @@ class Views::Admin::Organizations::Index < Views::Base
         td(class: "text-center") { organization.password_auth_allowed? ? "Yes" : "No" }
         td(class: "text-center") { organization.email_domains_count }
         td(class: "text-center") { organization.shared_identity_providers.count }
-        td(class: "text-center") { organization.dedicated_identity_providers.count }
+        td(class: "text-center") { organization.dedicated_identity_provider.present? ? "Yes" : "No" }
         td(class: "border-l border-base-content") { render Components::Admin::Index::Actions.new(record: organization) }
       end
     end
