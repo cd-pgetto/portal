@@ -73,8 +73,6 @@ class Admin::OrganizationsController < Admin::BaseController
     @organization = Organization.find(params.expect(:id))
   end
 
-  DEDICATED_IDP_TYPES = [OktaIdentityProvider.name].freeze
-
   # Only allow a list of trusted parameters through.
   def organization_params
     permitted = params.require(:organization).permit(
@@ -84,18 +82,12 @@ class Admin::OrganizationsController < Admin::BaseController
       shared_identity_provider_ids: [],
       practices_attributes: [:id, :name, :_destroy],
       email_domains_attributes: [:id, :domain_name, :_destroy],
-      dedicated_identity_provider_attributes: [:id, :_destroy, :type, :name, :strategy,
+      dedicated_identity_provider_attributes: [:id, :_destroy, :name, :strategy,
         :icon_url, :client_id, :client_secret, :okta_domain]
     )
     idp_attrs = permitted[:dedicated_identity_provider_attributes]
-    if idp_attrs.present?
-      if idp_attrs.fetch(:id, nil).present?
-        # Prevent changing the STI type of an existing dedicated identity provider
-        idp_attrs.delete(:type)
-      else
-        # Whitelist the type for new dedicated identity providers
-        idp_attrs[:type] = OktaIdentityProvider.name unless DEDICATED_IDP_TYPES.include?(idp_attrs[:type])
-      end
+    if idp_attrs.present? && idp_attrs.fetch(:id, nil).blank?
+      idp_attrs[:type] = DedicatedIdentityProvider.class_for_strategy(idp_attrs[:strategy])
     end
     permitted
   end

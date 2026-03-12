@@ -10,10 +10,10 @@ class Views::Admin::Organizations::DedicatedIdentityProvidersSubform < Views::Ba
 
       # Use the existing dedicated IdP or build a new one for the form
       dedicated_idp = organization.dedicated_identity_provider ||
-        organization.build_dedicated_identity_provider(type: "OktaIdentityProvider")
+        organization.build_dedicated_identity_provider
 
       form.fields_for :dedicated_identity_provider, dedicated_idp do |idp_fields|
-        render Views::Admin::Organizations::IdentityProviderFields.new(form: idp_fields, organization: organization)
+        render Views::Admin::Organizations::DedicatedIdentityProviderFields.new(form: idp_fields, organization: organization)
       end
     end
   end
