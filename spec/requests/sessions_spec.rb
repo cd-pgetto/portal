@@ -52,11 +52,13 @@ RSpec.describe "Sessions", type: :request do
       end
 
       context "for an organization based on the email domain" do
-        let(:idp) { create(:identity_provider, availability: "dedicated", name: "DedicatedIdP") }
+        let(:idp) { create(:identity_provider, name: "OrgIdP") }
+        let(:email_domain_name) { user.email_address.split("@").last }
 
         it "renders a list of org identity providers" do
-          create(:organization, password_auth_allowed: true, identity_providers: [idp],
-            email_domains: [create(:email_domain, domain_name: user.email_address.split("@").last)])
+          org = create(:organization, password_auth_allowed: true,
+            email_domains: [create(:email_domain, domain_name: email_domain_name)])
+          org.shared_identity_providers << idp
 
           post session_path, params: {sign_in_step: 1, email_address: user.email_address}
 
@@ -66,8 +68,10 @@ RSpec.describe "Sessions", type: :request do
         end
 
         it "does not render password entry if not allowed" do
-          create(:organization, password_auth_allowed: false, identity_providers: [idp],
-            email_domains: [create(:email_domain, domain_name: user.email_address.split("@").last)])
+          org = create(:organization, password_auth_allowed: true,
+            email_domains: [create(:email_domain, domain_name: email_domain_name)])
+          org.shared_identity_providers << idp
+          org.update!(password_auth_allowed: false)
 
           post session_path, params: {sign_in_step: 1, email_address: user.email_address}
 
@@ -78,8 +82,9 @@ RSpec.describe "Sessions", type: :request do
       end
 
       it "renders a list of org identity providers based on subdomain" do
-        idp = create(:identity_provider, availability: "dedicated", name: "DedicatedIdP")
-        org = create(:organization, identity_providers: [idp])
+        idp = create(:identity_provider, name: "SubdomainOrgIdP")
+        org = create(:organization)
+        org.shared_identity_providers << idp
         host! "#{org.subdomain}.example.com"
 
         post session_path, params: {sign_in_step: 1, email_address: user.email_address}
