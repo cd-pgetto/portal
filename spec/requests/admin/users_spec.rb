@@ -33,6 +33,13 @@ RSpec.describe "/admin/users", type: :request do
       get admin_users_url
       expect(response).to be_successful
     end
+
+    it "lists all users" do
+      user_a = User.create! valid_attributes
+      user_b = User.create! valid_attributes.merge(email_address: "other@example.com")
+      get admin_users_url
+      expect(response.body).to include(user_a.first_name, user_b.first_name)
+    end
   end
 
   describe "GET /show" do

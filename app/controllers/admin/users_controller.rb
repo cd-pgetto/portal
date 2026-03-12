@@ -1,29 +1,32 @@
 class Admin::UsersController < Admin::BaseController
   before_action :set_user, only: %i[show edit update destroy]
 
-  authorize_resource
-
   # GET /admin/users or /admin/users.json
   def index
-    render Views::Admin::Users::Index.new(users: User.includes([:organization, :practices]).order(["organization.name", :last_name, :first_name]).all)
+    authorize User
+    render Views::Admin::Users::Index.new(users: policy_scope(User).includes([:organization, :practices]).order(["organization.name", :last_name, :first_name]))
   end
 
   # GET /admin/users/1 or /admin/users/1.json
   def show
+    authorize @user
   end
 
   # GET /admin/users/new
   def new
     @user = User.new
+    authorize @user
   end
 
   # GET /admin/users/1/edit
   def edit
+    authorize @user
   end
 
   # POST /admin/users or /admin/users.json
   def create
     @user = User.new(user_params)
+    authorize @user
     respond_to do |format|
       if @user.save
         format.html { redirect_to [:admin, @user], notice: "User was successfully created." }
@@ -37,6 +40,7 @@ class Admin::UsersController < Admin::BaseController
 
   # PATCH/PUT /admin/users/1 or /admin/users/1.json
   def update
+    authorize @user
     respond_to do |format|
       if @user.update(user_params)
         format.html { redirect_to [:admin, @user], notice: "User was successfully updated.", status: :see_other }
@@ -50,6 +54,7 @@ class Admin::UsersController < Admin::BaseController
 
   # DELETE /admin/users/1 or /admin/users/1.json
   def destroy
+    authorize @user
     @user.destroy!
 
     respond_to do |format|

@@ -1,4 +1,4 @@
-class Views::Admin::Organizations::IdentityProviderFields < Views::Base
+class Views::Admin::Organizations::DedicatedIdentityProviderFields < Views::Base
   def initialize(form:, organization:)
     @form = form
     @organization = organization
@@ -9,14 +9,17 @@ class Views::Admin::Organizations::IdentityProviderFields < Views::Base
       fieldset(class: "fieldset bg-base-200 border-1 border-neutral rounded-box flex items-center gap-x-6 p-2 mb-2",
         data: {nested_form: {item: true}}) do
         form.hidden_field :id
-        form.hidden_field :availability, value: "dedicated"
         div(class: "flex flex-col w-full gap-y-4 mt-2") do
           div(class: "flex flex-row justify-between gap-x-4 w-full") do
             # TODO: CSS to highlight borders of fields with errors, maybe use form_field_classes(form.object, :name)
 
             div(class: "w-full") do
               form.label(:strategy, class: "label")
-              form.select(:strategy, IdentityProvider.available_strategies, {}, class: "select w-full")
+              if form.object.new_record?
+                form.select(:strategy, DedicatedIdentityProvider.dedicated_strategies, {}, class: "select w-full")
+              else
+                form.text_field(:strategy, class: "input w-full", disabled: true)
+              end
             end
 
             div(class: "w-full") do
