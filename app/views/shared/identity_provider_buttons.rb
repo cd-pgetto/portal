@@ -11,8 +11,8 @@ class Views::Shared::IdentityProviderButtons < Views::Base
 
     div(class: "flex flex-col text-center mt-6 mb-10") do
       identity_providers.each do |provider|
-        button_to("/oauth/#{provider.strategy}", class: "btn btn-outline btn-medium",
-          data: {turbo: false}, local: true) do
+        button_to("/oauth/#{provider.strategy}", params: {identity_provider_id: provider.id},
+          class: "btn btn-outline btn-medium", data: {turbo: false}, local: true) do
           img(src: asset_path(provider.icon_url), class: "h-5 w-5")
           span { "#{action} with #{provider.name}" }
         end

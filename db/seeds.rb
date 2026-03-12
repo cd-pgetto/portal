@@ -15,6 +15,7 @@ if Rails.env.local?
 end
 
 IdentityProvider.available_strategies.each do |strategy|
+  next if /okta/.match?(strategy)
   next if Rails.application.credentials.dig(:omniauth, strategy.to_sym, :client_id).blank?
 
   idp = IdentityProvider.find_or_initialize_by(strategy: strategy)
@@ -41,9 +42,7 @@ admin_user.build_organization_membership(organization: org, role: :admin)
 admin_user.identities << Identity.new(identity_provider: google_idp, provider_user_id: "107480982343427960619")
 admin_user.save!
 
-# standard:disable Rails/Output
 ap "Ensured existence of organization #{org.name} with admin user #{admin_user.email_address}."
-# standard:enable Rails/Output
 
 if Rails.env.development?
   load Rails.root.join("db/seeds/development.rb")

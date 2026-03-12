@@ -1,7 +1,7 @@
 Rails.application.config.middleware.use OmniAuth::Builder do
   provider :developer if Rails.env.development?
 
-  # TODO: Use setup to initalize from DB-stored credentials
+  # TODO: Use setup to initalize from DB-stored credentials for other shared providers
 
   # provider :apple,
   #   Rails.application.credentials.dig(:omniauth, :apple, :client_id), "",
@@ -25,11 +25,10 @@ Rails.application.config.middleware.use OmniAuth::Builder do
   #   Rails.application.credentials.dig(:omniauth, :microsoft_office365, :client_id),
   #   Rails.application.credentials.dig(:omniauth, :microsoft_office365, :client_secret)
 
-  # provider :okta,
-  #   Rails.application.credentials.dig(:omniauth, :okta, :client_id),
-  #   Rails.application.credentials.dig(:omniauth, :okta, :client_secret)
-  # provider :okta,
-  #   setup: ->(env) { OmniAuthOktaProvider.setup(env) }
+  # Each organization has its own Okta instance. The identity_provider_id param
+  # must be passed when initiating the OAuth flow (e.g. /oauth/okta?identity_provider_id=<id>)
+  # so the setup proc can configure the correct credentials and domain.
+  provider :okta, setup: ->(env) { OktaIdentityProvider.setup(env) }
 end
 
 OmniAuth.configure do |config|

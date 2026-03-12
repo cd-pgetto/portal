@@ -8,7 +8,9 @@
 #  client_secret :string           not null
 #  icon_url      :string           not null
 #  name          :string           not null
+#  okta_domain   :string
 #  strategy      :string           not null
+#  type          :string
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  client_id     :string           not null
@@ -17,6 +19,7 @@
 #
 #  index_identity_providers_on_strategy                (strategy) UNIQUE WHERE (availability = 'shared'::availability)
 #  index_identity_providers_on_strategy_and_client_id  (strategy,client_id) UNIQUE
+#  index_identity_providers_on_type                    (type)
 #
 require "rails_helper"
 
