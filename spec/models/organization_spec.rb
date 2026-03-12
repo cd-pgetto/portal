@@ -23,25 +23,24 @@ RSpec.describe Organization, type: :model do
 
   describe "associations" do
     it { is_expected.to have_many(:email_domains).dependent(:destroy) }
-    it { is_expected.to have_many(:credentials).dependent(:destroy) }
-    it { is_expected.to have_many(:identity_providers).through(:credentials) }
-    it { is_expected.to accept_nested_attributes_for(:credentials).allow_destroy(true) }
+    it { is_expected.to have_many(:organization_shared_identity_providers).dependent(:destroy) }
+    it { is_expected.to have_many(:shared_identity_providers).through(:organization_shared_identity_providers) }
+    it { is_expected.to have_one(:dedicated_identity_provider) }
+    it { is_expected.to accept_nested_attributes_for(:organization_shared_identity_providers).allow_destroy(true) }
+    it { is_expected.to accept_nested_attributes_for(:dedicated_identity_provider).allow_destroy(true) }
     it { is_expected.to accept_nested_attributes_for(:email_domains).allow_destroy(true) }
-    it "is expected to have many shared identity providers through credentials" do
-      subject.save!
-      identity_provider = create(:identity_provider, availability: "shared")
-      subject.identity_providers << identity_provider
 
-      expect(subject.shared_identity_providers.length).to eq(1)
-      expect(subject.shared_identity_providers.first).to eq(identity_provider)
+    it "returns shared identity providers through the join table" do
+      subject.save!
+      idp = create(:identity_provider)
+      subject.shared_identity_providers << idp
+      expect(subject.shared_identity_providers).to contain_exactly(idp)
     end
-    it "is expected to have many dedicated identity providers through credentials" do
-      subject.save!
-      identity_provider = create(:identity_provider, availability: "dedicated")
-      subject.identity_providers << identity_provider
 
-      expect(subject.dedicated_identity_providers.length).to eq(1)
-      expect(subject.dedicated_identity_providers.first).to eq(identity_provider)
+    it "returns the dedicated identity provider via has_one" do
+      subject.save!
+      okta = create(:okta_identity_provider, organization: subject)
+      expect(subject.reload.dedicated_identity_provider).to eq(okta)
     end
   end
 
@@ -71,10 +70,50 @@ RSpec.describe Organization, type: :model do
       context "without any identity providers" do
         it { is_expected.not_to be_valid }
       end
-      context "with at least one identity provider" do
-        before { subject.identity_providers << create(:google_identity_provider) }
+
+      context "with at least one shared identity provider" do
+        before { subject.shared_identity_providers << create(:google_identity_provider) }
 
         it { is_expected.to be_valid }
+      end
+
+      context "with a dedicated identity provider" do
+        let(:org) { create(:organization, password_auth_allowed: true) }
+
+        before do
+          org.password_auth_allowed = false
+          org.build_dedicated_identity_provider(
+            name: "Test IdP", strategy: "test-dedicated", icon_url: "test.svg",
+            client_id: "client-id", client_secret: "secret"
+          )
+        end
+
+        it "is valid" do
+          expect(org).to be_valid
+        end
+      end
+    end
+
+    context "authentication mode exclusivity" do
+      let!(:org) { create(:organization) }
+
+      it "is invalid with both shared and dedicated identity providers" do
+        org.shared_identity_providers << create(:identity_provider)
+        org.build_dedicated_identity_provider(
+          name: "Test IdP", strategy: "test-dedicated", icon_url: "test.svg",
+          client_id: "client-id", client_secret: "secret"
+        )
+        expect(org).not_to be_valid
+        expect(org.errors[:base]).to include(match(/cannot have both/))
+      end
+
+      it "is invalid when password auth is allowed with a dedicated identity provider" do
+        org.build_dedicated_identity_provider(
+          name: "Test IdP", strategy: "test-dedicated", icon_url: "test.svg",
+          client_id: "client-id", client_secret: "secret"
+        )
+        expect(org).not_to be_valid
+        expect(org.errors[:base]).to include(match(/password authentication must be disabled/))
       end
     end
   end
@@ -94,48 +133,57 @@ RSpec.describe Organization, type: :model do
         expect(result).to eq(organization)
       end
 
-      it "returns nil if no matching email domain exists" do
+      it "returns an Organization::Null if no matching email domain exists" do
         result = Organization.find_by_email("user@nonexistentdomain.com")
         expect(result).to be_an_instance_of(Organization::Null)
       end
     end
 
+    describe "#identity_providers" do
+      let!(:org) { create(:organization) }
+
+      it "includes shared identity providers" do
+        idp = create(:identity_provider)
+        org.shared_identity_providers << idp
+        expect(org.identity_providers).to include(idp)
+      end
+
+      it "includes the dedicated identity provider" do
+        okta = create(:okta_identity_provider, organization: org)
+        expect(org.identity_providers).to include(okta)
+      end
+    end
+
     describe "#identity_providers_by_email" do
-      it "returns the identity providers for organization based on an email address" do
+      it "returns the identity providers for an organization based on email" do
         provider1 = create(:identity_provider, strategy: "strategy1", client_id: "client_id_1")
         provider2 = create(:identity_provider, strategy: "strategy2", client_id: "client_id_2")
         org = create(:organization)
         org.email_domains.create!(domain_name: "example.com")
-        org.credentials.create(identity_provider: provider1)
-        org.credentials.create(identity_provider: provider2)
+        org.organization_shared_identity_providers.create!(identity_provider: provider1)
+        org.organization_shared_identity_providers.create!(identity_provider: provider2)
 
         result = Organization.identity_providers_by_email("user@example.com")
         expect(result).to match_array([provider1, provider2])
       end
     end
 
-    describe ".shared_identity_provider_ids and .shared_identity_provider_ids=" do
+    describe "#shared_identity_provider_ids and #shared_identity_provider_ids=" do
       let!(:organization) { create(:organization) }
-      let!(:shared_provider1) { create(:identity_provider, availability: "shared") }
-      let!(:shared_provider2) { create(:identity_provider, availability: "shared") }
-      let!(:dedicated_provider) { create(:identity_provider, availability: "dedicated") }
+      let!(:shared_provider1) { create(:identity_provider) }
+      let!(:shared_provider2) { create(:identity_provider) }
 
-      before do
-        organization.identity_providers << shared_provider1
-        organization.identity_providers << dedicated_provider
-      end
+      before { organization.shared_identity_providers << shared_provider1 }
 
       it "returns the IDs of associated shared identity providers" do
         expect(organization.shared_identity_provider_ids).to contain_exactly(shared_provider1.id)
       end
 
       it "adds and removes shared identity providers correctly" do
-        # Add shared_provider2 and remove shared_provider1
         organization.shared_identity_provider_ids = [shared_provider2.id]
         organization.save!
 
-        expect(organization.shared_identity_providers).to contain_exactly(shared_provider2)
-        expect(organization.identity_providers).to include(dedicated_provider)
+        expect(organization.reload.shared_identity_providers).to contain_exactly(shared_provider2)
       end
     end
   end

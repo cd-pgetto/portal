@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  skip_authorization_check
+  skip_after_action :verify_authorized
 
   def show
     return redirect_to admin_dashboard_path if Current.user&.system_admin?

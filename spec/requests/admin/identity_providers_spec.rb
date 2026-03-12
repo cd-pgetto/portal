@@ -14,12 +14,12 @@ require "rails_helper"
 
 RSpec.describe "/admin/identity_providers", type: :request do
   let(:valid_attributes) {
-    {strategy: "google", name: "Google", availability: "shared", icon_url: "google-icon.jpg",
+    {strategy: "google", name: "Google", icon_url: "google-icon.jpg",
      client_id: "some-client-id", client_secret: "some-client-secret"}
   }
 
   let(:invalid_attributes) {
-    {strategy: "", name: "", availability: "", icon_url: "",
+    {strategy: "", name: "", icon_url: "",
      client_id: "", client_secret: ""}
   }
 
@@ -100,7 +100,7 @@ RSpec.describe "/admin/identity_providers", type: :request do
   describe "PATCH /update" do
     context "with valid parameters" do
       let(:new_attributes) {
-        {strategy: "facebook", name: "Facebook", availability: "dedicated", icon_url: "fb-icon.jpg",
+        {strategy: "facebook", name: "Facebook", icon_url: "fb-icon.jpg",
          client_id: "fb-client-id", client_secret: "fb-client-secret"}
       }
 
@@ -110,7 +110,6 @@ RSpec.describe "/admin/identity_providers", type: :request do
         identity_provider.reload
         expect(identity_provider.strategy).to eq("facebook")
         expect(identity_provider.name).to eq("Facebook")
-        expect(identity_provider.availability).to eq("dedicated")
         expect(identity_provider.icon_url).to eq("fb-icon.jpg")
         expect(identity_provider.client_id).to eq("fb-client-id")
         expect(identity_provider.client_secret).to eq("fb-client-secret")
