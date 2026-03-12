@@ -1,26 +1,28 @@
 class Admin::PracticesController < Admin::BaseController
   before_action :set_practice, only: %i[edit update destroy]
 
-  authorize_resource
-
   # GET /practices or /practices.json
   def index
-    render Views::Admin::Practices::Index.new(practices: Practice.includes([:organization]).order(:name).all)
+    authorize Practice
+    render Views::Admin::Practices::Index.new(practices: policy_scope(Practice).includes([:organization]).order(:name))
   end
 
   # GET /practices/1 or /practices/1.json
   def show
     @practice = Practice.includes([{members: :user}]).find(params.expect(:id))
+    authorize @practice
   end
 
   # GET /practices/new
   def new
     @practice = Practice.new
+    authorize @practice
   end
 
   # POST /practices or /practices.json
   def create
     @practice = Practice.new(practice_params)
+    authorize @practice
     respond_to do |format|
       if @practice.save
         format.html { redirect_to [:admin, @practice], notice: "Practice was successfully created." }
@@ -34,10 +36,12 @@ class Admin::PracticesController < Admin::BaseController
 
   # GET /practices/1/edit
   def edit
+    authorize @practice
   end
 
   # PATCH/PUT /practices/1 or /practices/1.json
   def update
+    authorize @practice
     respond_to do |format|
       if @practice.update(practice_params)
         format.html { redirect_to [:admin, @practice], notice: "Practice was successfully updated.", status: :see_other }
@@ -51,6 +55,7 @@ class Admin::PracticesController < Admin::BaseController
 
   # DELETE /practices/1 or /practices/1.json
   def destroy
+    authorize @practice
     @practice.destroy!
 
     respond_to do |format|

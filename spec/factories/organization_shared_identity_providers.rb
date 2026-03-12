@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: credentials
+# Table name: organization_shared_identity_providers
 # Database name: primary
 #
 #  id                   :uuid             not null, primary key
@@ -11,9 +11,9 @@
 #
 # Indexes
 #
-#  index_credentials_on_identity_provider_id                      (identity_provider_id)
-#  index_credentials_on_organization_id                           (organization_id)
-#  index_credentials_on_organization_id_and_identity_provider_id  (organization_id,identity_provider_id) UNIQUE
+#  idx_on_identity_provider_id_69c7c4049e                  (identity_provider_id)
+#  idx_on_organization_id_5824626843                       (organization_id)
+#  idx_on_organization_id_identity_provider_id_0f78e8471f  (organization_id,identity_provider_id) UNIQUE
 #
 # Foreign Keys
 #
@@ -21,7 +21,7 @@
 #  fk_rails_...  (organization_id => organizations.id)
 #
 FactoryBot.define do
-  factory :credential do
+  factory :organization_shared_identity_provider do
     organization
     identity_provider
   end
