@@ -637,7 +637,7 @@ DEPENDENCIES
   propshaft
   puma (>= 5.0)
   pundit (~> 2.4)
-  rails (~> 8.1.1)
+  rails (~> 8.1.2)
   rails-erd (~> 1.7)
   rails_live_reload
   rspec-rails
