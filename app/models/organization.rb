@@ -1,3 +1,21 @@
+# == Schema Information
+#
+# Table name: organizations
+# Database name: primary
+#
+#  id                    :uuid             not null, primary key
+#  email_domains_count   :integer          default(0), not null
+#  name                  :string           not null
+#  password_auth_allowed :boolean          default(TRUE), not null
+#  practices_count       :integer          default(0), not null
+#  subdomain             :string           not null
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#
+# Indexes
+#
+#  index_organizations_on_subdomain  (subdomain) UNIQUE
+#
 class Organization < ApplicationRecord
   has_many :organization_shared_identity_providers, dependent: :destroy
   has_many :shared_identity_providers, through: :organization_shared_identity_providers, source: :identity_provider

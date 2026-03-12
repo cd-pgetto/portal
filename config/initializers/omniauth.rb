@@ -1,7 +1,7 @@
 Rails.application.config.middleware.use OmniAuth::Builder do
   provider :developer if Rails.env.development?
 
-  # TODO: Use setup to initalize from DB-stored credentials for other shared providers
+  # Shared provider credentials are intentionally kept in the credentials file, not the DB.
 
   # provider :apple,
   #   Rails.application.credentials.dig(:omniauth, :apple, :client_id), "",

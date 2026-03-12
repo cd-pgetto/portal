@@ -25,18 +25,35 @@
 #
 #  fk_rails_...  (organization_id => organizations.id)
 #
-FactoryBot.define do
-  sequence(:identity_provider_number) { |n| n }
+require "rails_helper"
 
-  factory :identity_provider do
-    name { "IdP-#{generate(:identity_provider_number)}" }
-    icon_url { "test-icon.svg" }
-    strategy { "strategy-#{generate(:identity_provider_number)}" }
+RSpec.describe DedicatedIdentityProvider, type: :model do
+  subject { build(:okta_identity_provider) }
 
-    factory :google_identity_provider do
-      name { "Google OAuth" }
-      icon_url { "google-oauth2-icon.svg" }
-      strategy { "google_oauth2" }
+  describe "validations" do
+    it { is_expected.to validate_presence_of(:organization) }
+    it { is_expected.to validate_presence_of(:client_id) }
+    it { is_expected.to validate_presence_of(:client_secret) }
+  end
+
+  describe "#dedicated?" do
+    it { is_expected.to be_dedicated }
+    it { is_expected.not_to be_shared }
+  end
+
+  describe ".class_for_strategy" do
+    it "returns the class name for a known strategy" do
+      expect(described_class.class_for_strategy("okta")).to eq("OktaIdentityProvider")
+    end
+
+    it "returns nil for an unknown strategy" do
+      expect(described_class.class_for_strategy("unknown")).to be_nil
+    end
+  end
+
+  describe ".dedicated_strategies" do
+    it "includes okta" do
+      expect(described_class.dedicated_strategies).to include("okta")
     end
   end
 end

@@ -1,8 +1,6 @@
 %w[apple auth0 facebook github linkedin twitter].each do |strategy|
   IdentityProvider.create!(name: strategy.titleize.split.first, strategy: strategy,
-    icon_url: "test-icon.svg",
-    client_id: Faker::Alphanumeric.alphanumeric(number: 10),
-    client_secret: Faker::Alphanumeric.alphanumeric(number: 20))
+    icon_url: "test-icon.svg")
 end
 ap "Created #{IdentityProvider.count} shared identity providers."
 
@@ -30,9 +28,12 @@ def create_organization
     org.update!(password_auth_allowed: false)
   else
     org = Organization.create!(name: name, subdomain: base_email_domain,
+      password_auth_allowed: true,
+      email_domains: email_domains)
+    org.update!(
       password_auth_allowed: [true, false].sample,
-      email_domains: email_domains,
-      shared_identity_provider_ids: shared_providers.sample(rand(1..shared_providers.count)).map(&:id))
+      shared_identity_provider_ids: shared_providers.sample(rand(1..shared_providers.count)).map(&:id)
+    )
   end
   org
 end
@@ -82,8 +83,7 @@ okta_credentials = Rails.application.credentials.dig(:omniauth, :okta).first
 big_dso = Organization.create!(name: "Big DSO", subdomain: "big-dso",
   password_auth_allowed: true,
   email_domains: [
-    EmailDomain.new(domain_name: "#{okta_credentials[:name]}.com"),
-    EmailDomain.new(domain_name: "perceptive.io")
+    EmailDomain.new(domain_name: "#{okta_credentials[:name]}.com")
   ])
 OktaIdentityProvider.create!(strategy: "okta",
   name: "Okta for Big DSO", icon_url: "okta-icon.svg", okta_domain: okta_credentials[:name],
