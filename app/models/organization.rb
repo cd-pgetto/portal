@@ -5,6 +5,7 @@
 #
 #  id                    :uuid             not null, primary key
 #  email_domains_count   :integer          default(0), not null
+#  internal              :boolean          default(FALSE), not null
 #  name                  :string           not null
 #  password_auth_allowed :boolean          default(TRUE), not null
 #  practices_count       :integer          default(0), not null
@@ -14,6 +15,7 @@
 #
 # Indexes
 #
+#  index_organizations_on_internal   (internal) UNIQUE WHERE (internal = true)
 #  index_organizations_on_subdomain  (subdomain) UNIQUE
 #
 class Organization < ApplicationRecord
@@ -73,7 +75,7 @@ class Organization < ApplicationRecord
     domain = email_domain(email)
     return false if domain.nil?
     email_domains.exists?(domain_name: domain) ||
-      Organization.find_by(subdomain: "perceptive").email_domains.exists?(domain_name: domain)
+      Organization.find_by!(internal: true).email_domains.exists?(domain_name: domain)
   end
 
   def shared_identity_provider_ids
