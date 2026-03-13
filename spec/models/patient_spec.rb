@@ -50,15 +50,5 @@ RSpec.describe Patient, type: :model do
 
       expect(patient1.patient_number).not_to eq(patient2.patient_number)
     end
-
-    xit "runs for a long time before failing to find a unique reference number" do
-      practice = create(:practice, organization: create(:organization))
-
-      100000.times do
-        create(:patient, practice:)
-      end
-
-      expect(Patient.count).to eq(100000)
-    end
   end
 end
