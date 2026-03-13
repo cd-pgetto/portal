@@ -1,7 +1,7 @@
 class Components::Admin::Index < Components::Base
   def initialize(records:, class_name: nil)
     @records = records
-    @class_name = records.first&.class&.name || class_name || "Record"
+    @class_name = class_name || records.first&.class&.name || "Record"
   end
 
   def view_template(&block)

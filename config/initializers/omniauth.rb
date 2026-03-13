@@ -28,7 +28,7 @@ Rails.application.config.middleware.use OmniAuth::Builder do
   # Each organization has its own Okta instance. The identity_provider_id param
   # must be passed when initiating the OAuth flow (e.g. /oauth/okta?identity_provider_id=<id>)
   # so the setup proc can configure the correct credentials and domain.
-  provider :okta, setup: ->(env) { OktaIdentityProvider.setup(env) }
+  provider :okta, setup: ->(env) { IdentityProvider::Okta.setup(env) }
 end
 
 OmniAuth.configure do |config|

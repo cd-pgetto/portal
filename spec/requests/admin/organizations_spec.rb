@@ -20,7 +20,7 @@ RSpec.describe "/admin/organizations", type: :request do
   let(:invalid_attributes) {
     {name: "", subdomain: "",
      dedicated_identity_provider_attributes: {
-       type: "OktaIdentityProvider", strategy: "okta", name: "invalid-idp-name",
+       type: "IdentityProvider::Okta", strategy: "okta", name: "invalid-idp-name",
        icon_url: "    ", client_id: "    ", client_secret: "", okta_domain: ""
      }}
   }

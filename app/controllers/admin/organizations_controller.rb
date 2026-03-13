@@ -87,7 +87,7 @@ class Admin::OrganizationsController < Admin::BaseController
     )
     idp_attrs = permitted[:dedicated_identity_provider_attributes]
     if idp_attrs.present? && idp_attrs.fetch(:id, nil).blank?
-      idp_attrs[:type] = DedicatedIdentityProvider.class_for_strategy(idp_attrs[:strategy])
+      idp_attrs[:type] = IdentityProvider::Dedicated.class_for_strategy(idp_attrs[:strategy])
     end
     permitted
   end

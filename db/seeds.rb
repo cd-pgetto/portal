@@ -19,7 +19,7 @@ IdentityProvider.available_strategies.each do |strategy|
   next if Rails.application.credentials.dig(:omniauth, strategy.to_sym, :client_id).blank?
 
   # Credentials are read from the credentials file at startup (omniauth.rb) — not stored in DB
-  idp = IdentityProvider.find_or_initialize_by(strategy: strategy)
+  idp = IdentityProvider::Shared.find_or_initialize_by(strategy: strategy)
   idp.update(name: strategy.to_s.titleize.split.first, icon_url: "#{strategy.dasherize}-icon.svg")
 end
 

@@ -35,7 +35,7 @@ RSpec.describe "/admin/identity_providers", type: :request do
     end
 
     it "lists all identity providers" do
-      identity_provider = IdentityProvider.create! valid_attributes
+      identity_provider = IdentityProvider::Shared.create! valid_attributes
       get admin_identity_providers_url
       expect(response.body).to include(identity_provider.name)
     end
@@ -43,7 +43,7 @@ RSpec.describe "/admin/identity_providers", type: :request do
 
   describe "GET /show" do
     it "renders a successful response" do
-      identity_provider = IdentityProvider.create! valid_attributes
+      identity_provider = IdentityProvider::Shared.create! valid_attributes
       get admin_identity_provider_url(identity_provider)
       expect(response).to be_successful
     end
@@ -60,7 +60,7 @@ RSpec.describe "/admin/identity_providers", type: :request do
 
   describe "GET /edit" do
     it "renders a successful response" do
-      identity_provider = IdentityProvider.create! valid_attributes
+      identity_provider = IdentityProvider::Shared.create! valid_attributes
       get edit_admin_identity_provider_url(identity_provider)
       expect(response).to be_successful
     end
@@ -105,7 +105,7 @@ RSpec.describe "/admin/identity_providers", type: :request do
       }
 
       it "updates the requested admin_identity_provider" do
-        identity_provider = IdentityProvider.create! valid_attributes
+        identity_provider = IdentityProvider::Shared.create! valid_attributes
         patch admin_identity_provider_url(identity_provider), params: {identity_provider: new_attributes}
         identity_provider.reload
         expect(identity_provider.strategy).to eq("facebook")
@@ -116,7 +116,7 @@ RSpec.describe "/admin/identity_providers", type: :request do
       end
 
       it "redirects to the admin_identity_provider" do
-        identity_provider = IdentityProvider.create! valid_attributes
+        identity_provider = IdentityProvider::Shared.create! valid_attributes
         patch admin_identity_provider_url(identity_provider), params: {identity_provider: new_attributes}
         expect(response).to redirect_to(admin_identity_provider_url(identity_provider))
 
@@ -127,7 +127,7 @@ RSpec.describe "/admin/identity_providers", type: :request do
 
     context "with invalid parameters" do
       it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-        identity_provider = IdentityProvider.create! valid_attributes
+        identity_provider = IdentityProvider::Shared.create! valid_attributes
         patch admin_identity_provider_url(identity_provider), params: {identity_provider: invalid_attributes}
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -136,14 +136,14 @@ RSpec.describe "/admin/identity_providers", type: :request do
 
   describe "DELETE /destroy" do
     it "destroys the requested admin_identity_provider" do
-      identity_provider = IdentityProvider.create! valid_attributes
+      identity_provider = IdentityProvider::Shared.create! valid_attributes
       expect {
         delete admin_identity_provider_url(identity_provider)
       }.to change(IdentityProvider, :count).by(-1)
     end
 
     it "redirects to the admin_identity_providers list" do
-      identity_provider = IdentityProvider.create! valid_attributes
+      identity_provider = IdentityProvider::Shared.create! valid_attributes
       delete admin_identity_provider_url(identity_provider)
       expect(response).to redirect_to(admin_identity_providers_url)
 

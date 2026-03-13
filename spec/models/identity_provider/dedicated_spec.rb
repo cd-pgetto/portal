@@ -27,30 +27,33 @@
 #
 require "rails_helper"
 
-RSpec.describe IdentityProvider::Shared, type: :model do
-  subject { build(:identity_provider) }
-
-  describe "associations" do
-    it { is_expected.to have_many(:organization_shared_identity_providers).dependent(:destroy) }
-    it { is_expected.to have_many(:organizations).through(:organization_shared_identity_providers) }
-  end
+RSpec.describe IdentityProvider::Dedicated, type: :model do
+  subject { build(:okta_identity_provider) }
 
   describe "validations" do
-    it { is_expected.to validate_presence_of(:strategy) }
-    it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_presence_of(:icon_url) }
+    it { is_expected.to validate_presence_of(:organization) }
+    it { is_expected.to validate_presence_of(:client_id) }
+    it { is_expected.to validate_presence_of(:client_secret) }
+  end
 
-    it "prevents two shared providers with the same strategy" do
-      create(:identity_provider, strategy: "github")
-      duplicate = build(:identity_provider, strategy: "github")
-      expect(duplicate).not_to be_valid
+  describe "#dedicated?" do
+    it { is_expected.to be_dedicated }
+    it { is_expected.not_to be_shared }
+  end
+
+  describe ".class_for_strategy" do
+    it "returns the class name for a known strategy" do
+      expect(described_class.class_for_strategy("okta")).to eq("IdentityProvider::Okta")
+    end
+
+    it "returns nil for an unknown strategy" do
+      expect(described_class.class_for_strategy("unknown")).to be_nil
     end
   end
 
-  describe "#shared? and #dedicated?" do
-    it "is shared" do
-      expect(subject.shared?).to be true
-      expect(subject.dedicated?).to be false
+  describe ".dedicated_strategies" do
+    it "includes okta" do
+      expect(described_class.dedicated_strategies).to include("okta")
     end
   end
 end

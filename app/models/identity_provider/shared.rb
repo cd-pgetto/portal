@@ -25,26 +25,5 @@
 #
 #  fk_rails_...  (organization_id => organizations.id)
 #
-class DedicatedIdentityProvider < IdentityProvider
-  require_relative "okta_identity_provider"
-
-  STRATEGY_CLASS_MAP = {
-    "okta" => "OktaIdentityProvider"
-  }.freeze
-
-  encrypts :client_id, :client_secret
-
-  belongs_to :organization
-
-  validates :organization, :client_id, :client_secret, presence: true
-
-  def self.class_for_strategy(strategy)
-    STRATEGY_CLASS_MAP[strategy]
-  end
-
-  def self.dedicated_strategies
-    STRATEGY_CLASS_MAP.keys
-  end
-
-  def dedicated? = true
+class IdentityProvider::Shared < IdentityProvider
 end

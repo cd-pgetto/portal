@@ -15,14 +15,14 @@ class Admin::IdentityProvidersController < Admin::BaseController
 
   # GET /identity_providers/new
   def new
-    @identity_provider = IdentityProvider.new
+    @identity_provider = IdentityProvider::Shared.new
     authorize @identity_provider
     render Views::Admin::IdentityProviders::New.new(identity_provider: @identity_provider)
   end
 
   # POST /identity_providers or /identity_providers.json
   def create
-    @identity_provider = IdentityProvider.new(identity_provider_params)
+    @identity_provider = IdentityProvider::Shared.new(identity_provider_params)
     authorize @identity_provider
 
     respond_to do |format|
@@ -76,6 +76,6 @@ class Admin::IdentityProvidersController < Admin::BaseController
 
   # Only allow a list of trusted parameters through.
   def identity_provider_params
-    params.expect(identity_provider: [:name, :strategy, :availability, :icon_url, :client_id, :client_secret])
+    params.expect(identity_provider: [:name, :strategy, :icon_url, :client_id, :client_secret])
   end
 end

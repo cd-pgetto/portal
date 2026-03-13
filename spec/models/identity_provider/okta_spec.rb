@@ -27,7 +27,7 @@
 #
 require "rails_helper"
 
-RSpec.describe OktaIdentityProvider, type: :model do
+RSpec.describe IdentityProvider::Okta, type: :model do
   subject { build(:okta_identity_provider) }
 
   it { is_expected.to be_a(IdentityProvider) }
@@ -40,17 +40,17 @@ RSpec.describe OktaIdentityProvider, type: :model do
 
     shared_examples "configures the strategy" do
       it "sets client_id" do
-        OktaIdentityProvider.setup(env)
+        IdentityProvider::Okta.setup(env)
         expect(strategy.options[:client_id]).to eq(okta_idp.client_id)
       end
 
       it "sets client_secret" do
-        OktaIdentityProvider.setup(env)
+        IdentityProvider::Okta.setup(env)
         expect(strategy.options[:client_secret]).to eq(okta_idp.client_secret)
       end
 
       it "sets client_options from okta_domain" do
-        OktaIdentityProvider.setup(env)
+        IdentityProvider::Okta.setup(env)
         site = "https://#{okta_idp.okta_domain}.okta.com"
         expect(strategy.options[:client_options][:site]).to eq(site)
         expect(strategy.options[:client_options][:authorize_url]).to eq("#{site}/oauth2/default/v1/authorize")

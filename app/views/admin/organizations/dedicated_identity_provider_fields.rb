@@ -16,7 +16,7 @@ class Views::Admin::Organizations::DedicatedIdentityProviderFields < Views::Base
             div(class: "w-full") do
               form.label(:strategy, class: "label")
               if form.object.new_record?
-                form.select(:strategy, DedicatedIdentityProvider.dedicated_strategies, {}, class: "select w-full")
+                form.select(:strategy, IdentityProvider::Dedicated.dedicated_strategies, {}, class: "select w-full")
               else
                 form.text_field(:strategy, class: "input w-full", disabled: true)
               end
