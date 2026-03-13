@@ -5,6 +5,7 @@
 #
 #  id                    :uuid             not null, primary key
 #  email_domains_count   :integer          default(0), not null
+#  internal              :boolean          default(FALSE), not null
 #  name                  :string           not null
 #  password_auth_allowed :boolean          default(TRUE), not null
 #  practices_count       :integer          default(0), not null
@@ -14,6 +15,7 @@
 #
 # Indexes
 #
+#  index_organizations_on_internal   (internal) UNIQUE WHERE (internal = true)
 #  index_organizations_on_subdomain  (subdomain) UNIQUE
 #
 FactoryBot.define do
@@ -27,6 +29,7 @@ FactoryBot.define do
     factory :perceptive do
       name { "Perceptive" }
       subdomain { "perceptive" }
+      internal { true }
       password_auth_allowed { true }
       email_domains {
         [create(:perceptive_io_email_domain), create(:cyberdontics_io_email_domain),

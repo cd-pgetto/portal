@@ -86,7 +86,7 @@ class User < ApplicationRecord
   end
 
   def internal?
-    organization&.subdomain == "perceptive"
+    organization&.internal? || false
   end
 
   def organization_admin?

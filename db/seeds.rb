@@ -27,7 +27,7 @@ google_idp = IdentityProvider.find_by(strategy: "google_oauth2")
 
 org = Organization.find_or_initialize_by(subdomain: "perceptive")
 # Save the org first (shared_identity_provider_ids= requires a persisted record)
-org.update!(name: "Perceptive", password_auth_allowed: true,
+org.update!(name: "Perceptive", internal: true, password_auth_allowed: true,
   email_domains: [
     EmailDomain.new(domain_name: "perceptive.io"),
     EmailDomain.new(domain_name: "cyberdontics.io"),

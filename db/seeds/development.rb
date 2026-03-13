@@ -13,13 +13,11 @@ def create_organization
     EmailDomain.new(domain_name: base_email_domain + ".dental")
   ]
 
-  use_dedicated = [true, false].sample
-  shared_providers = IdentityProvider.shared.to_a
+  org = Organization.create!(name: name, subdomain: base_email_domain,
+    password_auth_allowed: true, email_domains: email_domains)
 
+  use_dedicated = [true, false].sample
   if use_dedicated
-    org = Organization.create!(name: name, subdomain: base_email_domain,
-      password_auth_allowed: true,
-      email_domains: email_domains)
     strategy = %w[apple auth0 facebook google_oauth2 github linkedin twitter].sample
     DedicatedIdentityProvider.create!(strategy: strategy, organization: org,
       name: "#{strategy.titleize.split.first} Dedicated", icon_url: "test-icon.svg",
@@ -27,13 +25,9 @@ def create_organization
       client_secret: Faker::Alphanumeric.alphanumeric(number: 20))
     org.update!(password_auth_allowed: false)
   else
-    org = Organization.create!(name: name, subdomain: base_email_domain,
-      password_auth_allowed: true,
-      email_domains: email_domains)
-    org.update!(
-      password_auth_allowed: [true, false].sample,
-      shared_identity_provider_ids: shared_providers.sample(rand(1..shared_providers.count)).map(&:id)
-    )
+    shared_providers = IdentityProvider.shared.to_a
+    org.update!(password_auth_allowed: [true, false].sample,
+      shared_identity_provider_ids: shared_providers.sample(rand(1..shared_providers.count)).map(&:id))
   end
   org
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_12_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_13_094459) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -125,11 +125,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_100000) do
   create_table "organizations", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "email_domains_count", default: 0, null: false
+    t.boolean "internal", default: false, null: false
     t.string "name", null: false
     t.boolean "password_auth_allowed", default: true, null: false
     t.integer "practices_count", default: 0, null: false
     t.string "subdomain", null: false
     t.datetime "updated_at", null: false
+    t.index ["internal"], name: "index_organizations_on_internal", unique: true, where: "(internal = true)"
     t.index ["subdomain"], name: "index_organizations_on_subdomain", unique: true
   end
 
