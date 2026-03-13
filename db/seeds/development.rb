@@ -1,5 +1,5 @@
 %w[apple auth0 facebook github linkedin twitter].each do |strategy|
-  IdentityProvider.create!(name: strategy.titleize.split.first, strategy: strategy,
+  IdentityProvider::Shared.create!(name: strategy.titleize.split.first, strategy: strategy,
     icon_url: "test-icon.svg")
 end
 ap "Created #{IdentityProvider.count} shared identity providers."
@@ -19,7 +19,7 @@ def create_organization
   use_dedicated = [true, false].sample
   if use_dedicated
     strategy = %w[apple auth0 facebook google_oauth2 github linkedin twitter].sample
-    DedicatedIdentityProvider.create!(strategy: strategy, organization: org,
+    IdentityProvider::Dedicated.create!(strategy: strategy, organization: org,
       name: "#{strategy.titleize.split.first} Dedicated", icon_url: "test-icon.svg",
       client_id: Faker::Alphanumeric.alphanumeric(number: 10),
       client_secret: Faker::Alphanumeric.alphanumeric(number: 20))
@@ -79,7 +79,7 @@ big_dso = Organization.create!(name: "Big DSO", subdomain: "big-dso",
   email_domains: [
     EmailDomain.new(domain_name: "#{okta_credentials[:name]}.com")
   ])
-OktaIdentityProvider.create!(strategy: "okta",
+IdentityProvider::Okta.create!(strategy: "okta",
   name: "Okta for Big DSO", icon_url: "okta-icon.svg", okta_domain: okta_credentials[:name],
   client_id: okta_credentials[:client_id], client_secret: okta_credentials[:client_secret],
   organization: big_dso)

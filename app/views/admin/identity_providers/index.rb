@@ -4,7 +4,7 @@ class Views::Admin::IdentityProviders::Index < Views::Base
   end
 
   def view_template
-    render Components::Admin::Index.new(records: @identity_providers) do |table|
+    render Components::Admin::Index.new(records: @identity_providers, class_name: "IdentityProvider") do |table|
       table.header do
         th(class: "font-bold") { "Name" }
         th { "Strategy" }

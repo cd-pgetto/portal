@@ -28,7 +28,7 @@
 FactoryBot.define do
   sequence(:identity_provider_number) { |n| n }
 
-  factory :identity_provider do
+  factory :identity_provider, class: "IdentityProvider::Shared" do
     name { "IdP-#{generate(:identity_provider_number)}" }
     icon_url { "test-icon.svg" }
     strategy { "strategy-#{generate(:identity_provider_number)}" }

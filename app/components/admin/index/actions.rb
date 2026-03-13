@@ -18,6 +18,6 @@ class Components::Admin::Index::Actions < Components::Base
   private
 
   def class_name
-    @record.class.name.underscore
+    @record.class.model_name.singular_route_key
   end
 end

@@ -41,6 +41,13 @@ class IdentityProvider < ApplicationRecord
   def shared? = !dedicated?
   def dedicated? = false
 
+  def self.policy_class = IdentityProviderPolicy
+
+  def self.inherited(subclass)
+    super
+    subclass.define_singleton_method(:model_name) { IdentityProvider.model_name }
+  end
+
   # List of available OAuth strategies
   def self.available_strategies
     OmniAuth.strategies.map(&:default_options).map(&:name).compact.map(&:to_s).sort

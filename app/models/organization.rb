@@ -21,7 +21,7 @@
 class Organization < ApplicationRecord
   has_many :organization_shared_identity_providers, dependent: :destroy
   has_many :shared_identity_providers, through: :organization_shared_identity_providers, source: :identity_provider
-  has_one :dedicated_identity_provider, dependent: :destroy
+  has_one :dedicated_identity_provider, class_name: "IdentityProvider::Dedicated", dependent: :destroy
 
   has_many :email_domains, dependent: :destroy
   has_many :practices, dependent: :destroy
@@ -48,7 +48,7 @@ class Organization < ApplicationRecord
   # can have in-memory shared identity providers.
   def identity_providers
     IdentityProvider.where(id: shared_identity_providers.ids)
-      .or(IdentityProvider.where(organization_id: id).where.not(type: "IdentityProvider"))
+      .or(IdentityProvider::Dedicated.where(organization_id: id))
   end
 
   def self.find_by_email(email)

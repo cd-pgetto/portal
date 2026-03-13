@@ -26,6 +26,7 @@
       "Bash(bundle exec rspec spec/requests/patients_spec.rb --format documentation)",
       "Bash(bundle exec rspec spec/models/identity_provider_spec.rb spec/models/okta_identity_provider_spec.rb spec/models/organization_spec.rb)",
       "Bash(bin/rails spec)"
+      "Bash(bundle exec rspec spec/models/identity_provider_spec.rb spec/models/identity_provider/ spec/models/organization_spec.rb spec/requests/admin/identity_providers_spec.rb spec/requests/admin/organizations_spec.rb spec/policies/identity_provider_policy_spec.rb)"
     ]
   }
 }
