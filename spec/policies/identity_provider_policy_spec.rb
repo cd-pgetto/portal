@@ -5,13 +5,13 @@ RSpec.describe IdentityProviderPolicy, type: :policy do
 
   permissions :index? do
     context "without any user" do
-      it { is_expected.not_to permit(nil, IdentityProvider.new) }
+      it { is_expected.not_to permit(nil, IdentityProvider::Shared.new) }
     end
 
     context "as a regular user" do
       let(:user) { create(:user, organization: create(:organization)) }
 
-      it { is_expected.not_to permit(user, IdentityProvider.new) }
+      it { is_expected.not_to permit(user, IdentityProvider::Shared.new) }
     end
 
     context "as an organization admin" do
@@ -20,25 +20,31 @@ RSpec.describe IdentityProviderPolicy, type: :policy do
 
       before { user.create_organization_membership(organization: organization, role: :admin) }
 
-      it { is_expected.not_to permit(user, IdentityProvider.new) }
+      it { is_expected.not_to permit(user, IdentityProvider::Shared.new) }
+
+      context "with a dedicated identity provider in own organization" do
+        let(:record) { create(:okta_identity_provider, organization: organization) }
+
+        it { is_expected.not_to permit(user, record) }
+      end
     end
 
     context "as a system admin" do
       let(:user) { create_system_admin }
 
-      it { is_expected.to permit(user, IdentityProvider.new) }
+      it { is_expected.to permit(user, IdentityProvider::Shared.new) }
     end
   end
 
   permissions :show?, :create?, :update? do
     context "without any user" do
-      it { is_expected.not_to permit(nil, IdentityProvider.new) }
+      it { is_expected.not_to permit(nil, IdentityProvider::Shared.new) }
     end
 
     context "as a regular user" do
       let(:user) { create(:user, organization: create(:organization)) }
 
-      it { is_expected.not_to permit(user, IdentityProvider.new) }
+      it { is_expected.not_to permit(user, IdentityProvider::Shared.new) }
     end
 
     context "as an organization admin" do
@@ -48,33 +54,19 @@ RSpec.describe IdentityProviderPolicy, type: :policy do
       before { user.create_organization_membership(organization: organization, role: :admin) }
 
       context "with a dedicated identity provider in own organization" do
-        let(:record) do
-          ip = IdentityProvider.new
-          allow(ip).to receive(:dedicated?).and_return(true)
-          allow(ip).to receive(:organization_ids).and_return([organization.id])
-          ip
-        end
+        let(:record) { create(:okta_identity_provider, organization: organization) }
 
         it { is_expected.to permit(user, record) }
       end
 
-      context "with a non-dedicated identity provider" do
-        let(:record) do
-          ip = IdentityProvider.new
-          allow(ip).to receive(:dedicated?).and_return(false)
-          ip
-        end
+      context "with a shared identity provider" do
+        let(:record) { IdentityProvider::Shared.new }
 
         it { is_expected.not_to permit(user, record) }
       end
 
       context "with a dedicated identity provider in another organization" do
-        let(:record) do
-          ip = IdentityProvider.new
-          allow(ip).to receive(:dedicated?).and_return(true)
-          allow(ip).to receive(:organization_ids).and_return([create(:organization).id])
-          ip
-        end
+        let(:record) { create(:okta_identity_provider, organization: create(:organization)) }
 
         it { is_expected.not_to permit(user, record) }
       end
@@ -83,19 +75,19 @@ RSpec.describe IdentityProviderPolicy, type: :policy do
     context "as a system admin" do
       let(:user) { create_system_admin }
 
-      it { is_expected.to permit(user, IdentityProvider.new) }
+      it { is_expected.to permit(user, IdentityProvider::Shared.new) }
     end
   end
 
   permissions :destroy? do
     context "without any user" do
-      it { is_expected.not_to permit(nil, IdentityProvider.new) }
+      it { is_expected.not_to permit(nil, IdentityProvider::Shared.new) }
     end
 
     context "as a regular user" do
       let(:user) { create(:user, organization: create(:organization)) }
 
-      it { is_expected.not_to permit(user, IdentityProvider.new) }
+      it { is_expected.not_to permit(user, IdentityProvider::Shared.new) }
     end
 
     context "as an organization admin" do
@@ -104,13 +96,19 @@ RSpec.describe IdentityProviderPolicy, type: :policy do
 
       before { user.create_organization_membership(organization: organization, role: :admin) }
 
-      it { is_expected.not_to permit(user, IdentityProvider.new) }
+      it { is_expected.not_to permit(user, IdentityProvider::Shared.new) }
+
+      context "with a dedicated identity provider in own organization" do
+        let(:record) { create(:okta_identity_provider, organization: organization) }
+
+        it { is_expected.not_to permit(user, record) }
+      end
     end
 
     context "as a system admin" do
       let(:user) { create_system_admin }
 
-      it { is_expected.to permit(user, IdentityProvider.new) }
+      it { is_expected.to permit(user, IdentityProvider::Shared.new) }
     end
   end
 
@@ -139,6 +137,12 @@ RSpec.describe IdentityProviderPolicy, type: :policy do
       before { user.create_organization_membership(organization: organization, role: :admin) }
 
       it { is_expected.to be_empty }
+
+      context "with a dedicated identity provider in own organization" do
+        let!(:dedicated_provider) { create(:okta_identity_provider, organization: organization) }
+
+        it { is_expected.to be_empty }
+      end
     end
 
     context "as a system admin" do

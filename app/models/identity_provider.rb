@@ -26,6 +26,11 @@
 #  fk_rails_...  (organization_id => organizations.id)
 #
 class IdentityProvider < ApplicationRecord
+  def self.new(...)
+    raise "IdentityProvider is abstract — use IdentityProvider::Shared or IdentityProvider::Dedicated" if self == IdentityProvider
+    super
+  end
+
   has_many :organization_shared_identity_providers, dependent: :destroy
   has_many :organizations, through: :organization_shared_identity_providers
   has_many :identities, dependent: :destroy

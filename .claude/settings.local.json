@@ -1,5 +1,12 @@
 {
   "permissions": {
-    "allow": ["Bash(ruby --version)", "Bash(bundle exec rspec)", "Bash(bundle exec rails routes)"]
+    "allow": [
+      "Bash(ruby --version)",
+      "Bash(bundle exec rspec)",
+      "Bash(bundle exec rails routes)",
+      "Bash(rails db:migrate RAILS_ENV=test)",
+      "Bash(bundle exec rails db:migrate RAILS_ENV=test)",
+      "Bash(bundle exec rspec spec/policies/identity_provider_policy_spec.rb)"
+    ]
   }
 }
