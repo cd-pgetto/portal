@@ -38,8 +38,8 @@ class IdentityProvider < ApplicationRecord
   scope :shared, -> { where(organization_id: nil) }
   scope :dedicated, -> { where.not(organization_id: nil) }
 
-  def shared? = !dedicated?
-  def dedicated? = false
+  def shared? = is_a?(IdentityProvider::Shared)
+  def dedicated? = is_a?(IdentityProvider::Dedicated)
 
   def self.policy_class = IdentityProviderPolicy
 

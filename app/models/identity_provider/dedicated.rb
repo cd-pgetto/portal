@@ -43,6 +43,4 @@ class IdentityProvider::Dedicated < IdentityProvider
   def self.dedicated_strategies
     STRATEGY_CLASS_MAP.keys
   end
-
-  def dedicated? = true
 end
