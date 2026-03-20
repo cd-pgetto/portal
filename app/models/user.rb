@@ -97,8 +97,4 @@ class User < ApplicationRecord
   def practice_admin_or_owner?(practice_id:)
     practice_memberships.admin_or_owner_in(practice_id).exists?
   end
-
-  def can_edit_practice?(practice)
-    system_admin? || practice_admin_or_owner?(practice_id: practice.id)
-  end
 end
