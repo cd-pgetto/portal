@@ -11,6 +11,9 @@ class Views::Layouts::NavBar::UserMenu < Components::Base
     div(class: "flex-none") do
       ul(class: "menu menu-horizontal px-1") do
         if @current_user
+          if Current.practice && Current.user&.can_edit_practice?(Current.practice)
+            li { render Views::Layouts::NavBar::PracticeSettings.new }
+          end
           li(id: "notifications") { render Views::Layouts::NavBar::Notifications.new }
           li(id: "user-details-menu") { render Views::Layouts::NavBar::UserDetailsMenu.new(@current_user) }
         else

@@ -21,6 +21,7 @@ class Views::Practices::Edit < Views::Base
 
       section_card("Members") do
         members_by_user = @practice.members.includes(:user).group_by(&:user)
+          .sort_by { |user, _| [user.last_name, user.first_name] }
         if members_by_user.any?
           table(class: "table table-sm") do
             thead {
@@ -31,18 +32,30 @@ class Views::Practices::Edit < Views::Base
             }
             tbody do
               members_by_user.each do |user, memberships|
+                existing_roles = memberships.map(&:role)
+                remaining_roles = sorted_roles - existing_roles
                 tr do
-                  td(class: "align-top font-medium") { user.full_name }
+                  td(class: "align-top font-medium pt-3") { user.full_name }
                   td do
-                    div(class: "flex flex-wrap gap-2") do
-                      memberships.each do |membership|
-                        div(class: "flex items-center gap-1") do
-                          span(class: "badge badge-neutral") { membership.role.humanize }
-                          button_to practice_membership_path(@practice, membership), method: :delete,
-                            class: "btn btn-xs btn-circle btn-ghost btn-error",
-                            form: {data: {turbo_confirm: "Remove #{membership.role.humanize} role from #{user.full_name}?"}} do
-                            "×"
+                    div(class: "flex items-center justify-between gap-2") do
+                      div(class: "flex flex-wrap items-center gap-2") do
+                        memberships.each do |membership|
+                          div(class: "flex items-center gap-1") do
+                            span(class: "badge badge-neutral") { membership.role.humanize }
+                            button_to practice_membership_path(@practice, membership), method: :delete,
+                              class: "btn btn-xs btn-circle btn-ghost btn-error",
+                              form: {data: {turbo_confirm: "Remove #{membership.role.humanize} role from #{user.full_name}?"}} do
+                              "×"
+                            end
                           end
+                        end
+                      end
+                      if remaining_roles.any?
+                        form_with url: practice_memberships_path(@practice), method: :post, class: "flex items-center gap-1" do |f|
+                          f.hidden_field :email_address, value: user.email_address, name: "practice_member[email_address]"
+                          f.select :role, remaining_roles.map { |r| [r.humanize, r] },
+                            {}, name: "practice_member[role]", class: "select select-xs"
+                          f.submit "Add", class: "btn btn-xs btn-outline"
                         end
                       end
                     end
@@ -99,7 +112,7 @@ class Views::Practices::Edit < Views::Base
             end
             div(class: "fieldset") do
               f.label :role, "Role", class: "fieldset-legend"
-              f.select :role, Invitation::INVITABLE_ROLES.map { |r| [r.humanize, r] },
+              f.select :role, PracticeMember::REGULAR_ROLES.sort.map { |r| [r.humanize, r] },
                 {}, class: "select w-full"
             end
           end
@@ -110,6 +123,10 @@ class Views::Practices::Edit < Views::Base
   end
 
   private
+
+  def sorted_roles
+    PracticeMember::REGULAR_ROLES.sort + PracticeMember::PRIVILEGED_ROLES
+  end
 
   def section_card(title)
     div(class: "card bg-base-100 border border-base-300") do

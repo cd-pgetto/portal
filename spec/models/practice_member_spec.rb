@@ -66,6 +66,26 @@ RSpec.describe PracticeMember, type: :model do
     end
   end
 
+  describe "PRIVILEGED_ROLES" do
+    it "contains owner and admin" do
+      expect(PracticeMember::PRIVILEGED_ROLES).to contain_exactly("owner", "admin")
+    end
+  end
+
+  describe "REGULAR_ROLES" do
+    it "contains non-privileged roles" do
+      expect(PracticeMember::REGULAR_ROLES).to contain_exactly("member", "dentist", "hygienist", "assistant")
+    end
+
+    it "does not overlap with PRIVILEGED_ROLES" do
+      expect(PracticeMember::REGULAR_ROLES & PracticeMember::PRIVILEGED_ROLES).to be_empty
+    end
+
+    it "covers all roles together with PRIVILEGED_ROLES" do
+      expect(PracticeMember::REGULAR_ROLES + PracticeMember::PRIVILEGED_ROLES).to match_array(PracticeMember.roles.keys)
+    end
+  end
+
   describe "scopes" do
     let(:organization) { create(:organization) }
     let(:practice) { create(:practice, organization: organization) }

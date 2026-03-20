@@ -31,6 +31,9 @@ class PracticeMember < ApplicationRecord
   enum :role, {owner: "owner", admin: "admin", member: "member", dentist: "dentist", hygienist: "hygienist",
     assistant: "assistant"}
 
+  PRIVILEGED_ROLES = %w[owner admin].freeze
+  REGULAR_ROLES = (roles.keys - PRIVILEGED_ROLES).freeze
+
   scope :active, -> { where(active: true) }
   scope :inactive, -> { where(active: false) }
   scope :admin_or_owner, -> { active.where(role: [:owner, :admin]) }

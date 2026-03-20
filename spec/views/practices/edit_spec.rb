@@ -48,6 +48,41 @@ RSpec.describe Views::Practices::Edit, type: :view do
       end
     end
 
+    context "with multiple members" do
+      let!(:jones) { create(:another_user, organization: organization, practices: [practice]) }
+      let!(:anderson) { create(:user, organization: organization, practices: [practice], email_address: "b@example.com", first_name: "Bob", last_name: "Anderson") }
+
+      before { render Views::Practices::Edit.new(practice: practice) }
+
+      it "renders members sorted by last name then first name" do
+        anderson_pos = rendered.index("Anderson")
+        jones_pos = rendered.index("Jones")
+        expect(anderson_pos).to be < jones_pos
+      end
+    end
+
+    context "with a member who has some roles" do
+      let!(:member) { create(:another_user, organization: organization, practices: [practice]) }
+
+      before { render Views::Practices::Edit.new(practice: practice) }
+
+      it "shows an add role dropdown excluding roles the member already has" do
+        membership = member.all_practice_memberships.find_by(practice: practice)
+        expect(rendered).not_to have_css(
+          "select[name='practice_member[role]'] option[value='#{membership.role}']"
+        )
+      end
+
+      it "shows roles alphabetically with owner and admin last" do
+        option_texts = Nokogiri::HTML(rendered).css("select[name='practice_member[role]'] option").map(&:text)
+        regular = option_texts.reject { |t| %w[Owner Admin].include?(t) }
+        privileged = option_texts.select { |t| %w[Owner Admin].include?(t) }
+        expect(regular).to eq(regular.sort)
+        expect(option_texts.last(2)).to match_array(%w[Owner Admin])
+        expect(privileged).to eq(option_texts.last(privileged.size))
+      end
+    end
+
     context "with a member who has multiple roles" do
       let!(:member) { create(:another_user, organization: organization, practices: [practice]) }
 
@@ -117,7 +152,7 @@ RSpec.describe Views::Practices::Edit, type: :view do
     end
 
     it "renders invitable role options" do
-      Invitation::INVITABLE_ROLES.each do |role|
+      PracticeMember::REGULAR_ROLES.each do |role|
         expect(rendered).to have_css("select option", text: role.humanize)
       end
     end
