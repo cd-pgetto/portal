@@ -1,0 +1,5 @@
+<%= @invitation.invited_by.full_name %> has invited you to join <%= @invitation.practice.name %> as a <%= @invitation.role %>.
+
+View and accept your invitation: <%= invitation_url(@token) %>
+
+This invitation expires in 7 days.

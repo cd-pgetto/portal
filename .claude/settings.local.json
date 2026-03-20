@@ -5,7 +5,8 @@
       "Bash(bundle exec rspec *)",
       "Bash(bundle exec rails routes)",
       "Bash(rails db:migrate RAILS_ENV=test)",
-      "Bash(bundle exec rails db:migrate RAILS_ENV=test)"
+      "Bash(bundle exec rails db:migrate RAILS_ENV=test)",
+      "Bash(bundle exec:*)"
     ]
   }
 }

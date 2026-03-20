@@ -1,4 +1,6 @@
 class SessionsController < ApplicationController
+  include InvitationAcceptance
+
   before_action :redirect_signed_in_user, only: [:new, :create]
 
   allow_unauthenticated_access only: [:new, :create]
@@ -16,9 +18,12 @@ class SessionsController < ApplicationController
 
     elsif (authenticated_user = User.authenticate_by(session_params))
       start_new_session_for authenticated_user
+      invitation = accept_pending_invitation_if_any(authenticated_user)
+      redirect_url = invitation ? practice_url(invitation.practice) : after_authentication_url
+      notice = invitation ? "You have joined #{invitation.practice.name}." : nil
       respond_to do |format|
-        format.html { redirect_to after_authentication_url }
-        format.turbo_stream { render turbo_stream: turbo_stream.action(:redirect, after_authentication_url) }
+        format.html { redirect_to redirect_url, notice: notice }
+        format.turbo_stream { render turbo_stream: turbo_stream.action(:redirect, redirect_url) }
       end
 
     else

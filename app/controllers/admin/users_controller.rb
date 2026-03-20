@@ -10,6 +10,7 @@ class Admin::UsersController < Admin::BaseController
   # GET /admin/users/1 or /admin/users/1.json
   def show
     authorize @user
+    render Views::Users::Show.new(user: @user)
   end
 
   # GET /admin/users/new

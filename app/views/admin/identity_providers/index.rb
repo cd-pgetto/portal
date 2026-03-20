@@ -18,8 +18,8 @@ class Views::Admin::IdentityProviders::Index < Views::Base
         td { a(href: admin_identity_provider_path(identity_provider), class: "link link-primary") { identity_provider.name } }
         td { identity_provider.strategy }
         td { identity_provider.dedicated? ? "Dedicated" : "Shared" }
-        td(title: identity_provider.client_id) { identity_provider.client_id.truncate(10) }
-        td(title: identity_provider.client_secret) { identity_provider.client_secret.truncate(10) }
+        td(title: identity_provider.client_id) { identity_provider.client_id&.truncate(10) }
+        td(title: identity_provider.client_secret) { identity_provider.client_secret&.truncate(10) }
         td(class: "border-l border-base-content") { render Components::Admin::Index::Actions.new(record: identity_provider) }
       end
     end

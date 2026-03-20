@@ -27,6 +27,29 @@
 #
 require "rails_helper"
 
+RSpec.describe IdentityProvider, type: :model do
+  describe ".available_strategies" do
+    subject(:strategies) { described_class.available_strategies }
+
+    it "returns an array of strings" do
+      expect(strategies).to be_an(Array)
+      expect(strategies).to all(be_a(String))
+    end
+
+    it "returns sorted results" do
+      expect(strategies).to eq(strategies.sort)
+    end
+
+    it "excludes nil values" do
+      expect(strategies).to all(be_present)
+    end
+
+    it "includes google_oauth2" do
+      expect(strategies).to include("google_oauth2")
+    end
+  end
+end
+
 RSpec.describe IdentityProvider::Shared, type: :model do
   subject { build(:identity_provider) }
 

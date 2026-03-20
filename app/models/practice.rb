@@ -20,9 +20,11 @@
 #
 class Practice < ApplicationRecord
   belongs_to :organization, counter_cache: true
-  has_many :members, dependent: :destroy, class_name: "PracticeMember"
-  has_many :users, through: :members
+  has_many :members, -> { active }, class_name: "PracticeMember"
+  has_many :all_members, dependent: :destroy, class_name: "PracticeMember"
+  has_many :users, -> { distinct }, through: :members
   has_many :patients, dependent: :destroy
+  has_many :invitations, dependent: :destroy
 
   validates :name, presence: true
 
