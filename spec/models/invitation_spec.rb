@@ -171,8 +171,8 @@ RSpec.describe Invitation, type: :model do
   end
 
   describe ".accept_from_session!" do
-    let(:invitee) { create(:another_user) }
-    let(:invitation) { create(:invitation, practice: practice, invited_by: inviter) }
+    let(:invitation) { create(:invitation, practice: practice, invited_by: inviter, email: "invitee@example.com") }
+    let(:invitee) { create(:another_user, email_address: "invitee@example.com") }
     let(:token) { invitation.generate_token_for(:acceptance) }
     let(:mock_session) { {invitation_token: token} }
 

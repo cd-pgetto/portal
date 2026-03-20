@@ -12,6 +12,10 @@ class Practice::MembershipsController < ApplicationController
       redirect_to edit_practice_path(@practice), alert: "No user found with that email address." and return
     end
 
+    unless membership_params[:role]
+      redirect_to edit_practice_path(@practice), alert: "You are not authorized to assign that role." and return
+    end
+
     membership = @practice.members.build(user: user, role: membership_params[:role])
 
     if membership.save
@@ -41,7 +45,15 @@ class Practice::MembershipsController < ApplicationController
 
   def membership_params
     permitted = params.require(:practice_member).permit(:email_address)
-    permitted.merge(role: params.dig(:practice_member, :role).presence_in(PracticeMember.roles.keys))
+    permitted.merge(role: params.dig(:practice_member, :role).presence_in(assignable_roles))
+  end
+
+  def assignable_roles
+    if Current.user.practice_memberships.exists?(practice: @practice, role: :owner)
+      PracticeMember.roles.keys
+    else
+      PracticeMember.roles.keys - ["owner"]
+    end
   end
 
   def ensure_organization_membership(user)

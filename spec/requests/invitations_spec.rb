@@ -119,6 +119,21 @@ RSpec.describe "Invitations", type: :request do
   describe "invitation acceptance via sign in" do
     let(:existing_user) { create(:user, email_address: "newuser@example.com") }
 
+    it "does not accept the invitation when signing in as a different user" do
+      attacker = create(:another_user, organization: organization)
+
+      get invitation_path(token)
+
+      post session_path, params: {
+        sign_in_step: 2,
+        email_address: attacker.email_address,
+        password: attributes_for(:another_user)[:password]
+      }
+
+      expect(invitation.reload.accepted?).to be false
+      expect(PracticeMember.where(practice: practice, user: attacker)).not_to exist
+    end
+
     it "accepts the invitation after signing in with the invited email" do
       get invitation_path(token)
 

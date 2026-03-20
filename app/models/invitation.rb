@@ -61,6 +61,7 @@ class Invitation < ApplicationRecord
     return unless token
     invitation = find_by_token_for(:acceptance, token)
     return unless invitation&.pending?
+    return unless invitation.email == user.email_address
     invitation.accept!(user)
     invitation
   end

@@ -57,6 +57,40 @@ RSpec.describe "Practice::Memberships", type: :request do
       end
     end
 
+    context "role restrictions by actor role" do
+      let(:target_user) { create(:dr_sue, organization: organization) }
+
+      context "when signed in as an admin" do
+        it "cannot assign the owner role" do
+          expect {
+            post practice_memberships_path(practice), params: {practice_member: {email_address: target_user.email_address, role: "owner"}}
+          }.not_to change { practice.members.count }
+        end
+
+        it "can assign the admin role" do
+          expect {
+            post practice_memberships_path(practice), params: {practice_member: {email_address: target_user.email_address, role: "admin"}}
+          }.to change { practice.members.count }.by(1)
+        end
+      end
+
+      context "when signed in as an owner" do
+        let(:owner) { create(:user, organization: organization, practices: [practice], email_address: "owner@example.com", first_name: "Owner") }
+
+        before do
+          owner.all_practice_memberships.find_by(practice: practice).update!(role: :owner)
+          delete session_path
+          sign_in_as(owner, attributes_for(:user)[:password])
+        end
+
+        it "can assign the owner role" do
+          expect {
+            post practice_memberships_path(practice), params: {practice_member: {email_address: target_user.email_address, role: "owner"}}
+          }.to change { practice.members.count }.by(1)
+        end
+      end
+    end
+
     context "when signed in as a non-admin member" do
       before do
         delete session_path
