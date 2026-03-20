@@ -40,7 +40,8 @@ class Practice::MembershipsController < ApplicationController
   end
 
   def membership_params
-    params.require(:practice_member).permit(:email_address, :role)
+    permitted = params.require(:practice_member).permit(:email_address)
+    permitted.merge(role: params.dig(:practice_member, :role).presence_in(PracticeMember.roles.keys))
   end
 
   def ensure_organization_membership(user)
