@@ -62,13 +62,13 @@ RSpec.describe Invitation, type: :model do
       end
     end
 
-    context "INVITABLE_ROLES" do
+    context "invitable roles" do
       it "excludes owner and admin" do
-        expect(Invitation::INVITABLE_ROLES).not_to include("owner", "admin")
+        expect(PracticeMember::REGULAR_ROLES).not_to include("owner", "admin")
       end
 
       it "includes member, dentist, hygienist, assistant" do
-        expect(Invitation::INVITABLE_ROLES).to include("member", "dentist", "hygienist", "assistant")
+        expect(PracticeMember::REGULAR_ROLES).to include("member", "dentist", "hygienist", "assistant")
       end
 
       it "raises ArgumentError for owner role" do

@@ -31,9 +31,7 @@ class Invitation < ApplicationRecord
     accepted_at
   end
 
-  INVITABLE_ROLES = %w[member dentist hygienist assistant].freeze
-
-  enum :role, PracticeMember.roles.slice(*INVITABLE_ROLES)
+  enum :role, PracticeMember.roles.slice(*PracticeMember::REGULAR_ROLES)
 
   normalizes :email, with: ->(e) { e.strip.downcase }
 

@@ -34,6 +34,6 @@ class Practice::InvitationsController < ApplicationController
 
   def invitation_params
     permitted = params.require(:invitation).permit(:email)
-    permitted.merge(role: params.dig(:invitation, :role).presence_in(Invitation::INVITABLE_ROLES))
+    permitted.merge(role: params.dig(:invitation, :role).presence_in(PracticeMember::REGULAR_ROLES))
   end
 end
