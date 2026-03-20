@@ -49,6 +49,10 @@ RSpec.describe "sessions/new", type: :view do
       it "has a submit button" do
         expect(rendered).to have_css("form input[type='submit'][value='Next']")
       end
+
+      it "does not target the top frame so the turbo frame updates inline" do
+        expect(rendered).not_to have_css("form[data-turbo-frame='_top']")
+      end
     end
   end
 
@@ -77,6 +81,10 @@ RSpec.describe "sessions/new", type: :view do
 
         it "has a submit button" do
           expect(rendered).to have_css("form input[type='submit'][value='Sign In']")
+        end
+
+        it "targets the top frame so a successful sign-in redirects the full page" do
+          expect(rendered).to have_css("form[data-turbo-frame='_top']")
         end
       end
     end

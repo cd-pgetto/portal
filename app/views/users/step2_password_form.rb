@@ -4,7 +4,7 @@ class Views::Users::Step2PasswordForm < Views::Base
   end
 
   def view_template
-    form_with model: @user, data: {turbo: false}, class: "contents flex-col items-center justify-center" do |form|
+    form_with model: @user, data: {turbo_frame: "_top"}, class: "contents flex-col items-center justify-center" do |form|
       render Views::Shared::ErrorMessages.new(resource: @user)
 
       form.hidden_field :registration_step

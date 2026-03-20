@@ -6,7 +6,7 @@ class Views::Sessions::Step2PasswordForm < Components::Base
   end
 
   def view_template
-    form_with url: session_path, class: "contents flex-col items-center justify-center" do |form|
+    form_with url: session_path, class: "contents flex-col items-center justify-center", data: {turbo_frame: "_top"} do |form|
       turbo_stream.update("flash_messages") { render Views::Shared::FlashMessages.new }
 
       form.hidden_field :sign_in_step, value: 2

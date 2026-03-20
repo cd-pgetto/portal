@@ -21,13 +21,7 @@ class SessionsController < ApplicationController
       invitation = accept_pending_invitation_if_any(authenticated_user)
       redirect_url = invitation ? practice_url(invitation.practice) : after_authentication_url
       notice = invitation ? "You have joined #{invitation.practice.name}." : nil
-      respond_to do |format|
-        format.html { redirect_to redirect_url, notice: notice }
-        format.turbo_stream do
-          flash[:notice] = notice if notice
-          render turbo_stream: turbo_stream.action(:redirect, redirect_url)
-        end
-      end
+      redirect_to redirect_url, notice: notice
 
     else
       flash.now.alert = "Sign in failed. Please try another email address or password."
