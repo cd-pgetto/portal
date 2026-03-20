@@ -7,6 +7,7 @@ module InvitationAcceptance
     Invitation.accept_from_session!(session, user)
   rescue => e
     Rails.logger.error("Failed to accept pending invitation: #{e.message}")
+    flash.alert = "Your invitation could not be accepted. Please try visiting the invitation link again."
     nil
   end
 end

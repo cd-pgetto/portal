@@ -19,6 +19,7 @@ class InvitationsController < ApplicationController
     org = @invitation.practice.organization
     render Views::Invitations::Show.new(
       invitation: @invitation,
+      user: User.new(email_address: @invitation.email, registration_step: 2),
       identity_providers: org.identity_providers,
       password_auth_allowed: org.password_auth_allowed?
     )

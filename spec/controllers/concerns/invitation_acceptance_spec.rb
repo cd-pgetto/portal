@@ -6,6 +6,7 @@ RSpec.describe InvitationAcceptance do
       include InvitationAcceptance
 
       def session = {}
+      def flash = @flash ||= ActionDispatch::Flash::FlashHash.new
     end.new
   end
 
@@ -36,6 +37,11 @@ RSpec.describe InvitationAcceptance do
       it "logs the error" do
         expect(Rails.logger).to receive(:error).with(/Failed to accept pending invitation: something went wrong/)
         host.send(:accept_pending_invitation_if_any, user)
+      end
+
+      it "sets a flash alert" do
+        host.send(:accept_pending_invitation_if_any, user)
+        expect(host.flash.alert).to be_present
       end
     end
   end

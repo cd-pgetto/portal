@@ -10,6 +10,9 @@
 # Ignore all environment files.
 /.env*
 
+# Ignore Claude local settings
+/.claude/settings.local.json
+
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*

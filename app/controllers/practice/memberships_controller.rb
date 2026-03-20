@@ -40,7 +40,7 @@ class Practice::MembershipsController < ApplicationController
   end
 
   def set_membership
-    @membership = @practice.members.find(params[:id])
+    @membership = @practice.all_members.find(params[:id])
   end
 
   def membership_params

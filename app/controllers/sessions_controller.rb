@@ -23,7 +23,10 @@ class SessionsController < ApplicationController
       notice = invitation ? "You have joined #{invitation.practice.name}." : nil
       respond_to do |format|
         format.html { redirect_to redirect_url, notice: notice }
-        format.turbo_stream { render turbo_stream: turbo_stream.action(:redirect, redirect_url) }
+        format.turbo_stream do
+          flash[:notice] = notice if notice
+          render turbo_stream: turbo_stream.action(:redirect, redirect_url)
+        end
       end
 
     else

@@ -1,9 +1,12 @@
 class Views::Invitations::Show < Views::Base
-  def initialize(invitation:, identity_providers:, password_auth_allowed:)
+  def initialize(invitation:, user:, identity_providers:, password_auth_allowed:)
     @invitation = invitation
+    @user = user
     @identity_providers = identity_providers
     @password_auth_allowed = password_auth_allowed
   end
+
+  attr_reader :user, :identity_providers, :password_auth_allowed
 
   def view_template
     content_for :title, "Join #{@invitation.practice.name}"
@@ -21,12 +24,7 @@ class Views::Invitations::Show < Views::Base
 
           div(class: "divider") { "Create an account to accept" }
 
-          new_user = User.new(email_address: @invitation.email, registration_step: 2)
-          render Views::Shared::AuthOptions.new(
-            user: new_user,
-            identity_providers: @identity_providers,
-            password_auth_allowed: @password_auth_allowed
-          )
+          render Views::Shared::AuthOptions.new(user:, identity_providers:, password_auth_allowed:)
 
           div(class: "divider") { "Already have an account?" }
           a(href: new_session_path, class: "btn btn-outline btn-block") { "Sign In" }
