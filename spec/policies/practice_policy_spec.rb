@@ -22,6 +22,15 @@ RSpec.describe PracticePolicy, type: :policy do
       it { is_expected.not_to permit(user, record) }
     end
 
+    context "as a user with only an inactive membership" do
+      let(:user) { create(:user, organization: create(:organization)) }
+      let(:record) { create(:practice, users: [user], organization_id: user.organization_membership.organization_id) }
+
+      before { user.all_practice_memberships.where(practice_id: record.id).update_all(active: false) }
+
+      it { is_expected.not_to permit(user, record) }
+    end
+
     context "as a system admin" do
       let(:user) { create_system_admin }
 
@@ -55,6 +64,15 @@ RSpec.describe PracticePolicy, type: :policy do
       before { user.practice_memberships.where(practice_id: record.id).update_all(role: :admin) }
 
       it { is_expected.to permit(user, record) }
+    end
+
+    context "as a user with only an inactive membership" do
+      let(:user) { create(:user, organization: create(:organization)) }
+      let(:record) { create(:practice, users: [user], organization_id: user.organization_membership.organization_id) }
+
+      before { user.all_practice_memberships.where(practice_id: record.id).update_all(active: false) }
+
+      it { is_expected.not_to permit(user, record) }
     end
 
     context "as a system admin" do
@@ -102,6 +120,15 @@ RSpec.describe PracticePolicy, type: :policy do
       before { user.practice_memberships.where(practice_id: record.id).update_all(role: :admin) }
 
       it { is_expected.to permit(user, record) }
+    end
+
+    context "as a user with only an inactive admin membership" do
+      let(:user) { create(:user, organization: create(:organization)) }
+      let(:record) { create(:practice, users: [user], organization_id: user.organization_membership.organization_id) }
+
+      before { user.all_practice_memberships.where(practice_id: record.id).update_all(role: :admin, active: false) }
+
+      it { is_expected.not_to permit(user, record) }
     end
 
     context "as a system admin" do
@@ -189,6 +216,16 @@ RSpec.describe PracticePolicy, type: :policy do
       let(:user) { create(:another_user) }
 
       it { is_expected.to be_empty }
+    end
+
+    context "as a user with only an inactive membership" do
+      let(:user) { create(:user) }
+
+      before do
+        create(:practice_member, practice: practice, user: user, active: false)
+      end
+
+      it { is_expected.not_to include(practice) }
     end
 
     context "as a system admin" do

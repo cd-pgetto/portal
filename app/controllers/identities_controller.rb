@@ -1,4 +1,6 @@
 class IdentitiesController < ApplicationController
+  include InvitationAcceptance
+
   allow_unauthenticated_access
   skip_after_action :verify_authorized
 
@@ -33,7 +35,8 @@ class IdentitiesController < ApplicationController
     end
 
     start_new_session_for user
-    redirect_to after_authentication_url
+    invitation = accept_pending_invitation_if_any(user)
+    redirect_to invitation ? practice_url(invitation.practice) : after_authentication_url
   end
 
   def failure

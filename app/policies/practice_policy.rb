@@ -41,6 +41,6 @@ class PracticePolicy < ApplicationPolicy
   end
 
   def admin_or_owner_member?
-    user&.practice_memberships&.where(role: [:owner, :admin])&.exists?(practice_id: record.id)
+    user&.practice_admin_or_owner?(practice_id: record.id)
   end
 end

@@ -1,7 +1,13 @@
 Rails.application.routes.draw do
   resources :patients
-  resources :practices, only: [:index, :show, :edit, :update]
-  post "practices/:id/select", to: "practices#select", as: :select_practice
+  resources :practices, only: [:index, :show, :edit, :update] do
+    post :select, on: :member
+    resources :invitations, module: :practice, only: [:create, :destroy]
+    resources :memberships, module: :practice, only: [:create, :destroy]
+  end
+  resources :invitations, only: [:show], param: :token do
+    patch :accept, on: :member
+  end
 
   # OAuth routes
   get "/oauth/:provider/callback", to: "identities#create"

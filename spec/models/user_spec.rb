@@ -89,5 +89,36 @@ RSpec.describe User, type: :model do
         expect(subject.full_name).to eq("John Doe")
       end
     end
+
+    describe "#practice_admin_or_owner?" do
+      let(:organization) { create(:organization) }
+      let(:practice) { create(:practice, organization: organization) }
+      let(:other_practice) { create(:practice, organization: organization) }
+      let(:user) { create(:user, organization: organization, practices: [practice]) }
+
+      it "returns true for an admin member" do
+        user.practice_memberships.find_by(practice: practice).update!(role: :admin)
+        expect(user.practice_admin_or_owner?(practice_id: practice.id)).to be true
+      end
+
+      it "returns true for an owner member" do
+        user.practice_memberships.find_by(practice: practice).update!(role: :owner)
+        expect(user.practice_admin_or_owner?(practice_id: practice.id)).to be true
+      end
+
+      it "returns false for a regular member" do
+        expect(user.practice_admin_or_owner?(practice_id: practice.id)).to be false
+      end
+
+      it "returns false for a practice the user is not a member of" do
+        user.practice_memberships.find_by(practice: practice).update!(role: :admin)
+        expect(user.practice_admin_or_owner?(practice_id: other_practice.id)).to be false
+      end
+
+      it "returns false for an inactive admin" do
+        user.all_practice_memberships.find_by(practice: practice).update!(role: :admin, active: false)
+        expect(user.practice_admin_or_owner?(practice_id: practice.id)).to be false
+      end
+    end
   end
 end

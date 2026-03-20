@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  include InvitationAcceptance
+
   before_action :set_user, only: %i[show edit update]
 
   allow_unauthenticated_access only: %i[new create]
@@ -30,7 +32,11 @@ class UsersController < ApplicationController
     else
       user.save!
       start_new_session_for(user)
-      redirect_to home_url, notice: "Welcome to Perceptive."
+      if (invitation = accept_pending_invitation_if_any(user))
+        redirect_to practice_url(invitation.practice), notice: "Welcome! You have joined #{invitation.practice.name}."
+      else
+        redirect_to home_url, notice: "Welcome to Perceptive."
+      end
     end
   end
 

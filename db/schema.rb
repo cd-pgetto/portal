@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_13_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_20_020151) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -18,7 +18,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_13_120000) do
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "jaw_type", ["maxilla", "mandible"]
   create_enum "organization_role", ["owner", "admin", "member", "inactive"]
-  create_enum "practice_role", ["owner", "admin", "member", "dentist", "hygienist", "assistant", "inactive"]
+  create_enum "practice_role", ["owner", "admin", "member", "dentist", "hygienist", "assistant"]
   create_enum "side", ["right", "left"]
 
   create_table "active_storage_attachments", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -93,6 +93,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_13_120000) do
     t.index ["type"], name: "index_identity_providers_on_type"
   end
 
+  create_table "invitations", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.datetime "accepted_at"
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.uuid "invited_by_id", null: false
+    t.uuid "practice_id", null: false
+    t.enum "role", default: "member", null: false, enum_type: "practice_role"
+    t.datetime "updated_at", null: false
+    t.index ["invited_by_id"], name: "index_invitations_on_invited_by_id"
+    t.index ["practice_id", "email"], name: "index_invitations_on_practice_id_and_email_pending", unique: true, where: "(accepted_at IS NULL)"
+    t.index ["practice_id"], name: "index_invitations_on_practice_id"
+  end
+
   create_table "jaws", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.uuid "dental_model_id", null: false
@@ -147,12 +160,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_13_120000) do
   end
 
   create_table "practice_members", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.uuid "practice_id", null: false
     t.enum "role", default: "member", null: false, enum_type: "practice_role"
     t.datetime "updated_at", null: false
     t.uuid "user_id", null: false
     t.index ["practice_id"], name: "index_practice_members_on_practice_id"
+    t.index ["user_id", "practice_id", "role"], name: "index_practice_members_on_user_id_and_practice_id_and_role", unique: true
     t.index ["user_id"], name: "index_practice_members_on_user_id"
   end
 
@@ -202,6 +217,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_13_120000) do
   add_foreign_key "identities", "identity_providers"
   add_foreign_key "identities", "users"
   add_foreign_key "identity_providers", "organizations"
+  add_foreign_key "invitations", "practices"
+  add_foreign_key "invitations", "users", column: "invited_by_id"
   add_foreign_key "jaws", "dental_models"
   add_foreign_key "organization_members", "organizations"
   add_foreign_key "organization_members", "users"

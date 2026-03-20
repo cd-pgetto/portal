@@ -33,8 +33,9 @@ class User < ApplicationRecord
   has_one :organization_admin, -> { where(role: "admin") }, class_name: "OrganizationMember"
   has_one :organization, through: :organization_membership
 
-  has_many :practice_memberships, dependent: :destroy, class_name: "PracticeMember"
-  has_many :practices, through: :practice_memberships
+  has_many :practice_memberships, -> { active }, class_name: "PracticeMember"
+  has_many :all_practice_memberships, dependent: :destroy, class_name: "PracticeMember"
+  has_many :practices, -> { distinct }, through: :practice_memberships
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
@@ -91,5 +92,9 @@ class User < ApplicationRecord
 
   def organization_admin?
     organization_admin.present?
+  end
+
+  def practice_admin_or_owner?(practice_id:)
+    practice_memberships.admin_or_owner_in(practice_id).exists?
   end
 end
