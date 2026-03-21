@@ -1,63 +1,31 @@
-guard :rspec, cmd: "bundle exec rspec" do
-  notification :off
+guard :minitest, spring: "bundle exec rails test", notification: false do
+  # Test files — run directly when changed
+  watch(%r{^test/(.+)_test\.rb$})
 
-  require "guard/rspec/dsl"
-  dsl = Guard::RSpec::Dsl.new(self)
+  # Support/helper changes — run all tests
+  watch("test/test_helper.rb") { "test" }
+  watch(%r{^test/support/(.+)\.rb$}) { "test" }
+  watch(%r{^test/fixtures/(.+)\.yml$}) { "test" }
 
-  # Feel free to open issues for suggestions and improvements
+  # Models
+  watch(%r{^app/models/(.+)\.rb$}) { |m| "test/models/#{m[1]}_test.rb" }
 
-  # RSpec files
-  rspec = dsl.rspec
-  watch(rspec.spec_helper) { rspec.spec_dir }
-  watch(rspec.spec_support) { rspec.spec_dir }
-  watch(rspec.spec_files)
+  # Controllers
+  watch(%r{^app/controllers/(.+)_controller\.rb$}) { |m| "test/requests/#{m[1]}_test.rb" }
+  watch(%r{^app/controllers/concerns/(.+)\.rb$}) { |m| "test/controllers/concerns/#{m[1]}_test.rb" }
 
-  # Ruby files
-  ruby = dsl.ruby
-  dsl.watch_spec_files_for(ruby.lib_files)
+  # Mailers
+  watch(%r{^app/mailers/(.+)_mailer\.rb$}) { |m| "test/mailers/#{m[1]}_mailer_test.rb" }
 
-  # Rails files
-  # rails = dsl.rails(view_extensions: %w[erb haml slim])
-  rails = dsl.rails(view_extensions: %w[erb rb])
-  dsl.watch_spec_files_for(rails.app_files)
-  dsl.watch_spec_files_for(rails.views)
+  # Policies
+  watch(%r{^app/policies/(.+)_policy\.rb$}) { |m| "test/policies/#{m[1]}_policy_test.rb" }
 
-  # View component templates (html.erb only)
-  watch(%r{^app/(components/.+).html.erb$}) { |m| "#{rspec.spec_dir}/#{m[1]}_spec.rb" }
+  # Views (Phlex .rb and ERB)
+  watch(%r{^app/views/(.+)\.(rb|html\.erb)$}) { |m| "test/views/#{m[1]}_test.rb" }
 
-  # Phlex view components (.rb files)
-  watch(%r{^app/components/(.+)\.rb$}) { |m| "spec/components/#{m[1]}_spec.rb" }
+  # Validators
+  watch(%r{^app/validators/(.+)\.rb$}) { |m| "test/validators/#{m[1]}_test.rb" }
 
-  # Phlex view specs and controller specs for view components
-  watch(%r{^app/views/(.+)\.rb$}) do |m|
-    [
-      "spec/views/#{m[1]}_spec.rb",
-      "spec/requests/#{m[1].split("/")[0..-2].join("/")}_spec.rb"
-    ]
-  end
-
-  watch(rails.controllers) do |m|
-    [
-      rspec.spec.call("routing/#{m[1]}_routing"),
-      rspec.spec.call("controllers/#{m[1]}_controller"),
-      rspec.spec.call("requests/#{m[1]}"),
-      rspec.spec.call("acceptance/#{m[1]}"),
-      rspec.spec.call("system/#{m[1]}_system")
-    ]
-  end
-
-  # Rails config changes
-  watch(rails.spec_helper) { rspec.spec_dir }
-  watch(rails.routes) { "#{rspec.spec_dir}/routing" }
-  watch(rails.app_controller) { "#{rspec.spec_dir}/controllers" }
-
-  # Capybara features specs
-  watch(rails.view_dirs) { |m| rspec.spec.call("features/#{m[1]}") }
-  watch(rails.layouts) { |m| rspec.spec.call("features/#{m[1]}") }
-
-  # Turnip features and steps
-  watch(%r{^spec/acceptance/(.+)\.feature$})
-  watch(%r{^spec/acceptance/steps/(.+)_steps\.rb$}) do |m|
-    Dir[File.join("**/#{m[1]}.feature")][0] || "spec/acceptance"
-  end
+  # Routes
+  watch("config/routes.rb") { "test/requests" }
 end

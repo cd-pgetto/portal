@@ -1,0 +1,127 @@
+require "test_helper"
+
+class PracticesTest < ActionDispatch::IntegrationTest
+  let(:organization) { create(:organization) }
+  let(:practice) { create(:practice, name: "Practice Name", organization: organization) }
+
+  describe "when not signed in" do
+    it "redirects to sign in" do
+      get practices_path
+      assert_redirected_to new_session_path
+    end
+  end
+
+  describe "when signed in as a non-member" do
+    let(:other_user) { create(:another_user) }
+    before { sign_in_as(other_user, USER_PASSWORD) }
+
+    it "is not authorized to access the index" do
+      get practices_path
+      assert_redirected_to home_path
+      assert_includes flash[:alert], "not authorized"
+    end
+
+    it "cannot find a practice they are not a member of" do
+      practice
+      get practice_path(practice)
+      assert_response :not_found
+    end
+  end
+
+  describe "when signed in as a practice member" do
+    let(:user) { create_member_in(practice) }
+    before {
+      practice
+      sign_in_as(user, USER_PASSWORD)
+    }
+
+    describe "GET /practices" do
+      it "returns success" do
+        get practices_path
+        assert_response :success
+      end
+
+      it "only lists practices the user belongs to" do
+        other_practice = create(:practice, organization: organization)
+        get practices_path
+        assert_includes response.body, "Practice Name"
+        assert_not_includes response.body, other_practice.name
+      end
+    end
+
+    describe "GET /practices/:id" do
+      it "returns success" do
+        get practice_path(practice)
+        assert_response :success
+      end
+    end
+
+    describe "GET /practices/:id/edit" do
+      it "is not authorized for a regular member" do
+        get edit_practice_path(practice)
+        assert_redirected_to home_path
+        assert_includes flash[:alert], "not authorized"
+      end
+    end
+
+    describe "PATCH /practices/:id" do
+      it "is not authorized for a regular member" do
+        patch practice_path(practice), params: {practice: {name: "New Name"}}
+        assert_redirected_to home_path
+        assert_includes flash[:alert], "not authorized"
+        assert_equal "Practice Name", practice.reload.name
+      end
+    end
+
+    describe "POST /practices/:id/select" do
+      it "sets the current practice and redirects to it" do
+        post select_practice_path(practice)
+        assert_redirected_to practice_path(practice)
+      end
+
+      it "returns 404 when the practice does not exist" do
+        post select_practice_path("00000000-0000-0000-0000-000000000000")
+        assert_response :not_found
+      end
+
+      it "returns 404 when the practice belongs to another user" do
+        other_practice = create(:practice, organization: organization)
+        post select_practice_path(other_practice)
+        assert_response :not_found
+      end
+    end
+  end
+
+  describe "when signed in as a practice admin" do
+    let(:admin) { create_member_in(practice, role: :admin) }
+    before {
+      practice
+      sign_in_as(admin, USER_PASSWORD)
+    }
+
+    describe "GET /practices/:id/edit" do
+      it "returns success" do
+        get edit_practice_path(practice)
+        assert_response :success
+      end
+    end
+
+    describe "PATCH /practices/:id with valid params" do
+      it "updates the practice name and redirects to show" do
+        patch practice_path(practice), params: {practice: {name: "Updated Name"}}
+        assert_redirected_to practice_path(practice)
+        assert_includes flash[:notice], "successfully updated"
+        assert_equal "Updated Name", practice.reload.name
+      end
+    end
+
+    describe "PATCH /practices/:id with invalid params" do
+      it "re-renders the edit form with an error" do
+        patch practice_path(practice), params: {practice: {name: ""}}
+        assert_response :unprocessable_content
+        assert_includes flash[:alert], "could not be updated"
+        assert_equal "Practice Name", practice.reload.name
+      end
+    end
+  end
+end

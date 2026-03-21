@@ -1,0 +1,11 @@
+alice_member:
+  user: alice
+  practice: acme_dental
+  role: member
+  active: true
+
+bob_dentist:
+  user: bob
+  practice: acme_dental
+  role: dentist
+  active: true
