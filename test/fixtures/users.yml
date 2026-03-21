@@ -1,0 +1,23 @@
+alice:
+  first_name: "Alice"
+  last_name: "Smith"
+  email_address: "alice.smith@example.com"
+  password_digest: <%= BCrypt::Password.create("The-quick-brown-fox-8-a-bird", cost: BCrypt::Engine::MIN_COST) %>
+  failed_login_count: 0
+  identities_count: 0
+
+bob:
+  first_name: "Bob"
+  last_name: "Jones"
+  email_address: "bob.jones@example.com"
+  password_digest: <%= BCrypt::Password.create("The-quick-brown-fox-8-a-bird", cost: BCrypt::Engine::MIN_COST) %>
+  failed_login_count: 0
+  identities_count: 0
+
+dr_sue:
+  first_name: "Sue"
+  last_name: "Smith"
+  email_address: "sue.smith@example.com"
+  password_digest: <%= BCrypt::Password.create("The-quick-brown-fox-8-a-bird", cost: BCrypt::Engine::MIN_COST) %>
+  failed_login_count: 0
+  identities_count: 0

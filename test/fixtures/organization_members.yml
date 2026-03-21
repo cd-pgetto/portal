@@ -1,0 +1,9 @@
+alice_acme:
+  user: alice
+  organization: acme
+  role: member
+
+bob_acme:
+  user: bob
+  organization: acme
+  role: member

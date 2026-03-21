@@ -43,7 +43,6 @@ group :development, :test do
   gem "debug", platforms: %i[mri windows], require: "debug/prelude"
   gem "awesome_print"
 
-  gem "rspec-rails"
   gem "factory_bot_rails"
   gem "faker"
   gem "bullet"
@@ -56,18 +55,19 @@ group :development do
 
   gem "bundler-audit", require: false
   gem "brakeman", require: false
-  gem "guard-rspec", require: false
+  gem "guard", require: false
+  gem "guard-minitest", require: false
   gem "standard", ">= 1.35.1", require: false
   gem "standard-rails", require: false
-  gem "standard-rspec", require: false
   gem "htmlbeautifier", require: false
   gem "annotaterb", require: false
-  gem "ruby-lsp-rspec", "~> 0.1.28", require: false
 end
 
 group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "shoulda-matchers"
+  gem "minitest-spec-rails"
+  gem "minitest-mock", "~> 5.27"
   gem "simplecov", require: false
 end
